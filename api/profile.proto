@@ -1,0 +1,34 @@
+syntax = "proto3";
+package profile;
+
+import "google/protobuf/timestamp.proto";
+option go_package = "internal/proto";
+
+
+
+message Badge {
+  string uuid = 1;
+  string name = 2;
+  google.protobuf.Timestamp assigned_on = 3;
+}
+
+message Profile {
+  string uuid = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string handle = 5;
+  string avatar = 6;
+  uint64 reputation = 7;
+  repeated Badge badges = 8;
+  google.protobuf.Timestamp date_updated = 9;
+  google.protobuf.Timestamp date_created = 10;
+}
+
+message GetProfileRequest {
+  string uuid =1;
+}
+
+
+service ProfileService {
+  rpc GetProfile(GetProfileRequest) returns (Profile) {}
+}

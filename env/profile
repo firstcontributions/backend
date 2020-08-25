@@ -1,0 +1,2 @@
+export PROFILE_PORT=9090
+export LOG_FILE=/dev/stdout
