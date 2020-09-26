@@ -11,6 +11,6 @@ import (
 func (s *Service) GetProfile(ctx context.Context, req *proto.GetProfileRequest) (*proto.Profile, error) {
 	log.Printf("%#v", req.String())
 	return &proto.Profile{
-		FirstName: "Gokul",
+		Name: "Gokul",
 	}, nil
 }

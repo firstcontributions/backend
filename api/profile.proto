@@ -12,23 +12,32 @@ message Badge {
   google.protobuf.Timestamp assigned_on = 3;
 }
 
+message Token {
+  string AccessToken = 1;
+  string RefreshToken = 2;
+  string TokenType = 3;
+  google.protobuf.Timestamp Expiry = 4; 
+}
+
 message Profile {
   string uuid = 1;
-  string first_name = 2;
-  string last_name = 3;
-  string handle = 5;
-  string avatar = 6;
-  uint64 reputation = 7;
-  repeated Badge badges = 8;
-  google.protobuf.Timestamp date_updated = 9;
-  google.protobuf.Timestamp date_created = 10;
+  string name = 2;
+  string handle =3;
+  string avatar = 4;
+  uint64 reputation = 5;
+  repeated Badge badges = 6;
+  google.protobuf.Timestamp date_updated = 7;
+  google.protobuf.Timestamp date_created = 8;
+  Token github_token = 9;
 }
 
 message GetProfileRequest {
-  string uuid =1;
+  string handle =1;
 }
 
 
 service ProfileService {
   rpc GetProfile(GetProfileRequest) returns (Profile) {}
+  rpc CreateProfile(Profile) returns (Profile) {}
+
 }

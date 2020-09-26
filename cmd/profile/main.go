@@ -2,25 +2,15 @@ package main
 
 import (
 	"fmt"
-
-	log "github.com/sirupsen/logrus"
+	"log"
 
 	"net"
-	"os"
 
 	"github.com/firstcontributions/firstcontributions/internal/profile"
 	"github.com/firstcontributions/firstcontributions/internal/proto"
 
 	"google.golang.org/grpc"
 )
-
-func init() {
-	log.SetFormatter(&log.JSONFormatter{})
-
-	// Output to stdout instead of the default stderr
-	// Can be any io.Writer, see below for File example
-	log.SetOutput(os.Stdout)
-}
 
 func main() {
 

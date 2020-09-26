@@ -1,0 +1,123 @@
+version: '3'
+
+services:
+  # redis setup, used by call state manager
+  redis:
+    container_name: redis
+    image: 'redis:4-alpine'
+    command: 'redis-server --requirepass spy0nM3'
+    ports:
+      - 6379:6379
+    volumes:
+        - redis_data:/var/lib/redis
+    networks:
+      docker_network:
+        ipv4_address: 172.30.1.1
+    stop_grace_period: 3s
+
+
+  # # zookeeper for kafka
+  # zookeeper:
+  #   container_name: zookeeper
+  #   image: zookeeper:3.5.5
+  #   networks:
+  #     docker_network:
+  #       ipv4_address: 172.30.1.2
+
+  # #kafka for post pipeline
+  # kafka:
+  #   container_name: kafka
+  #   environment:
+  #     - ALLOW_PLAINTEXT_LISTENER=yes
+  #     - KAFKA_CFG_BROKER_ID=1
+  #     - KAFKA_CFG_HOST_NAME=kafka
+  #     - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+  #     - KAFKA_CFG_NUM_PARTITIONS=3
+  #     - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+  #     - KAFKA_LISTENERS=PLAINTEXT://:9092
+  #     - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://172.30.1.3:9092
+  #   image: bitnami/kafka:2.2.1
+  #   restart: on-failure
+  #   networks:
+  #     docker_network:
+  #       ipv4_address: 172.30.1.3
+
+
+  # mongo for metrics meta store and live dashboard
+  mongo:
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: spy0nM3
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      docker_network:
+        ipv4_address: 172.30.1.4
+
+
+  # elasticsearch:
+  #   image: "elasticsearch:2.4.4-alpine"
+  #   container_name: elasticsearch
+  #   environment:
+  #     - discovery.type=single-node
+  #   ports:
+  #     - "9200:9200"
+  #     - "9300:9300"
+  #   volumes:
+  #     - es_data:/usr/share/elasticsearch/data
+  #   networks:
+  #     docker_network:
+  #       ipv4_address: 172.30.1.5
+  #   stop_grace_period: 3s
+
+
+  gateway:
+    build:
+      context: ./
+      dockerfile: deployments/gateway.Dockerfile
+    image: gateway:latest
+    container_name: gateway
+    env_file: ./env/gateway.env
+    networks:
+      docker_network:
+        ipv4_address: 172.30.1.6
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - redis
+      - profile
+
+
+  profile:
+    build:
+      context: ./
+      dockerfile: deployments/profile.Dockerfile
+    image: profile:latest
+    container_name: profile
+    env_file: ./env/profile.env
+    networks:
+      docker_network:
+        ipv4_address: 172.30.1.7
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+
+volumes:
+  mongodb_data:
+  es_data:
+  redis_data:
+
+# docker network interface
+networks:
+  docker_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.0.0/16
