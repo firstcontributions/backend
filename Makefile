@@ -6,3 +6,5 @@ generate:
 	(cd internal/gateway/configs && go generate && goimports -w *.go)
 
 
+run:
+	docker-compose up

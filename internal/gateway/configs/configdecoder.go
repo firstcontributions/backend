@@ -46,5 +46,10 @@ func (t *Config) DecodeEnv() error {
 		return fmt.Errorf("type commonconfigs.GithubConfignot implemts env Decoder interface, %w", envdecoder.ErrDecoderNotImplemented)
 	}
 	t.GithubConfig = &_recGithubconfig
+	_recProfilemanager := commonconfigs.ProfileManager{}
+	if err := envdecoder.Decode(&_recProfilemanager); err != nil {
+		return fmt.Errorf("type commonconfigs.ProfileManagernot implemts env Decoder interface, %w", envdecoder.ErrDecoderNotImplemented)
+	}
+	t.ProfileManager = &_recProfilemanager
 	return nil
 }

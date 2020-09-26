@@ -41,7 +41,7 @@ func (s *Server) HandleSession(next http.Handler) http.Handler {
 				ErrorResponse(ErrUnauthorized(), w)
 				return
 			}
-			log.Print("error on getting session asdf ", err)
+			log.Print("error on getting session ", err)
 			ErrorResponse(ErrInternalServerError(), w)
 			return
 		}

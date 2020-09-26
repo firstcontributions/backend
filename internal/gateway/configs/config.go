@@ -14,6 +14,7 @@ type Config struct {
 	HashKey        *string `env:"HASH_KEY"`
 	BlockKey       *string `env:"BLOCK_KEY"`
 	GithubConfig   *commonconfigs.GithubConfig
+	ProfileManager *commonconfigs.ProfileManager
 }
 
 // RedisConfig encapsulates the redis configs

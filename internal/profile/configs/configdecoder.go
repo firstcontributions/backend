@@ -19,5 +19,9 @@ func (t *Config) DecodeEnv() error {
 		_recPort := _recPortStr
 		t.Port = &_recPort
 	}
+	if _recMongourlStr := os.Getenv("MONGO_URL"); _recMongourlStr != "" {
+		_recMongourl := _recMongourlStr
+		t.MongoURL = &_recMongourl
+	}
 	return nil
 }

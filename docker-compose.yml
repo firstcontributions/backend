@@ -9,7 +9,7 @@ services:
     ports:
       - 6379:6379
     volumes:
-        - redis_data:/var/lib/redis
+        -  /opt/firstcontributions/redis:/var/lib/redis
     networks:
       docker_network:
         ipv4_address: 172.30.1.1
@@ -53,7 +53,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - mongodb_data:/data/db
+      -  /opt/firstcontributions/mongo:/data/db
     networks:
       docker_network:
         ipv4_address: 172.30.1.4

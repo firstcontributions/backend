@@ -27,7 +27,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 
 	proto.RegisterProfileServiceServer(grpcServer, s)
-
+	log.Printf("listening at :%s", *s.Port)
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %s", err)
 	}

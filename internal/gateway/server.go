@@ -12,6 +12,8 @@ import (
 	"github.com/firstcontributions/firstcontributions/internal/gateway/session"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/securecookie"
+	pool "github.com/processout/grpc-go-pool"
+	"google.golang.org/grpc"
 )
 
 // Server encapsulates the connection objects and configs for
@@ -22,6 +24,7 @@ type Server struct {
 	CookieManager  *securecookie.SecureCookie
 	Router         *mux.Router
 	CSRFManager    *csrf.Manager
+	ProfileConn    *pool.Pool
 }
 
 // NewServer returns an instance of server
@@ -54,6 +57,18 @@ func (s *Server) Init() error {
 	)
 	s.CookieManager = securecookie.New([]byte(*s.HashKey), []byte(*s.BlockKey))
 
+	profileConn, err := pool.New(
+		func() (*grpc.ClientConn, error) {
+			return grpc.Dial(*s.ProfileManager.URL, grpc.WithInsecure())
+		},
+		*s.ProfileManager.InitConnections,
+		*s.ProfileManager.ConnectionCapacity,
+		time.Duration(*s.ProfileManager.ConnectionTTLMinutes)*time.Minute,
+	)
+	if err != nil {
+		return fmt.Errorf("could not initialize connection to profile manager, Error: %w", err)
+	}
+	s.ProfileConn = profileConn
 	s.InitRoutes()
 	return nil
 }

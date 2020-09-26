@@ -10,6 +10,7 @@ message Badge {
   string uuid = 1;
   string name = 2;
   google.protobuf.Timestamp assigned_on = 3;
+  uint64 progress = 4;
 }
 
 message Token {

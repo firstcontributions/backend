@@ -9,6 +9,9 @@ import (
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (s *Server) GetOAuth2Config() *oauth2.Config {
@@ -57,7 +60,22 @@ func (s *Server) AuthCallback(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(ErrInternalServerError(), w)
 		return
 	}
-	if err := s.setSession(w, r, data); err != nil {
+	profile, err := s.getProfileByHandle(ctx, data.Handle)
+	if err != nil && grpc.Code(err) != codes.NotFound {
+		log.Printf("error on gettimg profile grpc %v", err)
+		ErrorResponse(ErrInternalServerError(), w)
+		return
+	}
+	if profile == nil || grpc.Code(err) == codes.NotFound {
+		profile, err = s.createProfile(ctx, data)
+		if err != nil {
+			log.Printf("error on gettimg profile grpc %v", err)
+			ErrorResponse(ErrInternalServerError(), w)
+			return
+		}
+	}
+	log.Print("user id", profile.Uuid)
+	if err := s.setSession(w, r, profile); err != nil {
 		log.Printf("error on setting session %v", err)
 		ErrorResponse(ErrInternalServerError(), w)
 		return
@@ -83,5 +101,31 @@ func (s *Server) getProfileFromGithub(ctx context.Context, token *oauth2.Token) 
 		Name:   string(query.Viewer.Name),
 		Avatar: query.Viewer.AvatarURL.String(),
 		Handle: string(query.Viewer.Login),
+		GithubToken: &proto.Token{
+			AccessToken:  token.AccessToken,
+			RefreshToken: token.RefreshToken,
+			TokenType:    token.TokenType,
+			Expiry:       timestamppb.New(token.Expiry),
+		},
 	}, nil
+}
+
+func (s *Server) getProfileByHandle(ctx context.Context, handle string) (*proto.Profile, error) {
+	conn, err := s.ProfileConn.Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+	req := proto.GetProfileRequest{
+		Handle: handle,
+	}
+	return proto.NewProfileServiceClient(conn).GetProfile(ctx, &req)
+}
+
+func (s *Server) createProfile(ctx context.Context, profile *proto.Profile) (*proto.Profile, error) {
+	conn, err := s.ProfileConn.Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return proto.NewProfileServiceClient(conn).CreateProfile(ctx, profile)
 }

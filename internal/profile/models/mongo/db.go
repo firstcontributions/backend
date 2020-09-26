@@ -11,6 +11,6 @@ const (
 	CollectionTokens  = "tokens"
 )
 
-func getCollection(conn *mongo.Client) {
-
+func getCollection(client *mongo.Client, collection string) *mongo.Collection {
+	return client.Database(DBProfile).Collection(collection)
 }
