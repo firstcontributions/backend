@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/firstcontributions/firstcontributions/internal/proto"
+	"github.com/firstcontributions/backend/internal/proto"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"

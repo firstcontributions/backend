@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/firstcontributions/firstcontributions/internal/gateway"
+	"github.com/firstcontributions/backend/internal/gateway"
 )
 
 func main() {

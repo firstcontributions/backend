@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/firstcontributions/firstcontributions/internal/proto"
+	"github.com/firstcontributions/backend/internal/proto"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/protobuf/types/known/timestamppb"

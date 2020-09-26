@@ -1,4 +1,4 @@
-module github.com/firstcontributions/firstcontributions
+module github.com/firstcontributions/backend
 
 go 1.14
 

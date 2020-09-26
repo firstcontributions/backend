@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	"github.com/firstcontributions/firstcontributions/internal/profile/models/mongo"
-	"github.com/firstcontributions/firstcontributions/internal/proto"
+	"github.com/firstcontributions/backend/internal/profile/models/mongo"
+	"github.com/firstcontributions/backend/internal/proto"
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

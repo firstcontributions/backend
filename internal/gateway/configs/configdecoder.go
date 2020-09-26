@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	commonconfigs "github.com/firstcontributions/firstcontributions/internal/configs"
+	commonconfigs "github.com/firstcontributions/backend/internal/configs"
 	"github.com/gokultp/go-envparser/pkg/envdecoder"
 )
 

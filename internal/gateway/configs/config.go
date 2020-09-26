@@ -1,7 +1,7 @@
 package configs
 
 import (
-	commonconfigs "github.com/firstcontributions/firstcontributions/internal/configs"
+	commonconfigs "github.com/firstcontributions/backend/internal/configs"
 )
 
 // Config keeps the service level config data for luffy
