@@ -8,3 +8,8 @@ generate:
 
 run:
 	docker-compose up
+
+configure:
+	grep -v "172.30.1.6" /etc/hosts >> /tmp/hosts
+	echo "172.30.1.6 firstcontributions.com" >> /tmp/hosts
+	mv /tmp/hosts /etc/hosts
