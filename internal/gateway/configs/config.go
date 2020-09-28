@@ -11,10 +11,11 @@ type Config struct {
 	RedisConfig    *RedisConfig
 	Port           *string `env:"GATEWAY_PORT"`
 	SessionTTLDays *int    `env:"SESSION_TTL_DAYS"`
+	CSRFTTLSeconds *int    `env:"CSRF_TTL_SECONDS"`
 	HashKey        *string `env:"HASH_KEY"`
 	BlockKey       *string `env:"BLOCK_KEY"`
 	GithubConfig   *commonconfigs.GithubConfig
-	ProfileManager *commonconfigs.ProfileManager
+	Profile        *commonconfigs.ProfileManager
 }
 
 // RedisConfig encapsulates the redis configs

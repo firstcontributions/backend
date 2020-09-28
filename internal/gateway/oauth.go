@@ -42,45 +42,46 @@ func (s *Server) AuthCallback(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(ErrForbidden(), w)
 		return
 	}
+	p, err := s.handleAuthCallback(ctx, code, state)
+	if err != nil {
+		ErrorResponse(err, w)
+		return
+	}
+	s.setSession(w, r, p)
+	http.Redirect(w, r, "http://explorer.firstcontributions.com", http.StatusSeeOther)
+	// JSONResponse(w, http.StatusOK, p)
+
+}
+
+func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*proto.Profile, *Error) {
 	if err := s.CSRFManager.Validate(ctx, state); err != nil {
 		log.Printf("error on validating csrf %v", err)
-		ErrorResponse(ErrForbidden(), w)
-		return
+		return nil, ErrForbidden()
 	}
 	conf := s.GetOAuth2Config()
 	token, err := conf.Exchange(ctx, code)
 	if err != nil {
 		log.Printf("error on gettimg token by code %v", err)
-		ErrorResponse(ErrForbidden(), w)
-		return
+		return nil, ErrForbidden()
 	}
 	data, err := s.getProfileFromGithub(ctx, token)
 	if err != nil {
 		log.Printf("error on gettimg profile from github %v", err)
-		ErrorResponse(ErrInternalServerError(), w)
-		return
+		return nil, ErrInternalServerError()
 	}
-	profile, err := s.getProfileByHandle(ctx, data.Handle)
+	profile, err := s.ProfileManager.GetProfile(ctx, data.Handle)
 	if err != nil && grpc.Code(err) != codes.NotFound {
 		log.Printf("error on gettimg profile grpc %v", err)
-		ErrorResponse(ErrInternalServerError(), w)
-		return
+		return nil, ErrInternalServerError()
 	}
 	if profile == nil || grpc.Code(err) == codes.NotFound {
-		profile, err = s.createProfile(ctx, data)
+		profile, err = s.ProfileManager.CreateProfile(ctx, data)
 		if err != nil {
 			log.Printf("error on gettimg profile grpc %v", err)
-			ErrorResponse(ErrInternalServerError(), w)
-			return
+			return nil, ErrInternalServerError()
 		}
 	}
-	log.Print("user id", profile.Uuid)
-	if err := s.setSession(w, r, profile); err != nil {
-		log.Printf("error on setting session %v", err)
-		ErrorResponse(ErrInternalServerError(), w)
-		return
-	}
-	JSONResponse(w, http.StatusAccepted, data)
+	return profile, nil
 }
 
 func (s *Server) getProfileFromGithub(ctx context.Context, token *oauth2.Token) (*proto.Profile, error) {
@@ -108,24 +109,4 @@ func (s *Server) getProfileFromGithub(ctx context.Context, token *oauth2.Token) 
 			Expiry:       timestamppb.New(token.Expiry),
 		},
 	}, nil
-}
-
-func (s *Server) getProfileByHandle(ctx context.Context, handle string) (*proto.Profile, error) {
-	conn, err := s.ProfileConn.Get(ctx)
-	if err != nil {
-		return nil, err
-	}
-	req := proto.GetProfileRequest{
-		Handle: handle,
-	}
-	return proto.NewProfileServiceClient(conn).GetProfile(ctx, &req)
-}
-
-func (s *Server) createProfile(ctx context.Context, profile *proto.Profile) (*proto.Profile, error) {
-	conn, err := s.ProfileConn.Get(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return proto.NewProfileServiceClient(conn).CreateProfile(ctx, profile)
 }

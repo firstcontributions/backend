@@ -4,6 +4,12 @@ import (
 	"encoding/json"
 )
 
+type CxtKey int
+
+const (
+	CxtKeySession CxtKey = iota
+)
+
 // MetaData encapsulates session info
 type MetaData struct {
 	UserID string `json:"uuid"`

@@ -23,13 +23,14 @@ message Token {
 message Profile {
   string uuid = 1;
   string name = 2;
-  string handle =3;
-  string avatar = 4;
-  uint64 reputation = 5;
-  repeated Badge badges = 6;
-  google.protobuf.Timestamp date_updated = 7;
-  google.protobuf.Timestamp date_created = 8;
-  Token github_token = 9;
+  string email = 3;
+  string handle = 4;
+  string avatar = 5;
+  uint64 reputation = 6;
+  repeated Badge badges = 7;
+  google.protobuf.Timestamp date_updated = 8;
+  google.protobuf.Timestamp date_created = 9;
+  Token github_token = 10;
 }
 
 message GetProfileRequest {

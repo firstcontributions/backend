@@ -13,12 +13,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type CxtKey int
-
-const (
-	CxtKeySession CxtKey = iota
-)
-
 // HandleSession checks session data
 func (s *Server) HandleSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -50,8 +44,8 @@ func (s *Server) HandleSession(next http.Handler) http.Handler {
 			ErrorResponse(ErrUnauthorized(), w)
 			return
 		}
-		r = r.WithContext(context.WithValue(r.Context(), CxtKeySession, sessionData))
-		log.Println(r.Context().Value(CxtKeySession))
+		r = r.WithContext(context.WithValue(r.Context(), session.CxtKeySession, sessionData))
+		log.Println(r.Context().Value(session.CxtKeySession))
 		// Our middleware logic goes here...
 		next.ServeHTTP(w, r)
 	})
@@ -81,7 +75,15 @@ func (s *Server) setSession(w http.ResponseWriter, r *http.Request, profile *pro
 		Name:    "fc_session",
 		Value:   encoded,
 		Expires: time.Now().Add(time.Duration(*s.SessionTTLDays) * time.Hour * 24),
+		Path:    "/",
 	}
 	http.SetCookie(w, cookie)
 	return nil
+}
+
+func (s *Server) SessionHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session := r.Context().Value(session.CxtKeySession)
+		JSONResponse(w, http.StatusOK, session)
+	})
 }

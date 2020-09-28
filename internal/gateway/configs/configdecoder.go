@@ -33,6 +33,14 @@ func (t *Config) DecodeEnv() error {
 		_recSessionttldays := int(_recSessionttldays64)
 		t.SessionTTLDays = &_recSessionttldays
 	}
+	if _recCsrfttlsecondsStr := os.Getenv("CSRF_TTL_SECONDS"); _recCsrfttlsecondsStr != "" {
+		_recCsrfttlseconds64, err := strconv.ParseInt(_recCsrfttlsecondsStr, 10, 32)
+		if err != nil {
+			return err
+		}
+		_recCsrfttlseconds := int(_recCsrfttlseconds64)
+		t.CSRFTTLSeconds = &_recCsrfttlseconds
+	}
 	if _recHashkeyStr := os.Getenv("HASH_KEY"); _recHashkeyStr != "" {
 		_recHashkey := _recHashkeyStr
 		t.HashKey = &_recHashkey
@@ -46,10 +54,10 @@ func (t *Config) DecodeEnv() error {
 		return fmt.Errorf("type commonconfigs.GithubConfignot implemts env Decoder interface, %w", envdecoder.ErrDecoderNotImplemented)
 	}
 	t.GithubConfig = &_recGithubconfig
-	_recProfilemanager := commonconfigs.ProfileManager{}
-	if err := envdecoder.Decode(&_recProfilemanager); err != nil {
+	_recProfile := commonconfigs.ProfileManager{}
+	if err := envdecoder.Decode(&_recProfile); err != nil {
 		return fmt.Errorf("type commonconfigs.ProfileManagernot implemts env Decoder interface, %w", envdecoder.ErrDecoderNotImplemented)
 	}
-	t.ProfileManager = &_recProfilemanager
+	t.Profile = &_recProfile
 	return nil
 }

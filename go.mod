@@ -9,7 +9,9 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/securecookie v1.1.1
+	github.com/graph-gophers/graphql-go v0.0.0-20200819123640-3b5ddcd884ae
 	github.com/processout/grpc-go-pool v1.2.1
+	github.com/rs/cors v1.7.0
 	github.com/shurcooL/githubv4 v0.0.0-20200915023059-bc5e4feb2971
 	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f // indirect
 	github.com/sirupsen/logrus v1.6.0 // indirect

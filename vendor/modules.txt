@@ -52,6 +52,22 @@ github.com/gorilla/mux
 # github.com/gorilla/securecookie v1.1.1
 ## explicit
 github.com/gorilla/securecookie
+# github.com/graph-gophers/graphql-go v0.0.0-20200819123640-3b5ddcd884ae
+## explicit
+github.com/graph-gophers/graphql-go
+github.com/graph-gophers/graphql-go/errors
+github.com/graph-gophers/graphql-go/internal/common
+github.com/graph-gophers/graphql-go/internal/exec
+github.com/graph-gophers/graphql-go/internal/exec/packer
+github.com/graph-gophers/graphql-go/internal/exec/resolvable
+github.com/graph-gophers/graphql-go/internal/exec/selected
+github.com/graph-gophers/graphql-go/internal/query
+github.com/graph-gophers/graphql-go/internal/schema
+github.com/graph-gophers/graphql-go/internal/validation
+github.com/graph-gophers/graphql-go/introspection
+github.com/graph-gophers/graphql-go/log
+github.com/graph-gophers/graphql-go/relay
+github.com/graph-gophers/graphql-go/trace
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
 # github.com/klauspost/compress v1.9.5
@@ -60,11 +76,18 @@ github.com/klauspost/compress/huff0
 github.com/klauspost/compress/snappy
 github.com/klauspost/compress/zstd
 github.com/klauspost/compress/zstd/internal/xxhash
+# github.com/opentracing/opentracing-go v1.1.0
+github.com/opentracing/opentracing-go
+github.com/opentracing/opentracing-go/ext
+github.com/opentracing/opentracing-go/log
 # github.com/pkg/errors v0.9.1
 github.com/pkg/errors
 # github.com/processout/grpc-go-pool v1.2.1
 ## explicit
 github.com/processout/grpc-go-pool
+# github.com/rs/cors v1.7.0
+## explicit
+github.com/rs/cors
 # github.com/shurcooL/githubv4 v0.0.0-20200915023059-bc5e4feb2971
 ## explicit
 github.com/shurcooL/githubv4

@@ -109,6 +109,21 @@ services:
     depends_on:
       - mongo
 
+  explorer:
+    build:
+      context: ./
+      dockerfile: deployments/explorer.Dockerfile
+    image: explorer:latest
+    container_name: explorer
+    networks:
+      docker_network:
+        ipv4_address: 172.30.1.8
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - gateway
+
 volumes:
   mongodb_data:
   es_data:
