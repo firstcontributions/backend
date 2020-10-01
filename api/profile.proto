@@ -2,7 +2,7 @@ syntax = "proto3";
 package profile;
 
 import "google/protobuf/timestamp.proto";
-option go_package = "internal/proto";
+option go_package = "internal/profile/proto";
 
 
 

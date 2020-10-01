@@ -10,6 +10,8 @@ run:
 	docker-compose up
 
 configure:
+
+	
 	grep -v "172.30.1." /etc/hosts >> /tmp/hosts
 	echo "172.30.1.6 api.firstcontributions.com" >> /tmp/hosts
 	echo "172.30.1.8 explorer.firstcontributions.com" >> /tmp/hosts

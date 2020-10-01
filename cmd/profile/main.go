@@ -7,7 +7,7 @@ import (
 	"net"
 
 	"github.com/firstcontributions/backend/internal/profile"
-	"github.com/firstcontributions/backend/internal/proto"
+	"github.com/firstcontributions/backend/internal/profile/proto"
 
 	"google.golang.org/grpc"
 )
