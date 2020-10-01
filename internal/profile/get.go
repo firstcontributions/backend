@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/firstcontributions/backend/internal/profile/models/mongo"
-	"github.com/firstcontributions/backend/internal/proto"
+	"github.com/firstcontributions/backend/internal/profile/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 )

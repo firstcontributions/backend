@@ -3,7 +3,7 @@ package graphql
 import (
 	"context"
 
-	"github.com/firstcontributions/backend/internal/proto"
+	"github.com/firstcontributions/backend/internal/profile/proto"
 	"github.com/graph-gophers/graphql-go"
 )
 

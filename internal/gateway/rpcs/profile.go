@@ -3,7 +3,7 @@ package rpcs
 import (
 	"context"
 
-	"github.com/firstcontributions/backend/internal/proto"
+	"github.com/firstcontributions/backend/internal/profile/proto"
 	pool "github.com/processout/grpc-go-pool"
 	"google.golang.org/grpc"
 )

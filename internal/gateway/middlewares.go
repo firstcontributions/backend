@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/firstcontributions/backend/internal/gateway/session"
-	"github.com/firstcontributions/backend/internal/proto"
+	"github.com/firstcontributions/backend/internal/profile/proto"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 )
