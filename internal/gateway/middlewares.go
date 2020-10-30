@@ -40,7 +40,7 @@ func (s *Server) HandleSession(next http.Handler) http.Handler {
 			return
 		}
 
-		if sessionData.Handle == "" {
+		if sessionData.Handle() == "" {
 			ErrorResponse(ErrUnauthorized(), w)
 			return
 		}
@@ -53,10 +53,9 @@ func (s *Server) HandleSession(next http.Handler) http.Handler {
 
 func (s *Server) setSession(w http.ResponseWriter, r *http.Request, profile *proto.Profile) error {
 
-	sessionData := session.MetaData{
-		UserID: profile.GetUuid(),
-		Handle: profile.GetHandle(),
-	}
+	sessionData := session.NewMetaData().
+		SetHandle(profile.Handle).
+		SetUserID(profile.Uuid)
 	sessionID, err := uuid.NewUUID()
 	if err != nil {
 		return err
