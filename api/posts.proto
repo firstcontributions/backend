@@ -1,0 +1,71 @@
+syntax = "proto3";
+package posts;
+
+import "google/protobuf/timestamp.proto";
+option go_package = "internal/posts/proto";
+
+
+message AuditFields {
+    google.protobuf.Timestamp date_updated = 9;
+    google.protobuf.Timestamp date_created = 10;
+}
+
+message PostData {
+    string title = 2;
+    string summary = 3;
+    string content = 4;
+    string created_by = 5;
+    string cover_image = 7;
+}
+
+message Post {
+    string uuid = 1;
+    PostData data = 2;
+    uint64 claps = 3;
+    AuditFields audit_fields = 4;
+}
+
+
+message Comment {
+    string uuid =1;
+    CommentData data= 2;
+    AuditFields audit_fields = 3;
+}
+
+message CommentData {
+    string content=1;
+    string created_by=2;
+    string post_uuid=3;
+}
+
+message ClapRequst {
+    string clapped_by =1;
+    string story_uuid =2;
+}
+
+message Clap {
+    string clapped_by =1;
+    string story_uuid =2;
+    int32 claps = 3;
+    google.protobuf.Timestamp date_updated = 5;
+    google.protobuf.Timestamp date_created = 6;
+}
+
+message GetByUUIDRequest {
+    string uuid =1;
+}
+
+
+
+service PostsService {
+    // posts
+    rpc CreatePost(PostData) returns (Post){}
+    rpc GetPostByUUID(GetByUUIDRequest) returns(Post){}
+    rpc UpdatePost(Post) returns (Post){}
+
+    // comments 
+    rpc CreateComment(CommentData) returns (Comment){}
+    rpc GetCommentByUUID(GetByUUIDRequest)returns (Comment){}
+    // claps
+    rpc CreateClap(ClapRequst) returns (Clap){}
+}
