@@ -2,6 +2,8 @@ package session
 
 import (
 	"encoding/json"
+
+	"google.golang.org/grpc/metadata"
 )
 
 type CxtKey int
@@ -11,9 +13,27 @@ const (
 )
 
 // MetaData encapsulates session info
-type MetaData struct {
-	UserID string `json:"uuid"`
-	Handle string `json:"handle"`
+type MetaData map[string]string
+
+func NewMetaData() MetaData {
+	return MetaData{}
+}
+func (m MetaData) SetHandle(h string) MetaData {
+	m["handle"] = h
+	return m
+}
+
+func (m MetaData) SetUserID(uid string) MetaData {
+	m["user_id"] = uid
+	return m
+}
+
+func (m MetaData) Handle() string {
+	return m["handle"]
+}
+
+func (m MetaData) UserID() string {
+	return m["user_id"]
 }
 
 func (m MetaData) MarshalBinary() ([]byte, error) {
@@ -22,4 +42,8 @@ func (m MetaData) MarshalBinary() ([]byte, error) {
 
 func (m *MetaData) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, &m)
+}
+
+func (m MetaData) Proto() metadata.MD {
+	return metadata.New(m)
 }

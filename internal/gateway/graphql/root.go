@@ -5,6 +5,7 @@ import (
 
 	"github.com/firstcontributions/backend/internal/gateway/rpcs"
 	"github.com/firstcontributions/backend/internal/gateway/session"
+	"google.golang.org/grpc/metadata"
 )
 
 type Resolver struct {
@@ -12,10 +13,9 @@ type Resolver struct {
 }
 
 func (r *Resolver) Viewer(ctx context.Context) (*profileResolver, error) {
-	meta := ctx.Value(session.CxtKeySession)
-	handle := meta.(session.MetaData).Handle
-
-	profile, err := r.GetProfile(ctx, handle)
+	meta := ctx.Value(session.CxtKeySession).(session.MetaData)
+	ctx = metadata.NewOutgoingContext(ctx, meta.Proto())
+	profile, err := r.GetProfile(ctx, meta.Handle())
 	if err != nil {
 		return nil, err
 	}
