@@ -14,7 +14,6 @@ message PostData {
     string title = 2;
     string summary = 3;
     string content = 4;
-    string created_by = 5;
     string cover_image = 7;
 }
 
@@ -23,6 +22,7 @@ message Post {
     PostData data = 2;
     uint64 claps = 3;
     AuditFields audit_fields = 4;
+    string created_by = 5;
 }
 
 
@@ -30,16 +30,16 @@ message Comment {
     string uuid =1;
     CommentData data= 2;
     AuditFields audit_fields = 3;
+    string created_by = 4;
 }
 
 message CommentData {
     string content=1;
-    string created_by=2;
-    string post_uuid=3;
+    string post_uuid=2;
 }
 
 message ClapRequst {
-    string clapped_by =1;
+    uint64 claps =1;
     string story_uuid =2;
 }
 
@@ -55,7 +55,19 @@ message GetByUUIDRequest {
     string uuid =1;
 }
 
+message Pagination {
+    int64 offset =1;
+    int64 limit =2;
+}
 
+message Feeds {
+    repeated Post posts=1;
+    Pagination pagination=2;
+}
+
+message FeedsRequest {
+    Pagination pagination = 1;
+}
 
 service PostsService {
     // posts
@@ -68,4 +80,7 @@ service PostsService {
     rpc GetCommentByUUID(GetByUUIDRequest)returns (Comment){}
     // claps
     rpc CreateClap(ClapRequst) returns (Clap){}
+
+    // feeds
+    rpc GetFeeds(FeedsRequest) returns (Feeds){}
 }

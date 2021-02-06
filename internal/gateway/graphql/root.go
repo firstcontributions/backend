@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/firstcontributions/backend/internal/gateway/rpcs"
 	"github.com/firstcontributions/backend/internal/gateway/session"
@@ -14,6 +15,7 @@ type Resolver struct {
 
 func (r *Resolver) Viewer(ctx context.Context) (*profileResolver, error) {
 	meta := ctx.Value(session.CxtKeySession).(session.MetaData)
+	fmt.Println("meta", meta.Proto())
 	ctx = metadata.NewOutgoingContext(ctx, meta.Proto())
 	profile, err := r.GetProfile(ctx, meta.Handle())
 	if err != nil {

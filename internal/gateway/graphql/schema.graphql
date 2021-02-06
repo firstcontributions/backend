@@ -2,15 +2,17 @@ schema {
   query: Query
 }
 
-type Query {
-  viewer: Profile
-  # profile(handle: String!): Profile!
-  # search(text: String!, page: Pagination): [SearchResult]!
+interface Node {
+  uuid: ID!
 }
 
-scalar Time
+type Query {
+  viewer: Viewer
+}
 
-type Profile {
+# --------------- Profile related information
+
+type Profile implements Node {
   uuid: ID!
   name: String!
   email: String!
@@ -20,15 +22,78 @@ type Profile {
   badges(page: Pagination): [Badge]
 }
 
-type Badge {
+type Badge implements Node {
   uuid: ID!
   name: String!
   assigned_on: Time!
-  progress: Int! 
+  progress: Int!
 }
+
+# ---------- Posts
+
+type Post implements Node {
+  uuid: ID!
+  title: String!
+  summary: String!
+  content: String!
+  cover_image: String!
+  created_at: Time!
+  created_by: Profile!
+  comments(page: Pagination): [CommentConnection]
+  claps: Int
+  my_clapps: Int
+}
+
+type PostEdge {
+  cursor: String!
+  node: Post!
+}
+
+type PostConnection {
+  edges: [PostEdge]
+  pageInfo: PageInfo!
+}
+
+type Comment implements Node {
+  uuid: ID!
+  post_uuid: ID!
+  created_by: Profile!
+  created_at: Time!
+}
+
+type CommentEdge {
+  cursor: String!
+  node: Comment!
+}
+
+type CommentConnection {
+  edges: [CommentEdge]
+  pageInfo: PageInfo!
+}
+
+
+
+type Viewer {
+  profile: Profile
+  feeds(page: Pagination!): [Post]!
+  node(uuid: String): Node!
+}
+
+
+# ------------ Commonly used
+
+scalar Time
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
 input Pagination {
-  offset: Int
-  limit: Int
+  cursor: String
+  first: Int
 }
 
 union SearchResult = Profile
