@@ -9,7 +9,7 @@ services:
     ports:
       - 6379:6379
     volumes:
-        -  /opt/firstcontributions/redis:/var/lib/redis
+        -  ~/data/firstcontributions/redis:/var/lib/redis
     networks:
       docker_network:
         ipv4_address: 172.30.1.1
@@ -53,7 +53,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      -  /opt/firstcontributions/mongo:/data/db
+      -  ~/data/firstcontributions/mongo:/data/db
     networks:
       docker_network:
         ipv4_address: 172.30.1.4
@@ -87,7 +87,7 @@ services:
         ipv4_address: 172.30.1.6
     restart: always
     ports:
-      - "80:80"
+      - "8090:80"
     depends_on:
       - redis
       - profile
@@ -120,7 +120,7 @@ services:
         ipv4_address: 172.30.1.8
     restart: always
     ports:
-      - "8080:80"
+      - "8070:80"
     depends_on:
       - gateway
 
@@ -135,4 +135,4 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.30.0.0/16
+        - subnet: 172.30.1.0/16
