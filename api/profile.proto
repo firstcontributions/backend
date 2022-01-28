@@ -13,6 +13,11 @@ message Badge {
   uint64 progress = 4;
 }
 
+message CursorCheckPoints {
+  string pull_request = 1;
+  string pull_request_file = 2;
+}
+
 message Token {
   string AccessToken = 1;
   string RefreshToken = 2;
@@ -31,6 +36,7 @@ message Profile {
   google.protobuf.Timestamp date_updated = 8;
   google.protobuf.Timestamp date_created = 9;
   Token github_token = 10;
+  CursorCheckPoints cursor_check_point = 11;
 }
 
 message GetProfileRequest {
