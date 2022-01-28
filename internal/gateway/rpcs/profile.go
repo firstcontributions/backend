@@ -36,3 +36,11 @@ func (p *ProfileManager) CreateProfile(ctx context.Context, in *proto.Profile, o
 	}
 	return proto.NewProfileServiceClient(c).CreateProfile(ctx, in, opts...)
 }
+
+func (p *ProfileManager) UpdateProfile(ctx context.Context, in *proto.Profile, opts ...grpc.CallOption) (*proto.Profile, error) {
+	c, err := p.Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return proto.NewProfileServiceClient(c).UpdateProfile(ctx, in, opts...)
+}

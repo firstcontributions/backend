@@ -81,6 +81,7 @@ func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*p
 			return nil, ErrInternalServerError()
 		}
 	}
+	go s.UpdateProfileReputation(ctx, profile)
 	return profile, nil
 }
 
