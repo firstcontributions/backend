@@ -36,7 +36,7 @@ message Profile {
   google.protobuf.Timestamp date_updated = 8;
   google.protobuf.Timestamp date_created = 9;
   Token github_token = 10;
-  CursorCheckPoints cursor_check_point = 11;
+  CursorCheckPoints cursor_check_points = 11;
 }
 
 message GetProfileRequest {
@@ -47,5 +47,5 @@ message GetProfileRequest {
 service ProfileService {
   rpc GetProfile(GetProfileRequest) returns (Profile) {}
   rpc CreateProfile(Profile) returns (Profile) {}
-
+  rpc UpdateProfile(Profile) returns (Profile) {}
 }

@@ -18,21 +18,20 @@ type Profile struct {
 	Handle string `bson:"handle"`
 	// this field is futuristic, will keep a track of login provider
 	//  will need this in later time if we have a conflict for handler
-	Provider    string    `bson:"provider"`
-	Avatar      string    `bson:"avatar"`
-	Reputation  uint64    `bson:"reputation"`
-	Badges      []Badge   `bson:"badges"`
+	Provider          string            `bson:"provider"`
+	Avatar            string            `bson:"avatar"`
+	Reputation        uint64            `bson:"reputation"`
+	Badges            []Badge           `bson:"badges"`
 	CursorCheckPoints CursorCheckPoints `bson:"cursor_check_points"`
-	DateCreated time.Time `bson:"date_created"`
-	DateUpdated time.Time `bson:"date_updated"`
-	Token       *Token    `bson:"token"`
+	DateCreated       time.Time         `bson:"date_created"`
+	DateUpdated       time.Time         `bson:"date_updated"`
+	Token             *Token            `bson:"token"`
 }
 
 type CursorCheckPoints struct {
-	PullRequest string `bson:"pull_request"`
+	PullRequest     string `bson:"pull_request"`
 	PullRequestFile string `bson:"pull_request_file"`
 }
-
 
 // Badge stores badge db doc structure
 type Badge struct {
@@ -81,8 +80,8 @@ func convertProfileToModel(p *proto.Profile) *Profile {
 		DateUpdated: p.DateUpdated.AsTime(),
 		Badges:      badges,
 		Token:       token,
-		CursorCheckPoints: CursorCheckPoints {
-			PullRequest: p.CursorCheckPoints.PullRequest,
+		CursorCheckPoints: CursorCheckPoints{
+			PullRequest:     p.CursorCheckPoints.PullRequest,
 			PullRequestFile: p.CursorCheckPoints.PullRequestFile,
 		},
 	}
@@ -111,8 +110,8 @@ func (p *Profile) Proto() *proto.Profile {
 		DateCreated: timestamppb.New(p.DateCreated),
 		DateUpdated: timestamppb.New(p.DateUpdated),
 		Badges:      badges,
-		CursorCheckPoints: &proto.CursorCheckPoints {
-			PullRequest: p.CursorCheckPoints.PullRequest,
+		CursorCheckPoints: &proto.CursorCheckPoints{
+			PullRequest:     p.CursorCheckPoints.PullRequest,
 			PullRequestFile: p.CursorCheckPoints.PullRequestFile,
 		},
 	}
@@ -142,15 +141,15 @@ func CreateProfile(ctx context.Context, client *mongo.Client, profile *proto.Pro
 	return err
 }
 
-func UpdateReputation(ctx context.Context, client *mongo.Client, profile *proto.Profile) error {
+func UpdateProfile(ctx context.Context, client *mongo.Client, profile *proto.Profile) error {
 	mProfile := convertProfileToModel(profile)
 	mProfile.DateUpdated = time.Now()
-	update := map[string]*Profile {
-		"$set": mProfile, 
+	update := map[string]*Profile{
+		"$set": mProfile,
 	}
-	query := map[string]string {
+	query := map[string]string{
 		"_id": mProfile.UUID,
 	}
-	_, err := getCollection(client, CollectionProfile).UpdateOne(ctx, mProfile)
+	_, err := getCollection(client, CollectionProfile).UpdateOne(ctx, query, update)
 	return err
 }
