@@ -8,6 +8,7 @@ import (
 	"github.com/firstcontributions/backend/internal/profile/proto"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -151,6 +152,6 @@ func UpdateProfile(ctx context.Context, client *mongo.Client, profile *proto.Pro
 	query := map[string]string{
 		"_id": mProfile.UUID,
 	}
-	_, err := getCollection(client, CollectionProfile).UpdateOne(ctx, query, update)
+	_, err := getCollection(client, CollectionProfile).UpdateOne(ctx, query, update, &options.UpdateOptions{})
 	return err
 }
