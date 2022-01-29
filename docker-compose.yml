@@ -110,10 +110,8 @@ services:
       - mongo
 
   explorer:
-    build:
-      context: ./
-      dockerfile: deployments/explorer.Dockerfile
-    image: explorer:latest
+    
+    image: gokultp/graphql-explorer:latest
     container_name: explorer
     networks:
       docker_network:

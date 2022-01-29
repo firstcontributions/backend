@@ -18,14 +18,14 @@ type Profile struct {
 	Handle string `bson:"handle"`
 	// this field is futuristic, will keep a track of login provider
 	//  will need this in later time if we have a conflict for handler
-	Provider          string            `bson:"provider"`
-	Avatar            string            `bson:"avatar"`
-	Reputation        uint64            `bson:"reputation"`
-	Badges            []Badge           `bson:"badges"`
-	CursorCheckPoints CursorCheckPoints `bson:"cursor_check_points"`
-	DateCreated       time.Time         `bson:"date_created"`
-	DateUpdated       time.Time         `bson:"date_updated"`
-	Token             *Token            `bson:"token"`
+	Provider          string             `bson:"provider"`
+	Avatar            string             `bson:"avatar"`
+	Reputation        uint64             `bson:"reputation"`
+	Badges            []Badge            `bson:"badges"`
+	CursorCheckPoints *CursorCheckPoints `bson:"cursor_check_points"`
+	DateCreated       time.Time          `bson:"date_created"`
+	DateUpdated       time.Time          `bson:"date_updated"`
+	Token             *Token             `bson:"token"`
 }
 
 type CursorCheckPoints struct {
@@ -70,20 +70,25 @@ func convertProfileToModel(p *proto.Profile) *Profile {
 			Expiry:       p.GithubToken.Expiry.AsTime(),
 		}
 	}
-	return &Profile{
-		UUID:        p.Uuid,
-		Name:        p.Name,
-		Handle:      p.Handle,
-		Avatar:      p.Avatar,
-		Reputation:  p.Reputation,
-		DateCreated: p.DateCreated.AsTime(),
-		DateUpdated: p.DateUpdated.AsTime(),
-		Badges:      badges,
-		Token:       token,
-		CursorCheckPoints: CursorCheckPoints{
+	var cursor *CursorCheckPoints
+
+	if p.CursorCheckPoints != nil {
+		cursor = &CursorCheckPoints{
 			PullRequest:     p.CursorCheckPoints.PullRequest,
 			PullRequestFile: p.CursorCheckPoints.PullRequestFile,
-		},
+		}
+	}
+	return &Profile{
+		UUID:              p.Uuid,
+		Name:              p.Name,
+		Handle:            p.Handle,
+		Avatar:            p.Avatar,
+		Reputation:        p.Reputation,
+		DateCreated:       p.DateCreated.AsTime(),
+		DateUpdated:       p.DateUpdated.AsTime(),
+		Badges:            badges,
+		Token:             token,
+		CursorCheckPoints: cursor,
 	}
 }
 
@@ -110,10 +115,6 @@ func (p *Profile) Proto() *proto.Profile {
 		DateCreated: timestamppb.New(p.DateCreated),
 		DateUpdated: timestamppb.New(p.DateUpdated),
 		Badges:      badges,
-		CursorCheckPoints: &proto.CursorCheckPoints{
-			PullRequest:     p.CursorCheckPoints.PullRequest,
-			PullRequestFile: p.CursorCheckPoints.PullRequestFile,
-		},
 	}
 }
 
