@@ -22,7 +22,7 @@ type Profile struct {
 	Provider          string             `bson:"provider"`
 	Avatar            string             `bson:"avatar"`
 	Reputation        uint64             `bson:"reputation"`
-	Badges            []Badge            `bson:"badges"`
+	Badges            []*Badge           `bson:"badges"`
 	CursorCheckPoints *CursorCheckPoints `bson:"cursor_check_points"`
 	DateCreated       time.Time          `bson:"date_created"`
 	DateUpdated       time.Time          `bson:"date_updated"`
@@ -53,9 +53,9 @@ func convertProfileToModel(p *proto.Profile) *Profile {
 	if p == nil {
 		return nil
 	}
-	badges := make([]Badge, len(p.Badges), len(p.Badges))
+	badges := make([]*Badge, len(p.Badges))
 	for idx, badge := range p.Badges {
-		badges[idx] = Badge{
+		badges[idx] = &Badge{
 			UUID:       badge.Uuid,
 			Name:       badge.Name,
 			AssignedOn: badge.AssignedOn.AsTime(),
@@ -98,7 +98,7 @@ func (p *Profile) Proto(passSesitiveInformation bool) *proto.Profile {
 	if p == nil {
 		return nil
 	}
-	badges := make([]*proto.Badge, len(p.Badges), len(p.Badges))
+	badges := make([]*proto.Badge, len(p.Badges))
 	for idx, badge := range p.Badges {
 		badges[idx] = &proto.Badge{
 			Uuid:       badge.UUID,
@@ -116,6 +116,14 @@ func (p *Profile) Proto(passSesitiveInformation bool) *proto.Profile {
 		DateCreated: timestamppb.New(p.DateCreated),
 		DateUpdated: timestamppb.New(p.DateUpdated),
 		Badges:      badges,
+	}
+	if passSesitiveInformation {
+		if p.CursorCheckPoints != nil {
+			profile.CursorCheckPoints = &proto.CursorCheckPoints{
+				PullRequest:     p.CursorCheckPoints.PullRequest,
+				PullRequestFile: p.CursorCheckPoints.PullRequestFile,
+			}
+		}
 	}
 	return profile
 }
