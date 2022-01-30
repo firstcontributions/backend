@@ -21,5 +21,5 @@ func (s *Service) GetProfile(ctx context.Context, req *proto.GetProfileRequest) 
 	if data == nil {
 		return nil, status.Errorf(codes.NotFound, "profile does not found")
 	}
-	return data.Proto(), nil
+	return data.Proto(false), nil
 }

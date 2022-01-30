@@ -396,6 +396,91 @@ func (x *GetProfileRequest) GetHandle() string {
 	return ""
 }
 
+type GetByUUIDRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Uuid string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+}
+
+func (x *GetByUUIDRequest) Reset() {
+	*x = GetByUUIDRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_profile_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetByUUIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetByUUIDRequest) ProtoMessage() {}
+
+func (x *GetByUUIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_profile_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetByUUIDRequest.ProtoReflect.Descriptor instead.
+func (*GetByUUIDRequest) Descriptor() ([]byte, []int) {
+	return file_api_profile_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetByUUIDRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+type EmptyRespose struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *EmptyRespose) Reset() {
+	*x = EmptyRespose{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_profile_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *EmptyRespose) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EmptyRespose) ProtoMessage() {}
+
+func (x *EmptyRespose) ProtoReflect() protoreflect.Message {
+	mi := &file_api_profile_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EmptyRespose.ProtoReflect.Descriptor instead.
+func (*EmptyRespose) Descriptor() ([]byte, []int) {
+	return file_api_profile_proto_rawDescGZIP(), []int{6}
+}
+
 var File_api_profile_proto protoreflect.FileDescriptor
 
 var file_api_profile_proto_rawDesc = []byte{
@@ -458,21 +543,29 @@ var file_api_profile_proto_rawDesc = []byte{
 	0x6f, 0x72, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x50, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x22, 0x2b, 0x0a,
 	0x11, 0x47, 0x65, 0x74, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
 	0x73, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x68, 0x61, 0x6e, 0x64, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x06, 0x68, 0x61, 0x6e, 0x64, 0x6c, 0x65, 0x32, 0xbc, 0x01, 0x0a, 0x0e, 0x50,
-	0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3c, 0x0a,
-	0x0a, 0x47, 0x65, 0x74, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x1a, 0x2e, 0x70, 0x72,
-	0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x10, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c,
-	0x65, 0x2e, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x0d, 0x43,
-	0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x10, 0x2e, 0x70,
-	0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x1a, 0x10,
-	0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65,
-	0x22, 0x00, 0x12, 0x35, 0x0a, 0x0d, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x66,
-	0x69, 0x6c, 0x65, 0x12, 0x10, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x50, 0x72,
-	0x6f, 0x66, 0x69, 0x6c, 0x65, 0x1a, 0x10, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e,
-	0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x22, 0x00, 0x42, 0x18, 0x5a, 0x16, 0x69, 0x6e, 0x74,
-	0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2f, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x28, 0x09, 0x52, 0x06, 0x68, 0x61, 0x6e, 0x64, 0x6c, 0x65, 0x22, 0x26, 0x0a, 0x10, 0x47, 0x65,
+	0x74, 0x42, 0x79, 0x55, 0x55, 0x49, 0x44, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12,
+	0x0a, 0x04, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75,
+	0x69, 0x64, 0x22, 0x0e, 0x0a, 0x0c, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x73, 0x65, 0x32, 0x82, 0x02, 0x0a, 0x0e, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x53, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3c, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x50, 0x72, 0x6f, 0x66,
+	0x69, 0x6c, 0x65, 0x12, 0x1a, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x47, 0x65,
+	0x74, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x10, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c,
+	0x65, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x0d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f,
+	0x66, 0x69, 0x6c, 0x65, 0x12, 0x10, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x50,
+	0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x1a, 0x10, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65,
+	0x2e, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x0d, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x10, 0x2e, 0x70, 0x72,
+	0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x1a, 0x10, 0x2e,
+	0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x22,
+	0x00, 0x12, 0x44, 0x0a, 0x0e, 0x53, 0x79, 0x6e, 0x63, 0x47, 0x69, 0x74, 0x48, 0x75, 0x62, 0x44,
+	0x61, 0x74, 0x61, 0x12, 0x19, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x47, 0x65,
+	0x74, 0x42, 0x79, 0x55, 0x55, 0x49, 0x44, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15,
+	0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x73, 0x65, 0x22, 0x00, 0x42, 0x18, 0x5a, 0x16, 0x69, 0x6e, 0x74, 0x65, 0x72,
+	0x6e, 0x61, 0x6c, 0x2f, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -487,31 +580,35 @@ func file_api_profile_proto_rawDescGZIP() []byte {
 	return file_api_profile_proto_rawDescData
 }
 
-var file_api_profile_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_api_profile_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_api_profile_proto_goTypes = []interface{}{
 	(*Badge)(nil),                 // 0: profile.Badge
 	(*CursorCheckPoints)(nil),     // 1: profile.CursorCheckPoints
 	(*Token)(nil),                 // 2: profile.Token
 	(*Profile)(nil),               // 3: profile.Profile
 	(*GetProfileRequest)(nil),     // 4: profile.GetProfileRequest
-	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
+	(*GetByUUIDRequest)(nil),      // 5: profile.GetByUUIDRequest
+	(*EmptyRespose)(nil),          // 6: profile.EmptyRespose
+	(*timestamppb.Timestamp)(nil), // 7: google.protobuf.Timestamp
 }
 var file_api_profile_proto_depIdxs = []int32{
-	5,  // 0: profile.Badge.assigned_on:type_name -> google.protobuf.Timestamp
-	5,  // 1: profile.Token.Expiry:type_name -> google.protobuf.Timestamp
+	7,  // 0: profile.Badge.assigned_on:type_name -> google.protobuf.Timestamp
+	7,  // 1: profile.Token.Expiry:type_name -> google.protobuf.Timestamp
 	0,  // 2: profile.Profile.badges:type_name -> profile.Badge
-	5,  // 3: profile.Profile.date_updated:type_name -> google.protobuf.Timestamp
-	5,  // 4: profile.Profile.date_created:type_name -> google.protobuf.Timestamp
+	7,  // 3: profile.Profile.date_updated:type_name -> google.protobuf.Timestamp
+	7,  // 4: profile.Profile.date_created:type_name -> google.protobuf.Timestamp
 	2,  // 5: profile.Profile.github_token:type_name -> profile.Token
 	1,  // 6: profile.Profile.cursor_check_points:type_name -> profile.CursorCheckPoints
 	4,  // 7: profile.ProfileService.GetProfile:input_type -> profile.GetProfileRequest
 	3,  // 8: profile.ProfileService.CreateProfile:input_type -> profile.Profile
 	3,  // 9: profile.ProfileService.UpdateProfile:input_type -> profile.Profile
-	3,  // 10: profile.ProfileService.GetProfile:output_type -> profile.Profile
-	3,  // 11: profile.ProfileService.CreateProfile:output_type -> profile.Profile
-	3,  // 12: profile.ProfileService.UpdateProfile:output_type -> profile.Profile
-	10, // [10:13] is the sub-list for method output_type
-	7,  // [7:10] is the sub-list for method input_type
+	5,  // 10: profile.ProfileService.SyncGitHubData:input_type -> profile.GetByUUIDRequest
+	3,  // 11: profile.ProfileService.GetProfile:output_type -> profile.Profile
+	3,  // 12: profile.ProfileService.CreateProfile:output_type -> profile.Profile
+	3,  // 13: profile.ProfileService.UpdateProfile:output_type -> profile.Profile
+	6,  // 14: profile.ProfileService.SyncGitHubData:output_type -> profile.EmptyRespose
+	11, // [11:15] is the sub-list for method output_type
+	7,  // [7:11] is the sub-list for method input_type
 	7,  // [7:7] is the sub-list for extension type_name
 	7,  // [7:7] is the sub-list for extension extendee
 	0,  // [0:7] is the sub-list for field type_name
@@ -583,6 +680,30 @@ func file_api_profile_proto_init() {
 				return nil
 			}
 		}
+		file_api_profile_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetByUUIDRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_profile_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*EmptyRespose); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -590,7 +711,7 @@ func file_api_profile_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_profile_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -619,6 +740,7 @@ type ProfileServiceClient interface {
 	GetProfile(ctx context.Context, in *GetProfileRequest, opts ...grpc.CallOption) (*Profile, error)
 	CreateProfile(ctx context.Context, in *Profile, opts ...grpc.CallOption) (*Profile, error)
 	UpdateProfile(ctx context.Context, in *Profile, opts ...grpc.CallOption) (*Profile, error)
+	SyncGitHubData(ctx context.Context, in *GetByUUIDRequest, opts ...grpc.CallOption) (*EmptyRespose, error)
 }
 
 type profileServiceClient struct {
@@ -656,11 +778,21 @@ func (c *profileServiceClient) UpdateProfile(ctx context.Context, in *Profile, o
 	return out, nil
 }
 
+func (c *profileServiceClient) SyncGitHubData(ctx context.Context, in *GetByUUIDRequest, opts ...grpc.CallOption) (*EmptyRespose, error) {
+	out := new(EmptyRespose)
+	err := c.cc.Invoke(ctx, "/profile.ProfileService/SyncGitHubData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProfileServiceServer is the server API for ProfileService service.
 type ProfileServiceServer interface {
 	GetProfile(context.Context, *GetProfileRequest) (*Profile, error)
 	CreateProfile(context.Context, *Profile) (*Profile, error)
 	UpdateProfile(context.Context, *Profile) (*Profile, error)
+	SyncGitHubData(context.Context, *GetByUUIDRequest) (*EmptyRespose, error)
 }
 
 // UnimplementedProfileServiceServer can be embedded to have forward compatible implementations.
@@ -675,6 +807,9 @@ func (*UnimplementedProfileServiceServer) CreateProfile(context.Context, *Profil
 }
 func (*UnimplementedProfileServiceServer) UpdateProfile(context.Context, *Profile) (*Profile, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
+}
+func (*UnimplementedProfileServiceServer) SyncGitHubData(context.Context, *GetByUUIDRequest) (*EmptyRespose, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncGitHubData not implemented")
 }
 
 func RegisterProfileServiceServer(s *grpc.Server, srv ProfileServiceServer) {
@@ -735,6 +870,24 @@ func _ProfileService_UpdateProfile_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProfileService_SyncGitHubData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByUUIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProfileServiceServer).SyncGitHubData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/profile.ProfileService/SyncGitHubData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProfileServiceServer).SyncGitHubData(ctx, req.(*GetByUUIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ProfileService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "profile.ProfileService",
 	HandlerType: (*ProfileServiceServer)(nil),
@@ -750,6 +903,10 @@ var _ProfileService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateProfile",
 			Handler:    _ProfileService_UpdateProfile_Handler,
+		},
+		{
+			MethodName: "SyncGitHubData",
+			Handler:    _ProfileService_SyncGitHubData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

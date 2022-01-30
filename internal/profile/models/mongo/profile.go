@@ -26,7 +26,7 @@ type Profile struct {
 	CursorCheckPoints *CursorCheckPoints `bson:"cursor_check_points"`
 	DateCreated       time.Time          `bson:"date_created"`
 	DateUpdated       time.Time          `bson:"date_updated"`
-	Token             *Token             `bson:"token"`
+	Token             *Token             `bson:"token,omitempty"`
 }
 
 type CursorCheckPoints struct {
@@ -94,7 +94,7 @@ func convertProfileToModel(p *proto.Profile) *Profile {
 }
 
 // Proto converts Profile model object into proto struct
-func (p *Profile) Proto() *proto.Profile {
+func (p *Profile) Proto(passSesitiveInformation bool) *proto.Profile {
 	if p == nil {
 		return nil
 	}
@@ -107,7 +107,7 @@ func (p *Profile) Proto() *proto.Profile {
 			Progress:   badge.Progress,
 		}
 	}
-	return &proto.Profile{
+	profile := &proto.Profile{
 		Uuid:        p.UUID,
 		Name:        p.Name,
 		Handle:      p.Handle,
@@ -117,6 +117,22 @@ func (p *Profile) Proto() *proto.Profile {
 		DateUpdated: timestamppb.New(p.DateUpdated),
 		Badges:      badges,
 	}
+	return profile
+}
+
+// GetProfileByUUID gets profile by github handle
+func GetProfileByUUID(ctx context.Context, client *mongo.Client, uuid string) (*Profile, error) {
+	query := bson.M{
+		"_id": uuid,
+	}
+	var profile Profile
+	if err := getCollection(client, CollectionProfile).FindOne(ctx, query).Decode(&profile); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &profile, nil
 }
 
 // GetProfileByHandle gets profile by github handle

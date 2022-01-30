@@ -31,7 +31,7 @@ github.com/go-redis/redis/v8/internal/rand
 github.com/go-redis/redis/v8/internal/util
 # github.com/go-stack/stack v1.8.0
 github.com/go-stack/stack
-# github.com/gokultp/go-envparser v0.0.0-20200905115523-b69d059c4fa6
+# github.com/gokultp/go-envparser v0.0.0-20201004113537-c284ea74650c
 ## explicit
 github.com/gokultp/go-envparser/pkg/envdecoder
 # github.com/golang/protobuf v1.4.2

@@ -43,9 +43,18 @@ message GetProfileRequest {
   string handle =1;
 }
 
+message GetByUUIDRequest {
+  string uuid =1;
+}
+
+message EmptyRespose {
+
+}
+
 
 service ProfileService {
   rpc GetProfile(GetProfileRequest) returns (Profile) {}
   rpc CreateProfile(Profile) returns (Profile) {}
   rpc UpdateProfile(Profile) returns (Profile) {}
+  rpc SyncGitHubData(GetByUUIDRequest) returns (EmptyRespose){}
 }

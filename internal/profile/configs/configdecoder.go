@@ -23,5 +23,10 @@ func (t *Config) DecodeEnv() error {
 		_recMongourl := _recMongourlStr
 		t.MongoURL = &_recMongourl
 	}
+	_recGithubconfig := commonconfigs.GithubConfig{}
+	if err := envdecoder.Decode(&_recGithubconfig); err != nil {
+		return fmt.Errorf("type commonconfigs.GithubConfignot implemts env Decoder interface, %w", envdecoder.ErrDecoderNotImplemented)
+	}
+	t.GithubConfig = &_recGithubconfig
 	return nil
 }

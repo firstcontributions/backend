@@ -44,3 +44,11 @@ func (p *ProfileManager) UpdateProfile(ctx context.Context, in *proto.Profile, o
 	}
 	return proto.NewProfileServiceClient(c).UpdateProfile(ctx, in, opts...)
 }
+
+func (p *ProfileManager) SyncGitHubData(ctx context.Context, in *proto.GetByUUIDRequest, opts ...grpc.CallOption) (*proto.EmptyRespose, error) {
+	c, err := p.Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return proto.NewProfileServiceClient(c).SyncGitHubData(ctx, in, opts...)
+}

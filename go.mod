@@ -4,8 +4,8 @@ go 1.14
 
 require (
 	github.com/go-redis/redis/v8 v8.2.0
-	github.com/gokultp/go-envparser v0.0.0-20200905115523-b69d059c4fa6
-	github.com/golang/protobuf v1.4.2
+	github.com/gokultp/go-envparser v0.0.0-20201004113537-c284ea74650c
+	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/securecookie v1.1.1

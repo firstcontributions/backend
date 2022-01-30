@@ -1,6 +1,6 @@
 generate:
 	(rm -rf internal/proto)
-	protoc --go_out=.  --go-grpc_out=.   api/*.proto
+	protoc --go_out=plugins=grpc:. api/*.proto 
 	(cd internal/profile/configs && go generate && goimports -w *.go)
 	(cd internal/configs && go generate && goimports -w *.go)
 	(cd internal/gateway/configs && go generate && goimports -w *.go)

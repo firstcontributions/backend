@@ -10,5 +10,7 @@ import (
 func (s *Server) UpdateProfileReputation(profile *proto.Profile) {
 	log.Println("from update profile, profile.Reputation", profile.Reputation)
 	profile.Reputation++
-	s.ProfileManager.UpdateProfile(context.Background(), profile)
+	s.ProfileManager.SyncGitHubData(context.Background(), &proto.GetByUUIDRequest{
+		Uuid: profile.Uuid,
+	})
 }

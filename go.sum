@@ -92,6 +92,8 @@ github.com/gokultp/go-envparser v0.0.0-20200825041040-c47272c9273c h1:Vh/vJG3wnX
 github.com/gokultp/go-envparser v0.0.0-20200825041040-c47272c9273c/go.mod h1:VszzUwH43NpNZ+Klg7RoBPejuR/faLtsEgecXGKTeok=
 github.com/gokultp/go-envparser v0.0.0-20200905115523-b69d059c4fa6 h1:Jh8Ck2lYakX8rNcmQSQf2Dn7OIjelvsfpkPpOit8gT0=
 github.com/gokultp/go-envparser v0.0.0-20200905115523-b69d059c4fa6/go.mod h1:VszzUwH43NpNZ+Klg7RoBPejuR/faLtsEgecXGKTeok=
+github.com/gokultp/go-envparser v0.0.0-20201004113537-c284ea74650c h1:UdUCxfV/cZDnlnPqXL5nb/UGDDs3e+94M1k4735nRTQ=
+github.com/gokultp/go-envparser v0.0.0-20201004113537-c284ea74650c/go.mod h1:VszzUwH43NpNZ+Klg7RoBPejuR/faLtsEgecXGKTeok=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
 github.com/golang/groupcache v0.0.0-20191227052852-215e87163ea7/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
