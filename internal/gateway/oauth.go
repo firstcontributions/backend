@@ -5,13 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/firstcontributions/backend/internal/profile/proto"
+	"github.com/firstcontributions/backend/internal/models/usersstore"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (s *Server) GetOAuth2Config() *oauth2.Config {
@@ -53,7 +50,7 @@ func (s *Server) AuthCallback(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*proto.Profile, *Error) {
+func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*usersstore.User, *Error) {
 	if err := s.CSRFManager.Validate(ctx, state); err != nil {
 		log.Printf("error on validating csrf %v", err)
 		return nil, ErrForbidden()
@@ -69,23 +66,25 @@ func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*p
 		log.Printf("error on gettimg profile from github %v", err)
 		return nil, ErrInternalServerError()
 	}
-	profile, err := s.ProfileManager.GetProfile(ctx, data.Handle)
-	if err != nil && grpc.Code(err) != codes.NotFound {
+	users, _, _, _, _, err := s.Store.UsersStore.GetUsers(ctx, nil, nil, &data.Handle, nil, nil, nil, nil)
+	if err != nil {
 		log.Printf("error on gettimg profile grpc %v", err)
 		return nil, ErrInternalServerError()
 	}
-	if profile == nil || grpc.Code(err) == codes.NotFound {
-		profile, err = s.ProfileManager.CreateProfile(ctx, data)
+	if len(users) == 0 {
+		data, err = s.Store.UsersStore.CreateUser(ctx, data)
 		if err != nil {
-			log.Printf("error on gettimg profile grpc %v", err)
+			log.Printf("error on creating profile grpc %v", err)
 			return nil, ErrInternalServerError()
 		}
+	} else {
+		data = users[0]
 	}
-	go s.UpdateProfileReputation(profile)
-	return profile, nil
+	// go s.UpdateProfileReputation(profile)
+	return data, nil
 }
 
-func (s *Server) getProfileFromGithub(ctx context.Context, token *oauth2.Token) (*proto.Profile, error) {
+func (s *Server) getProfileFromGithub(ctx context.Context, token *oauth2.Token) (*usersstore.User, error) {
 
 	var query struct {
 		Viewer struct {
@@ -99,15 +98,14 @@ func (s *Server) getProfileFromGithub(ctx context.Context, token *oauth2.Token) 
 	if err := client.Query(context.Background(), &query, nil); err != nil {
 		return nil, err
 	}
-	return &proto.Profile{
+	return &usersstore.User{
 		Name:   string(query.Viewer.Name),
-		Avatar: query.Viewer.AvatarURL.String(),
 		Handle: string(query.Viewer.Login),
-		GithubToken: &proto.Token{
+		Token: &usersstore.Token{
 			AccessToken:  token.AccessToken,
 			RefreshToken: token.RefreshToken,
 			TokenType:    token.TokenType,
-			Expiry:       timestamppb.New(token.Expiry),
+			Expiry:       token.Expiry,
 		},
 	}, nil
 }

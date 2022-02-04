@@ -8,7 +8,8 @@ import (
 	"time"
 
 	"github.com/firstcontributions/backend/internal/gateway/session"
-	"github.com/firstcontributions/backend/internal/profile/proto"
+	"github.com/firstcontributions/backend/internal/models/usersstore"
+	"github.com/firstcontributions/backend/internal/storemanager"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 )
@@ -44,18 +45,24 @@ func (s *Server) HandleSession(next http.Handler) http.Handler {
 			ErrorResponse(ErrUnauthorized(), w)
 			return
 		}
-		r = r.WithContext(context.WithValue(r.Context(), session.CxtKeySession, sessionData))
+		r = r.WithContext(
+			storemanager.ContextWithStore(
+				context.WithValue(r.Context(), session.CxtKeySession, sessionData),
+				s.Store,
+			),
+		)
+
 		log.Println(r.Context().Value(session.CxtKeySession))
 		// Our middleware logic goes here...
 		next.ServeHTTP(w, r)
 	})
 }
 
-func (s *Server) setSession(w http.ResponseWriter, r *http.Request, profile *proto.Profile) error {
+func (s *Server) setSession(w http.ResponseWriter, r *http.Request, profile *usersstore.User) error {
 
 	sessionData := session.NewMetaData().
 		SetHandle(profile.Handle).
-		SetUserID(profile.Uuid)
+		SetUserID(profile.Id)
 	sessionID, err := uuid.NewUUID()
 	if err != nil {
 		return err

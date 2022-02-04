@@ -1,0 +1,63 @@
+
+schema {
+	query: Query
+}
+scalar Time
+type Query {
+	viewer: User
+  
+	# Fetches an object given its ID
+	node(
+	  # The ID of an object
+	  id: ID!
+	): Node
+}
+
+interface Node {
+	id: ID!
+}
+
+type PageInfo {
+	startCursor: String
+	endCursor: String
+	hasNextPage: Boolean!
+	hasPreviousPage: Boolean!
+}
+
+type Badge implements Node {
+	displayName: String!
+	id: ID!
+	timeCreated: Time!
+	timeUpdated: Time!
+} 
+
+type BadgesConnection {
+	edges: [BadgeEdge]!
+	pageInfo: PageInfo!
+} 
+
+type BadgeEdge {
+	node: Badge!
+	cursor: String!
+}
+
+type Token {
+	accessToken: String!
+	expiry: Time!
+	refreshToken: String!
+	timeCreated: Time!
+	timeUpdated: Time!
+	tokenType: String!
+}
+
+type User implements Node {
+	badges(first: Int, last: Int, after: String, before: String): BadgesConnection!
+	handle: String!
+	id: ID!
+	name: String!
+	timeCreated: Time!
+	timeUpdated: Time!
+	token: Token!
+}
+
+

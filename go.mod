@@ -3,8 +3,10 @@ module github.com/firstcontributions/backend
 go 1.14
 
 require (
+	github.com/aws/aws-sdk-go v1.29.15 // indirect
 	github.com/go-redis/redis/v8 v8.2.0
 	github.com/gokultp/go-envparser v0.0.0-20201004113537-c284ea74650c
+	github.com/gokultp/go-mongoqb v0.0.0-20210803124046-b45d2a746e99
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.8.0
@@ -15,7 +17,9 @@ require (
 	github.com/shurcooL/githubv4 v0.0.0-20200915023059-bc5e4feb2971
 	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f // indirect
 	github.com/sirupsen/logrus v1.6.0 // indirect
-	go.mongodb.org/mongo-driver v1.4.1
+	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
+	github.com/xdg/stringprep v0.0.0-20180714160509-73f8eece6fdc // indirect
+	go.mongodb.org/mongo-driver v1.6.0
 	golang.org/x/net v0.0.0-20200925080053-05aa5d4ee321 // indirect
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43
 	google.golang.org/grpc v1.31.0

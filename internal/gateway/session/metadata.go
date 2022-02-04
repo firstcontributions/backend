@@ -1,6 +1,7 @@
 package session
 
 import (
+	"context"
 	"encoding/json"
 
 	"google.golang.org/grpc/metadata"
@@ -17,6 +18,10 @@ type MetaData map[string]string
 
 func NewMetaData() MetaData {
 	return MetaData{}
+}
+
+func FromContext(ctx context.Context) MetaData {
+	return ctx.Value(CxtKeySession).(MetaData)
 }
 func (m MetaData) SetHandle(h string) MetaData {
 	m["handle"] = h
