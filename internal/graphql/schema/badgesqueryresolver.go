@@ -7,8 +7,8 @@ import (
 )
 
 type BadgesInput struct {
-	First  *int64
-	Last   *int64
+	First  *int32
+	Last   *int32
 	After  *string
 	Before *string
 }
