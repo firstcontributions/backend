@@ -25,7 +25,7 @@ func NewCursor(id string, t time.Time) *Cursor {
 }
 
 func (c *Cursor) String() string {
-	str := fmt.Sprintf(cursorFormat, c.Version, c.TimeStamp.Unix(), c.ID)
+	str := fmt.Sprintf(cursorFormat, c.Version, c.TimeStamp.UnixMicro(), c.ID)
 	return base64.StdEncoding.EncodeToString([]byte(str))
 }
 
@@ -35,6 +35,8 @@ func FromString(s string) *Cursor {
 		return nil
 	}
 	c := Cursor{}
-	fmt.Sscanf(string(bts), cursorFormat, &c.Version, &c.TimeStamp, &c.ID)
+	var epoch int64
+	fmt.Sscanf(string(bts), cursorFormat, &c.Version, &epoch, &c.ID)
+	c.TimeStamp = time.UnixMicro(epoch)
 	return &c
 }

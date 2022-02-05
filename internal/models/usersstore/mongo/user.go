@@ -71,42 +71,62 @@ func (s *UsersStore) GetUsers(
 	}
 
 	limit, order, cursorStr := utils.GetLimitAndSortOrderAndCursor(first, last, after, before)
+	var c *cursor.Cursor
 	if cursorStr != nil {
-		c := cursor.FromString(*cursorStr)
+		c = cursor.FromString(*cursorStr)
 		if c != nil {
 			if order == 1 {
-				qb.Lt("time_created", c.TimeStamp)
-				qb.Lt("_id", c.ID)
+				qb.Lte("time_created", c.TimeStamp)
+				qb.Lte("_id", c.ID)
 			} else {
-				qb.Gt("time_created", c.TimeStamp)
-				qb.Gt("_id", c.ID)
+				qb.Gte("time_created", c.TimeStamp)
+				qb.Gte("_id", c.ID)
 			}
 		}
 	}
 	sortOrder := utils.GetSortOrder(order)
-
+	// incrementing limit by 2 to check if next, prev elements are present
+	limit += 2
 	options := &options.FindOptions{
 		Limit: &limit,
 		Sort:  sortOrder,
 	}
 
 	var firstCursor, lastCursor string
+	var hasNextPage, hasPreviousPage bool
 
 	var users []*usersstore.User
 	mongoCursor, err := s.getCollection(CollectionUsers).Find(ctx, qb.Build(), options)
 	if err != nil {
-		return nil, false, false, firstCursor, lastCursor, err
+		return nil, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err
 	}
 	err = mongoCursor.All(ctx, &users)
 	if err != nil {
-		return nil, false, false, firstCursor, lastCursor, err
+		return nil, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err
 	}
 	count := len(users)
+	if count == 0 {
+		return users, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
+	}
+
+	// check if the cursor element present, if yes that can be a prev elem
+	if c != nil && users[0].Id == c.ID {
+		hasPreviousPage = true
+		users = users[1:]
+		count--
+	}
+
+	// check if actual limit +1 elements are there, if yes trim it to limit
+	if count >= int(limit)-1 {
+		hasNextPage = true
+		users = users[:limit-2]
+		count = len(users)
+	}
+
 	if count > 0 {
 		firstCursor = cursor.NewCursor(users[0].Id, users[0].TimeCreated).String()
 		lastCursor = cursor.NewCursor(users[count-1].Id, users[count-1].TimeCreated).String()
 	}
-	hasNextPage, hasPreviousPage := utils.CheckHasNextPrevPages(count, int(limit), order)
 	return users, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
 }
 func (s *UsersStore) UpdateUser(ctx context.Context, id string, userUpdate *usersstore.UserUpdate) error {

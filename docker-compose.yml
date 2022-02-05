@@ -90,7 +90,6 @@ services:
       - "8090:80"
     depends_on:
       - redis
-      - profile
 
 
   # profile:
