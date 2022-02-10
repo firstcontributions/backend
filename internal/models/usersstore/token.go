@@ -14,3 +14,7 @@ type Token struct {
 func NewToken() *Token {
 	return &Token{}
 }
+
+type TokenUpdate struct {
+	TimeUpdated *time.Time `bson:"time_updated,omitempty"`
+}

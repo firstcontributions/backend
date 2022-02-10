@@ -8,22 +8,27 @@ import (
 )
 
 type User struct {
-	Handle      string
-	Id          string
-	Name        string
-	TimeCreated graphql.Time
-	TimeUpdated graphql.Time
-	Token       *Token
+	CursorCheckpoints *CursorCheckpoints
+	Handle            string
+	Id                string
+	Name              string
+	TimeCreated       graphql.Time
+	TimeUpdated       graphql.Time
+	Token             *Token
 }
 
 func NewUser(m *usersstore.User) *User {
+	if m == nil {
+		return nil
+	}
 	return &User{
-		Handle:      m.Handle,
-		Id:          m.Id,
-		Name:        m.Name,
-		TimeCreated: graphql.Time{Time: m.TimeCreated},
-		TimeUpdated: graphql.Time{Time: m.TimeUpdated},
-		Token:       NewToken(m.Token),
+		CursorCheckpoints: NewCursorCheckpoints(m.CursorCheckpoints),
+		Handle:            m.Handle,
+		Id:                m.Id,
+		Name:              m.Name,
+		TimeCreated:       graphql.Time{Time: m.TimeCreated},
+		TimeUpdated:       graphql.Time{Time: m.TimeUpdated},
+		Token:             NewToken(m.Token),
 	}
 }
 func (n *User) ID(ctx context.Context) graphql.ID {

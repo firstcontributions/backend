@@ -6,12 +6,7 @@ import (
 )
 
 func main() {
-	t := time.Now()
+	d := time.Duration(1328519932000000) / time.Millisecond
 
-	fmt.Println("time -------", t)
-	micro := t.UnixMicro()
-
-	fmt.Println(micro)
-
-	fmt.Println("time from micro", time.UnixMicro(micro))
+	fmt.Println(d)
 }

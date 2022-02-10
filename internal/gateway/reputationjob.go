@@ -1,16 +1,14 @@
 package gateway
 
-// import (
-// 	"context"
-// 	"log"
+import (
+	"context"
 
-// 	"github.com/firstcontributions/backend/internal/profile/proto"
-// )
+	"github.com/firstcontributions/backend/internal/models/usersstore"
+	"github.com/firstcontributions/backend/internal/reputation"
+)
 
-// func (s *Server) UpdateProfileReputation(profile *proto.Profile) {
-// 	log.Println("from update profile, profile.Reputation", profile.Reputation)
-// 	profile.Reputation++
-// 	s.ProfileManager.SyncGitHubData(context.Background(), &proto.GetByUUIDRequest{
-// 		Uuid: profile.Uuid,
-// 	})
-// }
+func (s *Server) UpdateProfileReputation(user *usersstore.User) {
+	rs := reputation.NewReputationSynchroniser(*s.GithubConfig, s.Store.UsersStore)
+
+	go rs.SyncBadges(context.Background(), user)
+}

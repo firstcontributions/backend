@@ -152,6 +152,7 @@ func (s *UsersStore) UpdateUser(ctx context.Context, id string, userUpdate *user
 	}
 	return nil
 }
+
 func (s *UsersStore) DeleteUserByID(ctx context.Context, id string) error {
 	qb := mongoqb.NewQueryBuilder().
 		Eq("_id", id)

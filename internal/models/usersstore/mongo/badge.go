@@ -129,6 +129,26 @@ func (s *UsersStore) GetBadges(
 	}
 	return badges, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
 }
+func (s *UsersStore) UpdateBadge(ctx context.Context, id string, badgeUpdate *usersstore.BadgeUpdate) error {
+	qb := mongoqb.NewQueryBuilder().
+		Eq("_id", id)
+
+	now := time.Now()
+	badgeUpdate.TimeUpdated = &now
+
+	u := mongoqb.NewUpdateMap().
+		SetFields(badgeUpdate)
+
+	um, err := u.BuildUpdate()
+	if err != nil {
+		return err
+	}
+	if _, err := s.getCollection(CollectionBadges).UpdateOne(ctx, qb.Build(), um); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *UsersStore) DeleteBadgeByID(ctx context.Context, id string) error {
 	qb := mongoqb.NewQueryBuilder().
 		Eq("_id", id)
