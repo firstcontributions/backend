@@ -66,7 +66,7 @@ func (s *Server) Init() error {
 	s.CookieManager = securecookie.New([]byte(*s.HashKey), []byte(*s.BlockKey))
 
 	ctx := context.Background()
-	userStore, err := mongo.NewUsersStore(ctx, "mongodb://root:spy0nM3@172.30.1.4:27017")
+	userStore, err := mongo.NewUsersStore(ctx, *s.MongoURL)
 	if err != nil {
 		return err
 	}

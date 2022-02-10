@@ -123,6 +123,10 @@ func (s *UsersStore) GetBadges(
 		firstCursor = cursor.NewCursor(badges[0].Id, badges[0].TimeCreated).String()
 		lastCursor = cursor.NewCursor(badges[count-1].Id, badges[count-1].TimeCreated).String()
 	}
+	if order < 0 {
+		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
+		firstCursor, lastCursor = lastCursor, firstCursor
+	}
 	return badges, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
 }
 func (s *UsersStore) DeleteBadgeByID(ctx context.Context, id string) error {

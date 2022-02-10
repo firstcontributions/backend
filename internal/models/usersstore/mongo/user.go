@@ -127,6 +127,10 @@ func (s *UsersStore) GetUsers(
 		firstCursor = cursor.NewCursor(users[0].Id, users[0].TimeCreated).String()
 		lastCursor = cursor.NewCursor(users[count-1].Id, users[count-1].TimeCreated).String()
 	}
+	if order < 0 {
+		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
+		firstCursor, lastCursor = lastCursor, firstCursor
+	}
 	return users, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
 }
 func (s *UsersStore) UpdateUser(ctx context.Context, id string, userUpdate *usersstore.UserUpdate) error {
