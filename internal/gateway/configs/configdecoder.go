@@ -54,10 +54,9 @@ func (t *Config) DecodeEnv() error {
 		return fmt.Errorf("type commonconfigs.GithubConfignot implemts env Decoder interface, %w", envdecoder.ErrDecoderNotImplemented)
 	}
 	t.GithubConfig = &_recGithubconfig
-	_recProfile := commonconfigs.ProfileManager{}
-	if err := envdecoder.Decode(&_recProfile); err != nil {
-		return fmt.Errorf("type commonconfigs.ProfileManagernot implemts env Decoder interface, %w", envdecoder.ErrDecoderNotImplemented)
+	if _recMongourlStr := os.Getenv("MONGO_URL"); _recMongourlStr != "" {
+		_recMongourl := _recMongourlStr
+		t.MongoURL = &_recMongourl
 	}
-	t.Profile = &_recProfile
 	return nil
 }

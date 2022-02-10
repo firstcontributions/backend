@@ -1,6 +1,7 @@
 package gateway
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -9,18 +10,17 @@ import (
 
 	"github.com/firstcontributions/backend/internal/gateway/configs"
 	"github.com/firstcontributions/backend/internal/gateway/csrf"
-	graphqlschema "github.com/firstcontributions/backend/internal/gateway/graphql"
 	"github.com/firstcontributions/backend/internal/gateway/models/redis"
-	"github.com/firstcontributions/backend/internal/gateway/rpcs"
+	graphqlschema "github.com/firstcontributions/backend/internal/graphql/schema"
+	"github.com/firstcontributions/backend/internal/models/usersstore/mongo"
+	"github.com/firstcontributions/backend/internal/storemanager"
 
 	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/securecookie"
 	"github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
-	pool "github.com/processout/grpc-go-pool"
 	"github.com/rs/cors"
-	"google.golang.org/grpc"
 )
 
 // Server encapsulates the connection objects and configs for
@@ -31,7 +31,7 @@ type Server struct {
 	CookieManager  *securecookie.SecureCookie
 	Router         *mux.Router
 	CSRFManager    *csrf.Manager
-	ProfileManager *rpcs.ProfileManager
+	Store          *storemanager.Store
 }
 
 // NewServer returns an instance of server
@@ -43,6 +43,7 @@ func NewServer() *Server {
 
 // Init will initialise configs, connections etc.
 func (s *Server) Init() error {
+	var err error
 	if err := s.DecodeEnv(); err != nil {
 		return fmt.Errorf("could not initialize config, Error: %w", err)
 	}
@@ -64,18 +65,12 @@ func (s *Server) Init() error {
 	)
 	s.CookieManager = securecookie.New([]byte(*s.HashKey), []byte(*s.BlockKey))
 
-	profileConn, err := pool.New(
-		func() (*grpc.ClientConn, error) {
-			return grpc.Dial(*s.Profile.URL, grpc.WithInsecure())
-		},
-		*s.Profile.InitConnections,
-		*s.Profile.ConnectionCapacity,
-		time.Duration(*s.Profile.ConnectionTTLMinutes)*time.Minute,
-	)
+	ctx := context.Background()
+	userStore, err := mongo.NewUsersStore(ctx, *s.MongoURL)
 	if err != nil {
-		return fmt.Errorf("could not initialize connection to profile manager, Error: %w", err)
+		return err
 	}
-	s.ProfileManager = rpcs.NewProfileManager(profileConn)
+	s.Store = storemanager.NewStore(userStore)
 	if err := s.InitRoutes(); err != nil {
 		return err
 	}
@@ -113,9 +108,8 @@ func (s *Server) GetGraphqlSchema() (*graphql.Schema, error) {
 	if err != nil {
 		return nil, err
 	}
-	resolver := &graphqlschema.Resolver{
-		ProfileManager: s.ProfileManager,
-	}
+
+	resolver := &graphqlschema.Resolver{}
 	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
 	return graphql.MustParseSchema(string(schema), resolver, opts...), nil
 

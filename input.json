@@ -1,0 +1,57 @@
+{
+    "repo": "github.com/firstcontributions/backend",
+    "modules": [
+        {
+            "name": "users",
+            "data_source": "mongo",
+            "db": "mongo",
+            "entities": ["user", "badge", "token"]
+        }
+    ],
+    "high_level_queries": [
+    ],
+    "data_schema":{
+        "user":{
+            "name": "user",
+            "type": "object",
+            "meta": {
+                "search_fields": ["name", "handle"],
+                "filters": ["handle"],
+                "mutatable_fields" :["name",  "handle"],
+                "graphql_ops": "CRUD"
+            },
+            "properties":{
+                "id": "id",
+                "name": "string",
+                "handle": "string",
+                "badges": {
+                    "type": "list",
+                    "schema": "badge",
+                    "joined_data": true,
+                    "paginated": true
+                },
+                "token": "token"
+            }
+        },
+        "token" : {
+            "name": "token",
+            "type": "object",
+            "properties": {
+                "access_token": "string",
+                "refresh_token": "string",
+                "token_type": "string",
+                "expiry": "time"
+            }
+        },
+        "badge" : {
+            "name": "badge",
+            "type": "object",
+            "properties":{
+                "id": "id",
+                "display_name": "string"
+            }
+        }
+
+    }
+
+}

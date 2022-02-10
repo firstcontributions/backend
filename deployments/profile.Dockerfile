@@ -1,6 +1,6 @@
 
 # build stage
-FROM golang:1.14 as builder
+FROM golang:1.17 as builder
 WORKDIR /service/profile
 COPY . /service/profile
 RUN CGO_ENABLED=0 GOOS=linux go build -o ./build/profile -mod vendor  ./cmd/profile
