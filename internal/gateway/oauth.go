@@ -80,7 +80,7 @@ func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*u
 	} else {
 		data = users[0]
 	}
-	// go s.UpdateProfileReputation(profile)
+	go s.UpdateProfileReputation(data)
 	return data, nil
 }
 

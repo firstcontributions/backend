@@ -9,18 +9,27 @@ import (
 )
 
 type Badge struct {
-	DisplayName string
-	Id          string
-	TimeCreated graphql.Time
-	TimeUpdated graphql.Time
+	CurrentLevel                  int32
+	DisplayName                   string
+	Id                            string
+	Points                        int32
+	ProgressPercentageToNextLevel int32
+	TimeCreated                   graphql.Time
+	TimeUpdated                   graphql.Time
 }
 
 func NewBadge(m *usersstore.Badge) *Badge {
+	if m == nil {
+		return nil
+	}
 	return &Badge{
-		DisplayName: m.DisplayName,
-		Id:          m.Id,
-		TimeCreated: graphql.Time{Time: m.TimeCreated},
-		TimeUpdated: graphql.Time{Time: m.TimeUpdated},
+		CurrentLevel:                  int32(m.CurrentLevel),
+		DisplayName:                   m.DisplayName,
+		Id:                            m.Id,
+		Points:                        int32(m.Points),
+		ProgressPercentageToNextLevel: int32(m.ProgressPercentageToNextLevel),
+		TimeCreated:                   graphql.Time{Time: m.TimeCreated},
+		TimeUpdated:                   graphql.Time{Time: m.TimeUpdated},
 	}
 }
 func (n *Badge) ID(ctx context.Context) graphql.ID {

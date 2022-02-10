@@ -5,25 +5,19 @@ import (
 	graphql "github.com/graph-gophers/graphql-go"
 )
 
-type Token struct {
-	AccessToken  string
-	Expiry       graphql.Time
-	RefreshToken string
+type CursorCheckpoints struct {
+	PullRequests string
 	TimeCreated  graphql.Time
 	TimeUpdated  graphql.Time
-	TokenType    string
 }
 
-func NewToken(m *usersstore.Token) *Token {
+func NewCursorCheckpoints(m *usersstore.CursorCheckpoints) *CursorCheckpoints {
 	if m == nil {
 		return nil
 	}
-	return &Token{
-		AccessToken:  m.AccessToken,
-		Expiry:       graphql.Time{Time: m.Expiry},
-		RefreshToken: m.RefreshToken,
+	return &CursorCheckpoints{
+		PullRequests: m.PullRequests,
 		TimeCreated:  graphql.Time{Time: m.TimeCreated},
 		TimeUpdated:  graphql.Time{Time: m.TimeUpdated},
-		TokenType:    m.TokenType,
 	}
 }

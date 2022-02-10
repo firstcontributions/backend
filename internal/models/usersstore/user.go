@@ -3,12 +3,13 @@ package usersstore
 import "time"
 
 type User struct {
-	Handle      string    `bson:"handle,omitempty"`
-	Id          string    `bson:"_id"`
-	Name        string    `bson:"name,omitempty"`
-	TimeCreated time.Time `bson:"time_created,omitempty"`
-	TimeUpdated time.Time `bson:"time_updated,omitempty"`
-	Token       *Token    `bson:"token,omitempty"`
+	CursorCheckpoints *CursorCheckpoints `bson:"cursor_checkpoints,omitempty"`
+	Handle            string             `bson:"handle,omitempty"`
+	Id                string             `bson:"_id"`
+	Name              string             `bson:"name,omitempty"`
+	TimeCreated       time.Time          `bson:"time_created,omitempty"`
+	TimeUpdated       time.Time          `bson:"time_updated,omitempty"`
+	Token             *Token             `bson:"token,omitempty"`
 }
 
 func NewUser() *User {
@@ -16,7 +17,8 @@ func NewUser() *User {
 }
 
 type UserUpdate struct {
-	Handle      *string    `bson:"handle"`
-	Name        *string    `bson:"name"`
-	TimeUpdated *time.Time `bson:"time_updated"`
+	CursorCheckpoints *CursorCheckpoints `bson:"cursor_checkpoints,omitempty"`
+	Handle            *string            `bson:"handle,omitempty"`
+	Name              *string            `bson:"name,omitempty"`
+	TimeUpdated       *time.Time         `bson:"time_updated,omitempty"`
 }
