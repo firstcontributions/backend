@@ -2,14 +2,13 @@ package reputation
 
 import (
 	"github.com/firstcontributions/backend/internal/configs"
+	"github.com/firstcontributions/backend/internal/githubclient"
 	"github.com/firstcontributions/backend/internal/models/usersstore"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/github"
 )
 
 type ReputationSynchroniser struct {
-	oauthConfig *oauth2.Config
-	userStore   usersstore.Store
+	*githubclient.GitHubClient
+	userStore usersstore.Store
 }
 
 func NewReputationSynchroniser(
@@ -18,13 +17,7 @@ func NewReputationSynchroniser(
 ) *ReputationSynchroniser {
 
 	return &ReputationSynchroniser{
-		oauthConfig: &oauth2.Config{
-			ClientID:     *gitConfigs.ClientID,
-			ClientSecret: *gitConfigs.ClientSecret,
-			Endpoint:     github.Endpoint,
-			RedirectURL:  *gitConfigs.AuthRedirect,
-			Scopes:       gitConfigs.AuthScopes,
-		},
-		userStore: userStore,
+		GitHubClient: githubclient.NewGitHubClient(gitConfigs),
+		userStore:    userStore,
 	}
 }

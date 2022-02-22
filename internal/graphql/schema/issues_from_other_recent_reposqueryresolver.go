@@ -6,14 +6,14 @@ import (
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
-type BadgesInput struct {
+type IssuesFromOtherRecentReposInput struct {
 	First  *int32
 	Last   *int32
 	After  *string
 	Before *string
 }
 
-func (n *User) Badges(ctx context.Context, in *BadgesInput) (*BadgesConnection, error) {
+func (n *IssuesFeed) IssuesFromOtherRecentRepos(ctx context.Context, in *IssuesFromOtherRecentReposInput) (*IssuesConnection, error) {
 	var first, last *int64
 	if in.First != nil {
 		tmp := int64(*in.First)
@@ -24,10 +24,11 @@ func (n *User) Badges(ctx context.Context, in *BadgesInput) (*BadgesConnection, 
 		last = &tmp
 	}
 	store := storemanager.FromContext(ctx)
-	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.UsersStore.GetBadges(
+	issueType := "issues_from_other_recent_repos"
+	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.IssuesStore.GetIssues(
 		ctx,
 		nil,
-		&n.Id,
+		&issueType,
 		in.After,
 		in.Before,
 		first,
@@ -36,5 +37,5 @@ func (n *User) Badges(ctx context.Context, in *BadgesInput) (*BadgesConnection, 
 	if err != nil {
 		return nil, err
 	}
-	return NewBadgesConnection(data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewIssuesConnection(data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"google.golang.org/grpc/metadata"
+	"github.com/firstcontributions/backend/internal/models/usersstore"
 )
 
 type CxtKey int
@@ -14,31 +14,35 @@ const (
 )
 
 // MetaData encapsulates session info
-type MetaData map[string]string
+type MetaData struct {
+	usersstore.User
+}
 
-func NewMetaData() MetaData {
-	return MetaData{}
+func NewMetaData(user *usersstore.User) MetaData {
+	return MetaData{
+		User: *user,
+	}
 }
 
 func FromContext(ctx context.Context) MetaData {
 	return ctx.Value(CxtKeySession).(MetaData)
 }
 func (m MetaData) SetHandle(h string) MetaData {
-	m["handle"] = h
+	m.User.Handle = h
 	return m
 }
 
 func (m MetaData) SetUserID(uid string) MetaData {
-	m["user_id"] = uid
+	m.User.Id = uid
 	return m
 }
 
 func (m MetaData) Handle() string {
-	return m["handle"]
+	return m.User.Handle
 }
 
 func (m MetaData) UserID() string {
-	return m["user_id"]
+	return m.User.Id
 }
 
 func (m MetaData) MarshalBinary() ([]byte, error) {
@@ -47,8 +51,4 @@ func (m MetaData) MarshalBinary() ([]byte, error) {
 
 func (m *MetaData) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, &m)
-}
-
-func (m MetaData) Proto() metadata.MD {
-	return metadata.New(m)
 }

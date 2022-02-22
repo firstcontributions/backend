@@ -36,6 +36,15 @@ func (r *Resolver) Node(ctx context.Context, in NodeIDInput) (*NodeResolver, err
 		return &NodeResolver{
 			Node: badgeNode,
 		}, nil
+	case "issue":
+		issueData, err := store.IssuesStore.GetIssueByID(ctx, id.ID)
+		if err != nil {
+			return nil, err
+		}
+		issueNode := NewIssue(issueData)
+		return &NodeResolver{
+			Node: issueNode,
+		}, nil
 	case "user":
 		userData, err := store.UsersStore.GetUserByID(ctx, id.ID)
 		if err != nil {
@@ -50,6 +59,10 @@ func (r *Resolver) Node(ctx context.Context, in NodeIDInput) (*NodeResolver, err
 }
 func (n *NodeResolver) ToBadge() (*Badge, bool) {
 	t, ok := n.Node.(*Badge)
+	return t, ok
+}
+func (n *NodeResolver) ToIssue() (*Issue, bool) {
+	t, ok := n.Node.(*Issue)
 	return t, ok
 }
 func (n *NodeResolver) ToUser() (*User, bool) {
