@@ -60,9 +60,7 @@ func (s *Server) HandleSession(next http.Handler) http.Handler {
 
 func (s *Server) setSession(w http.ResponseWriter, r *http.Request, profile *usersstore.User) error {
 
-	sessionData := session.NewMetaData().
-		SetHandle(profile.Handle).
-		SetUserID(profile.Id)
+	sessionData := session.NewMetaData(profile)
 	sessionID, err := uuid.NewUUID()
 	if err != nil {
 		return err

@@ -7,7 +7,6 @@ import (
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
 	"github.com/shurcooL/githubv4"
-	"golang.org/x/oauth2"
 )
 
 func (r ReputationSynchroniser) SyncBadges(ctx context.Context, user *usersstore.User) error {
@@ -57,16 +56,7 @@ func (r ReputationSynchroniser) updateBadge(ctx context.Context, badge *userssto
 }
 
 func (r ReputationSynchroniser) getPRFileChangesFromGitHub(ctx context.Context, user *usersstore.User) ([]FileChange, *githubv4.String) {
-	token := &oauth2.Token{
-		AccessToken:  user.Token.AccessToken,
-		RefreshToken: user.Token.RefreshToken,
-		TokenType:    user.Token.TokenType,
-		Expiry:       user.Token.Expiry,
-	}
 
-	client := githubv4.NewClient(
-		r.oauthConfig.Client(ctx, token),
-	)
 	var f, fchanges []FileChange
 	hasNextPage := true
 	var prCursor, lastValidCursor *githubv4.String
@@ -77,7 +67,7 @@ func (r ReputationSynchroniser) getPRFileChangesFromGitHub(ctx context.Context, 
 		prCursor = &tmp
 	}
 	for hasNextPage {
-		f, hasNextPage, prCursor, err = getPullRequestDataFromGitHub(client, prCursor)
+		f, hasNextPage, prCursor, err = r.getPullRequestDataFromGitHub(ctx, prCursor)
 		if err != nil {
 			log.Printf("error on grtting data from github, %v", err)
 			break
@@ -118,8 +108,8 @@ type GitQuery struct {
 	}
 }
 
-func getPullRequestDataFromGitHub(
-	client *githubv4.Client,
+func (r ReputationSynchroniser) getPullRequestDataFromGitHub(
+	ctx context.Context,
 	cursor *githubv4.String,
 ) (
 	[]FileChange,
@@ -132,7 +122,7 @@ func getPullRequestDataFromGitHub(
 		"prCursor": cursor,
 	}
 
-	if err := client.Query(context.Background(), &query, params); err != nil {
+	if err := r.Query(context.Background(), &query, params); err != nil {
 		return nil, false, nil, err
 	}
 	files := []FileChange{}

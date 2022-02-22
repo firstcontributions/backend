@@ -3,6 +3,7 @@ package storemanager
 import (
 	"context"
 
+	"github.com/firstcontributions/backend/internal/models/issuesstore"
 	"github.com/firstcontributions/backend/internal/models/usersstore"
 )
 
@@ -13,14 +14,17 @@ const (
 )
 
 type Store struct {
-	UsersStore usersstore.Store
+	IssuesStore issuesstore.Store
+	UsersStore  usersstore.Store
 }
 
 func NewStore(
+	issuesStore issuesstore.Store,
 	usersStore usersstore.Store,
 ) *Store {
 	return &Store{
-		UsersStore: usersStore,
+		IssuesStore: issuesStore,
+		UsersStore:  usersStore,
 	}
 }
 

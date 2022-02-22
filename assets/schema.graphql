@@ -11,6 +11,7 @@ type Query {
 	  # The ID of an object
 	  id: ID!
 	): Node
+	issuesFeed: IssuesFeed!
 }
 
 interface Node {
@@ -50,6 +51,25 @@ type CursorCheckpoints {
 	timeUpdated: Time!
 }
 
+type Issue implements Node {
+	id: ID!
+	issueType: String!
+	repository: String!
+	respositoryAvatar: String!
+	title: String!
+	url: String!
+} 
+
+type IssuesConnection {
+	edges: [IssueEdge]!
+	pageInfo: PageInfo!
+} 
+
+type IssueEdge {
+	node: Issue!
+	cursor: String!
+}
+
 type Token {
 	accessToken: String!
 	expiry: Time!
@@ -68,6 +88,12 @@ type User implements Node {
 	timeCreated: Time!
 	timeUpdated: Time!
 	token: Token!
+}
+
+type IssuesFeed {
+	issuesFromLastRepo(first: Int, last: Int, after: String, before: String): IssuesConnection!
+	issuesFromOtherRecentRepos(first: Int, last: Int, after: String, before: String): IssuesConnection!
+	relevantIssues(first: Int, last: Int, after: String, before: String): IssuesConnection!
 }
 
 

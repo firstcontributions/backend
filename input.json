@@ -5,73 +5,128 @@
             "name": "users",
             "data_source": "mongo",
             "db": "mongo",
-            "entities": ["user", "badge", "token", "cursor_checkpoints"]
+            "entities": {
+                "user":{
+                    "name": "user",
+                    "type": "object",
+                    "meta": {
+                        "search_fields": ["name", "handle"],
+                        "filters": ["handle"],
+                        "mutatable_fields" :["name",  "handle", "cursor_checkpoints"],
+                        "graphql_ops": "CRUD"
+                    },
+                    "properties":{
+                        "id": "id",
+                        "name": "string",
+                        "handle": "string",
+                        "badges": {
+                            "type": "list",
+                            "schema": "badge",
+                            "joined_data": true,
+                            "paginated": true
+                        },
+                        "token":{
+                            "type": "object",
+                            "schema": "token"
+                        },
+                        "cursor_checkpoints": {
+                            "type": "object",
+                            "schema": "cursor_checkpoints"
+                        }
+                    }
+                },
+                "token" : {
+                    "name": "token",
+                    "type": "object",
+                    "properties": {
+                        "access_token": "string",
+                        "refresh_token": "string",
+                        "token_type": "string",
+                        "expiry": "time"
+                    }
+                },
+                "badge" : {
+                    "name": "badge",
+                    "type": "object",
+                    "meta": {
+                        "mutatable_fields" :["points", "current_level", "progress_percentage_to_next_level"]
+                    },
+                    "properties":{
+                        "id": "id",
+                        "display_name": "string",
+                        "points": "int",
+                        "current_level" : "int",
+                        "progress_percentage_to_next_level" : "int"
+                    }
+                },
+                "cursor_checkpoints" : {
+                    "name": "cursor_checkpoints",
+                    "type": "object",
+                    "properties": {
+                        "pull_requests": "string"
+                    }
+                }
+        
+            }
+        },
+        {
+            "name":"issues",
+            "data_source": "external_apis",
+            "entities":{
+                "issue" : {
+                    "name": "issue",
+                    "type": "object",
+                    "meta": {
+                        "filters": ["issue_type"],
+                        "graphql_ops": "R"
+                    },
+                    "properties":{
+                        "id": "id",
+                        "title": "string",
+                        "repository": "string",
+                        "respository_avatar": "string",
+                        "url": "string",
+                        "issue_type": "string"
+                    }
+                }
+            }
         }
     ],
     "high_level_queries": [
-    ],
-    "data_schema":{
-        "user":{
-            "name": "user",
-            "type": "object",
-            "meta": {
-                "search_fields": ["name", "handle"],
-                "filters": ["handle"],
-                "mutatable_fields" :["name",  "handle", "cursor_checkpoints"],
-                "graphql_ops": "CRUD"
-            },
-            "properties":{
-                "id": "id",
-                "name": "string",
-                "handle": "string",
-                "badges": {
+        {
+            "name": "issues_feed",
+            "type" :"object",
+
+            "properties" : {
+                "issues_from_last_repo" : {
                     "type": "list",
-                    "schema": "badge",
+                    "schema": "issue",
                     "joined_data": true,
-                    "paginated": true
+                    "paginated": true,
+                    "hardcoded_filters" : {
+                        "issue_type": "last_repo_issues"
+                    }
                 },
-                "token":{
-                    "type": "object",
-                    "schema": "token"
+                "issues_from_other_recent_repos" : {
+                    "type": "list",
+                    "schema": "issue",
+                    "joined_data": true,
+                    "paginated": true,
+                    "hardcoded_filters" : {
+                        "issue_type": "issues_from_other_recent_repos"
+                    }
                 },
-                "cursor_checkpoints": {
-                    "type": "object",
-                    "schema": "cursor_checkpoints"
+                "relevant_issues" : {
+                    "type": "list",
+                    "schema": "issue",
+                    "joined_data": true,
+                    "paginated": true,
+                    "hardcoded_filters" : {
+                        "issue_type": "relevant_issues"
+                    }
                 }
             }
-        },
-        "token" : {
-            "name": "token",
-            "type": "object",
-            "properties": {
-                "access_token": "string",
-                "refresh_token": "string",
-                "token_type": "string",
-                "expiry": "time"
-            }
-        },
-        "badge" : {
-            "name": "badge",
-            "type": "object",
-            "meta": {
-                "mutatable_fields" :["points", "current_level", "progress_percentage_to_next_level"]
-            },
-            "properties":{
-                "id": "id",
-                "display_name": "string",
-                "points": "int",
-                "current_level" : "int",
-                "progress_percentage_to_next_level" : "int"
-            }
-        },
-        "cursor_checkpoints" : {
-            "name": "cursor_checkpoints",
-            "type": "object",
-            "properties": {
-                "pull_requests": "string"
-            }
         }
-
-    }
+    ]
 
 }

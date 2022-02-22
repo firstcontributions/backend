@@ -12,6 +12,7 @@ import (
 	"github.com/firstcontributions/backend/internal/gateway/csrf"
 	"github.com/firstcontributions/backend/internal/gateway/models/redis"
 	graphqlschema "github.com/firstcontributions/backend/internal/graphql/schema"
+	"github.com/firstcontributions/backend/internal/models/issuesstore/githubstore"
 	"github.com/firstcontributions/backend/internal/models/usersstore/mongo"
 	"github.com/firstcontributions/backend/internal/storemanager"
 
@@ -70,7 +71,7 @@ func (s *Server) Init() error {
 	if err != nil {
 		return err
 	}
-	s.Store = storemanager.NewStore(userStore)
+	s.Store = storemanager.NewStore(githubstore.NewGitHubStore(*s.GithubConfig), userStore)
 	if err := s.InitRoutes(); err != nil {
 		return err
 	}
