@@ -18,7 +18,7 @@ func NewUser() *User {
 
 type UserUpdate struct {
 	CursorCheckpoints *CursorCheckpoints `bson:"cursor_checkpoints,omitempty"`
-	Handle            *string            `bson:"handle,omitempty"`
 	Name              *string            `bson:"name,omitempty"`
 	TimeUpdated       *time.Time         `bson:"time_updated,omitempty"`
+	Token             *Token             `bson:"token,omitempty"`
 }

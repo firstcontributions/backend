@@ -10,10 +10,10 @@ import (
 
 const (
 	DBUsers                     = "users"
-	CollectionCursorCheckpoints = "cursor_checkpoints"
 	CollectionUsers             = "users"
 	CollectionTokens            = "tokens"
 	CollectionBadges            = "badges"
+	CollectionCursorCheckpoints = "cursor_checkpoints"
 )
 
 type UsersStore struct {

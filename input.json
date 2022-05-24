@@ -12,7 +12,7 @@
                     "meta": {
                         "search_fields": ["name", "handle"],
                         "filters": ["handle"],
-                        "mutatable_fields" :["name",  "handle", "cursor_checkpoints"],
+                        "mutatable_fields" :["name", "cursor_checkpoints", "token"],
                         "graphql_ops": "CRUD"
                     },
                     "properties":{
@@ -28,6 +28,7 @@
                         "token":{
                             "type": "object",
                             "schema": "token"
+
                         },
                         "cursor_checkpoints": {
                             "type": "object",
@@ -38,6 +39,7 @@
                 "token" : {
                     "name": "token",
                     "type": "object",
+                    "no_graphql": true,
                     "properties": {
                         "access_token": "string",
                         "refresh_token": "string",
@@ -62,6 +64,7 @@
                 "cursor_checkpoints" : {
                     "name": "cursor_checkpoints",
                     "type": "object",
+                    "no_graphql": true,
                     "properties": {
                         "pull_requests": "string"
                     }

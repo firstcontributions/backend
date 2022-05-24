@@ -1,6 +1,7 @@
 
 schema {
 	query: Query
+	mutation: Mutation
 }
 scalar Time
 type Query {
@@ -45,12 +46,6 @@ type BadgeEdge {
 	cursor: String!
 }
 
-type CursorCheckpoints {
-	pullRequests: String!
-	timeCreated: Time!
-	timeUpdated: Time!
-}
-
 type Issue implements Node {
 	id: ID!
 	issueType: String!
@@ -70,24 +65,22 @@ type IssueEdge {
 	cursor: String!
 }
 
-type Token {
-	accessToken: String!
-	expiry: Time!
-	refreshToken: String!
-	timeCreated: Time!
-	timeUpdated: Time!
-	tokenType: String!
-}
-
 type User implements Node {
 	badges(first: Int, last: Int, after: String, before: String): BadgesConnection!
-	cursorCheckpoints: CursorCheckpoints!
 	handle: String!
 	id: ID!
 	name: String!
 	timeCreated: Time!
 	timeUpdated: Time!
-	token: Token!
+}
+
+input CreateUserInput {
+	handle: String!
+	name: String!
+}
+
+input UpdateUserInput {
+	name: String!
 }
 
 type IssuesFeed {
@@ -96,4 +89,6 @@ type IssuesFeed {
 	relevantIssues(first: Int, last: Int, after: String, before: String): IssuesConnection!
 }
 
-
+type Mutation { 
+	createUser(user: CreateUserInput!): User!
+}

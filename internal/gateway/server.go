@@ -98,7 +98,7 @@ func (s *Server) ListenAndServe() error {
 	log.Printf("listening at :%s", *s.Port)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://explorer.firstcontributions.com"},
+		AllowedOrigins:   []string{"http://explorer.firstcontributions.com", "http://app.firstcontributions.com"},
 		AllowCredentials: true,
 	})
 	return http.ListenAndServe(":"+*s.Port, c.Handler(s.Router))

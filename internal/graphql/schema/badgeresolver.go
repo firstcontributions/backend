@@ -32,6 +32,25 @@ func NewBadge(m *usersstore.Badge) *Badge {
 		TimeUpdated:                   graphql.Time{Time: m.TimeUpdated},
 	}
 }
+
+type CreateBadgeInput struct {
+	CurrentLevel                  int32
+	DisplayName                   string
+	Points                        int32
+	ProgressPercentageToNextLevel int32
+}
+
+func (n *CreateBadgeInput) ToModel() *usersstore.Badge {
+	if n == nil {
+		return nil
+	}
+	return &usersstore.Badge{
+		CurrentLevel:                  int64(n.CurrentLevel),
+		DisplayName:                   n.DisplayName,
+		Points:                        int64(n.Points),
+		ProgressPercentageToNextLevel: int64(n.ProgressPercentageToNextLevel),
+	}
+}
 func (n *Badge) ID(ctx context.Context) graphql.ID {
 	return NewIDMarshaller("badge", n.Id).
 		ToGraphqlID()

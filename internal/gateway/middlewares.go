@@ -80,6 +80,7 @@ func (s *Server) setSession(w http.ResponseWriter, r *http.Request, profile *use
 		Value:   encoded,
 		Expires: time.Now().Add(time.Duration(*s.SessionTTLDays) * time.Hour * 24),
 		Path:    "/",
+		Domain:  "firstcontributions.com",
 	}
 	http.SetCookie(w, cookie)
 	return nil
