@@ -44,7 +44,12 @@ func (s *Server) AuthCallback(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(err, w)
 		return
 	}
-	s.setSession(w, r, p)
+	sessionID, sessionErr := s.setSession(w, r, p)
+	if sessionErr != nil {
+		log.Println(sessionErr)
+		ErrorResponse(ErrInternalServerError(), w)
+	}
+	go s.UpdateProfileReputation(p, sessionID)
 	http.Redirect(w, r, "http://explorer.firstcontributions.com", http.StatusSeeOther)
 	// JSONResponse(w, http.StatusOK, p)
 
@@ -78,9 +83,13 @@ func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*u
 			return nil, ErrInternalServerError()
 		}
 	} else {
+		token := data.Token
 		data = users[0]
+		data.Token = token
+		go s.Store.UsersStore.UpdateUser(ctx, data.Id, &usersstore.UserUpdate{
+			Token: token,
+		})
 	}
-	go s.UpdateProfileReputation(data)
 	return data, nil
 }
 

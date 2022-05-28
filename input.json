@@ -12,7 +12,7 @@
                     "meta": {
                         "search_fields": ["name", "handle"],
                         "filters": ["handle"],
-                        "mutatable_fields" :["name", "cursor_checkpoints", "token"],
+                        "mutatable_fields" :["name", "cursor_checkpoints", "token", "tags"],
                         "graphql_ops": "CRUD"
                     },
                     "properties":{
@@ -33,6 +33,10 @@
                         "cursor_checkpoints": {
                             "type": "object",
                             "schema": "cursor_checkpoints"
+                        },
+                        "tags" : {
+                            "type": "object",
+                            "schema": "tags"
                         }
                     }
                 },
@@ -67,6 +71,16 @@
                     "no_graphql": true,
                     "properties": {
                         "pull_requests": "string"
+                    }
+                },
+                "tags" : {
+                    "name": "tags",
+                    "type": "object",
+                    "no_graphql": true,
+                    "properties": {
+                        "topics": {"type": "list", "schema": "string"},
+                        "recent_repos": {"type": "list", "schema": "string"},
+                        "languages": {"type": "list", "schema": "string"}
                     }
                 }
         

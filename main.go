@@ -11,13 +11,29 @@ import (
 	"golang.org/x/oauth2/github"
 )
 
-type GitQuery struct {
+type TagsQuery struct {
 	Viewer struct {
 		Login githubv4.String
-	}
-	RateLimit struct {
-		Limit     githubv4.Int
-		Remaining githubv4.Int
+
+		RepositoriesContributedTo struct {
+			Edges []struct {
+				Node struct {
+					NameWithOwner   githubv4.String
+					PrimaryLanguage struct {
+						Name githubv4.String
+					}
+					RepositoryTopics struct {
+						Edges []struct {
+							Node struct {
+								Topic struct {
+									Name githubv4.String
+								}
+							}
+						}
+					} `graphql:"repositoryTopics(first: 3)"`
+				}
+			}
+		} `graphql:"repositoriesContributedTo(first: 10, contributionTypes: COMMIT, orderBy: {field: PUSHED_AT, direction: DESC})"`
 	}
 }
 
@@ -35,14 +51,14 @@ func main() {
 	}
 
 	token := &oauth2.Token{
-		AccessToken: "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",
+		AccessToken: "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",
 	}
 	ctx := context.Background()
 	client := githubv4.NewClient(
 		authC.Client(ctx, token),
 	)
 
-	query := GitQuery{}
+	query := TagsQuery{}
 
 	if err := client.Query(ctx, &query, nil); err != nil {
 		panic(err)

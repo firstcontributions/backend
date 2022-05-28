@@ -9,11 +9,9 @@ import (
 )
 
 const (
-	DBUsers                     = "users"
-	CollectionUsers             = "users"
-	CollectionTokens            = "tokens"
-	CollectionBadges            = "badges"
-	CollectionCursorCheckpoints = "cursor_checkpoints"
+	DBUsers          = "users"
+	CollectionUsers  = "users"
+	CollectionBadges = "badges"
 )
 
 type UsersStore struct {
