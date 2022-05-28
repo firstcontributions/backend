@@ -51,38 +51,37 @@ func (s *Server) HandleSession(next http.Handler) http.Handler {
 				s.Store,
 			),
 		)
-
-		log.Println(r.Context().Value(session.CxtKeySession))
 		// Our middleware logic goes here...
 		next.ServeHTTP(w, r)
 	})
 }
 
-func (s *Server) setSession(w http.ResponseWriter, r *http.Request, profile *usersstore.User) error {
+func (s *Server) setSession(w http.ResponseWriter, r *http.Request, profile *usersstore.User) (string, error) {
 
 	sessionData := session.NewMetaData(profile)
 	sessionID, err := uuid.NewUUID()
 	if err != nil {
-		return err
+		return "", err
 	}
 	if err := s.SessionManager.Set(r.Context(), sessionID.String(), sessionData); err != nil {
-		return err
+		return "", err
 	}
 	cookieData := map[string]string{
 		"id": sessionID.String(),
 	}
 	encoded, err := s.CookieManager.Encode("fc_session", cookieData)
 	if err != nil {
-		return err
+		return "", err
 	}
 	cookie := &http.Cookie{
 		Name:    "fc_session",
 		Value:   encoded,
 		Expires: time.Now().Add(time.Duration(*s.SessionTTLDays) * time.Hour * 24),
 		Path:    "/",
+		Domain:  "firstcontributions.com",
 	}
 	http.SetCookie(w, cookie)
-	return nil
+	return sessionID.String(), nil
 }
 
 func (s *Server) SessionHandler() http.Handler {

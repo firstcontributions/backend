@@ -24,6 +24,10 @@ func NewMetaData(user *usersstore.User) MetaData {
 	}
 }
 
+func WithContext(ctx context.Context, m MetaData) context.Context {
+	return context.WithValue(ctx, CxtKeySession, m)
+}
+
 func FromContext(ctx context.Context) MetaData {
 	return ctx.Value(CxtKeySession).(MetaData)
 }

@@ -29,6 +29,27 @@ func NewIssue(m *issuesstore.Issue) *Issue {
 		Url:               m.Url,
 	}
 }
+
+type CreateIssueInput struct {
+	IssueType         string
+	Repository        string
+	RespositoryAvatar string
+	Title             string
+	Url               string
+}
+
+func (n *CreateIssueInput) ToModel() *issuesstore.Issue {
+	if n == nil {
+		return nil
+	}
+	return &issuesstore.Issue{
+		IssueType:         n.IssueType,
+		Repository:        n.Repository,
+		RespositoryAvatar: n.RespositoryAvatar,
+		Title:             n.Title,
+		Url:               n.Url,
+	}
+}
 func (n *Issue) ID(ctx context.Context) graphql.ID {
 	return NewIDMarshaller("issue", n.Id).
 		ToGraphqlID()

@@ -12,7 +12,7 @@ configure:
 	go install github.com/gokultp/go-envparser
 	go install github.com/golang/protobuf/proto
 	go install github.com/golang/protobuf/protoc-gen-go
-	grep -v "172.30.1." /etc/hosts >> /tmp/hosts
+	grep -v "firstcontributions" /etc/hosts >> /tmp/hosts
 	echo "172.30.1.6 api.firstcontributions.com" >> /tmp/hosts
 	echo "172.30.1.8 explorer.firstcontributions.com" >> /tmp/hosts
 

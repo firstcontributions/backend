@@ -122,7 +122,7 @@ func (r ReputationSynchroniser) getPullRequestDataFromGitHub(
 		"prCursor": cursor,
 	}
 
-	if err := r.Query(context.Background(), &query, params); err != nil {
+	if err := r.Query(ctx, &query, params); err != nil {
 		return nil, false, nil, err
 	}
 	files := []FileChange{}
