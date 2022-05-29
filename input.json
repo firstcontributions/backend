@@ -102,6 +102,15 @@
                         "title": "string",
                         "repository": "string",
                         "respository_avatar": "string",
+                        "labels": {
+                            "paginated": true,
+                            "name": "string",
+                            "id": "string"
+                        },
+                        "authorAssociation": "string",
+                        "assignees": {
+                            "totalCount": "number"
+                        },
                         "url": "string",
                         "issue_type": "string"
                     }
