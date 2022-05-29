@@ -100,8 +100,15 @@
                     "properties":{
                         "id": "id",
                         "title": "string",
+                        "body": "string",
                         "repository": "string",
                         "respository_avatar": "string",
+                        "repository_updated_at": "time",
+                        "comment_count": "int",
+                        "labels": {
+                            "type": "list",
+                            "schema": "string"
+                        },
                         "url": "string",
                         "issue_type": "string"
                     }

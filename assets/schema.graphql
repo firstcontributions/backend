@@ -47,9 +47,13 @@ type BadgeEdge {
 }
 
 type Issue implements Node {
+	body: String!
+	commentCount: Int!
 	id: ID!
 	issueType: String!
+	labels: [String]!
 	repository: String!
+	repositoryUpdatedAt: Time!
 	respositoryAvatar: String!
 	title: String!
 	url: String!
