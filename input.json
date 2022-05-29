@@ -100,16 +100,14 @@
                     "properties":{
                         "id": "id",
                         "title": "string",
+                        "body": "string",
                         "repository": "string",
                         "respository_avatar": "string",
+                        "repository_updated_at": "time",
+                        "comment_count": "int",
                         "labels": {
-                            "paginated": true,
-                            "name": "string",
-                            "id": "string"
-                        },
-                        "authorAssociation": "string",
-                        "assignees": {
-                            "totalCount": "number"
+                            "type": "list",
+                            "schema": "string"
                         },
                         "url": "string",
                         "issue_type": "string"

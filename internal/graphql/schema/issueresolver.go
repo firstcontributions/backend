@@ -8,12 +8,16 @@ import (
 )
 
 type Issue struct {
-	Id                string
-	IssueType         string
-	Repository        string
-	RespositoryAvatar string
-	Title             string
-	Url               string
+	Body                string
+	CommentCount        int32
+	Id                  string
+	IssueType           string
+	Labels              []*string
+	Repository          string
+	RepositoryUpdatedAt graphql.Time
+	RespositoryAvatar   string
+	Title               string
+	Url                 string
 }
 
 func NewIssue(m *issuesstore.Issue) *Issue {
@@ -21,21 +25,29 @@ func NewIssue(m *issuesstore.Issue) *Issue {
 		return nil
 	}
 	return &Issue{
-		Id:                m.Id,
-		IssueType:         m.IssueType,
-		Repository:        m.Repository,
-		RespositoryAvatar: m.RespositoryAvatar,
-		Title:             m.Title,
-		Url:               m.Url,
+		Body:                m.Body,
+		CommentCount:        int32(m.CommentCount),
+		Id:                  m.Id,
+		IssueType:           m.IssueType,
+		Labels:              m.Labels,
+		Repository:          m.Repository,
+		RepositoryUpdatedAt: graphql.Time{Time: m.RepositoryUpdatedAt},
+		RespositoryAvatar:   m.RespositoryAvatar,
+		Title:               m.Title,
+		Url:                 m.Url,
 	}
 }
 
 type CreateIssueInput struct {
-	IssueType         string
-	Repository        string
-	RespositoryAvatar string
-	Title             string
-	Url               string
+	Body                string
+	CommentCount        int32
+	IssueType           string
+	Labels              []*string
+	Repository          string
+	RepositoryUpdatedAt graphql.Time
+	RespositoryAvatar   string
+	Title               string
+	Url                 string
 }
 
 func (n *CreateIssueInput) ToModel() *issuesstore.Issue {
@@ -43,11 +55,15 @@ func (n *CreateIssueInput) ToModel() *issuesstore.Issue {
 		return nil
 	}
 	return &issuesstore.Issue{
-		IssueType:         n.IssueType,
-		Repository:        n.Repository,
-		RespositoryAvatar: n.RespositoryAvatar,
-		Title:             n.Title,
-		Url:               n.Url,
+		Body:                n.Body,
+		CommentCount:        int64(n.CommentCount),
+		IssueType:           n.IssueType,
+		Labels:              n.Labels,
+		Repository:          n.Repository,
+		RepositoryUpdatedAt: n.RepositoryUpdatedAt.Time,
+		RespositoryAvatar:   n.RespositoryAvatar,
+		Title:               n.Title,
+		Url:                 n.Url,
 	}
 }
 func (n *Issue) ID(ctx context.Context) graphql.ID {
