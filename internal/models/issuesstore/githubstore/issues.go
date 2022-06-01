@@ -21,13 +21,13 @@ func getQuery(ctx context.Context, issueType string) string {
 
 	switch issueType {
 	case IssueTypeLastRepo:
-		return fmt.Sprintf("%s repo:%s", query, meta.Tags.RecentRepos[0])
+		return fmt.Sprintf("%s repo:%s", query, *meta.Tags.RecentRepos[0])
 	case IssueTypeRecentRepo:
 		ln := len(meta.Tags.RecentRepos)
 		count := min(7, ln)
 		repos := meta.Tags.RecentRepos[1:count]
 		for _, repo := range repos {
-			query += fmt.Sprintf(" repo:%s", repo)
+			query += fmt.Sprintf(" repo:%s", *repo)
 		}
 		return query
 	default:
@@ -35,7 +35,7 @@ func getQuery(ctx context.Context, issueType string) string {
 		languages := meta.Tags.Languages[:languageCount]
 
 		for _, lng := range languages {
-			query += fmt.Sprintf(" language:%s", lng)
+			query += fmt.Sprintf(" language:%s", *lng)
 		}
 		return query
 	}
@@ -48,33 +48,34 @@ func min(a, b int) int {
 	return b
 }
 
+type GitIssue struct {
+	Id       githubv4.ID
+	Url      githubv4.String
+	Title    githubv4.String
+	Body     githubv4.String
+	Comments struct {
+		TotalCount githubv4.Int
+	}
+	Labels struct {
+		Edges []struct {
+			Node struct {
+				Name githubv4.String
+			}
+		}
+	} `graphql:"labels (first: 10)"`
+	Repository struct {
+		NameWithOwner githubv4.String
+		Owner         struct {
+			AvatarUrl githubv4.String
+		}
+		UpdatedAt githubv4.DateTime
+	}
+}
 type IssueQuery struct {
 	Search struct {
 		Edges []struct {
 			Node struct {
-				Issue struct {
-					Id       githubv4.ID
-					Url      githubv4.String
-					Title    githubv4.String
-					Body     githubv4.String
-					Comments struct {
-						TotalCount githubv4.Int
-					}
-					Labels struct {
-						Edges []struct {
-							Node struct {
-								Name githubv4.String
-							}
-						}
-					} `graphql:"labels (first: 10)"`
-					Repository struct {
-						NameWithOwner githubv4.String
-						Owner         struct {
-							AvatarUrl githubv4.String
-						}
-						UpdatedAt githubv4.DateTime
-					}
-				} `graphql:"... on Issue"`
+				Issue GitIssue `graphql:"... on Issue"`
 			}
 		}
 		PageInfo struct {
@@ -122,7 +123,6 @@ func (g *GitHubStore) GetIssues(
 		tmp := githubv4.String(*before)
 		beforeGql = &tmp
 	}
-	fmt.Println(getQuery(ctx, *issueType))
 	params := map[string]interface{}{
 		"q":      githubv4.String(getQuery(ctx, *issueType)),
 		"after":  afterGql,
@@ -137,22 +137,7 @@ func (g *GitHubStore) GetIssues(
 	issues := []*issuesstore.Issue{}
 
 	for _, i := range queryData.Search.Edges {
-		labels := []*string{}
-		for _, label := range i.Node.Issue.Labels.Edges {
-			strLabel := string(label.Node.Name)
-			labels = append(labels, &strLabel)
-		}
-		issues = append(issues, &issuesstore.Issue{
-			Id:                  i.Node.Issue.Id.(string),
-			Title:               string(i.Node.Issue.Title),
-			Body:                string(i.Node.Issue.Body),
-			Url:                 string(i.Node.Issue.Url),
-			Labels:              labels,
-			CommentCount:        int64(i.Node.Issue.Comments.TotalCount),
-			Repository:          string(i.Node.Issue.Repository.NameWithOwner),
-			RespositoryAvatar:   string(i.Node.Issue.Repository.Owner.AvatarUrl),
-			RepositoryUpdatedAt: i.Node.Issue.Repository.UpdatedAt.Time,
-		})
+		issues = append(issues, issueFromGithubIssue(i.Node.Issue))
 	}
 	return issues,
 		bool(queryData.Search.PageInfo.HasNextPage),
@@ -160,4 +145,23 @@ func (g *GitHubStore) GetIssues(
 		string(queryData.Search.PageInfo.StartCursor),
 		string(queryData.Search.PageInfo.EndCursor),
 		nil
+}
+
+func issueFromGithubIssue(i GitIssue) *issuesstore.Issue {
+	labels := []*string{}
+	for _, label := range i.Labels.Edges {
+		strLabel := string(label.Node.Name)
+		labels = append(labels, &strLabel)
+	}
+	return &issuesstore.Issue{
+		Id:                  i.Id.(string),
+		Title:               string(i.Title),
+		Body:                string(i.Body),
+		Url:                 string(i.Url),
+		Labels:              labels,
+		CommentCount:        int64(i.Comments.TotalCount),
+		Repository:          string(i.Repository.NameWithOwner),
+		RespositoryAvatar:   string(i.Repository.Owner.AvatarUrl),
+		RepositoryUpdatedAt: i.Repository.UpdatedAt.Time,
+	}
 }

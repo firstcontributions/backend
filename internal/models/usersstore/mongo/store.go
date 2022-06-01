@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
 const (
@@ -21,7 +22,7 @@ type UsersStore struct {
 // NewUsersStore makes connection to mongo server by provided url
 // and return an instance of the client
 func NewUsersStore(ctx context.Context, url string) (*UsersStore, error) {
-	client, err := mongo.NewClient(options.Client().ApplyURI(url))
+	client, err := mongo.NewClient(options.Client().ApplyURI(url).SetMonitor(otelmongo.NewMonitor()))
 	if err != nil {
 		return nil, err
 	}
