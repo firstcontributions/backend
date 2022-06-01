@@ -56,6 +56,7 @@ func replaceErrors(err error) error {
 			Labels:  de.Labels,
 			Name:    de.Name,
 			Wrapped: de.Wrapped,
+			Raw:     bson.Raw(de.Raw),
 		}
 	}
 	if qe, ok := err.(driver.QueryFailureError); ok {
@@ -63,6 +64,7 @@ func replaceErrors(err error) error {
 		ce := CommandError{
 			Name:    qe.Message,
 			Wrapped: qe.Wrapped,
+			Raw:     bson.Raw(qe.Response),
 		}
 
 		dollarErr, err := qe.Response.LookupErr("$err")
@@ -207,6 +209,7 @@ type ServerError interface {
 }
 
 var _ ServerError = CommandError{}
+var _ ServerError = WriteError{}
 var _ ServerError = WriteException{}
 var _ ServerError = BulkWriteException{}
 
@@ -217,6 +220,7 @@ type CommandError struct {
 	Labels  []string // Categories to which the error belongs
 	Name    string   // A human-readable name corresponding to the error code
 	Wrapped error    // The underlying error, if one exists.
+	Raw     bson.Raw // The original server response containing the error.
 }
 
 // Error implements the error interface.
@@ -275,31 +279,67 @@ type WriteError struct {
 
 	Code    int
 	Message string
+	Details bson.Raw
+
+	// The original write error from the server response.
+	Raw bson.Raw
 }
 
-func (we WriteError) Error() string { return we.Message }
+func (we WriteError) Error() string {
+	msg := we.Message
+	if len(we.Details) > 0 {
+		msg = fmt.Sprintf("%s: %s", msg, we.Details.String())
+	}
+	return msg
+}
+
+// HasErrorCode returns true if the error has the specified code.
+func (we WriteError) HasErrorCode(code int) bool {
+	return we.Code == code
+}
+
+// HasErrorLabel returns true if the error contains the specified label. WriteErrors do not contain labels,
+// so we always return false.
+func (we WriteError) HasErrorLabel(label string) bool {
+	return false
+}
+
+// HasErrorMessage returns true if the error contains the specified message.
+func (we WriteError) HasErrorMessage(message string) bool {
+	return strings.Contains(we.Message, message)
+}
+
+// HasErrorCodeWithMessage returns true if the error has the specified code and Message contains the specified message.
+func (we WriteError) HasErrorCodeWithMessage(code int, message string) bool {
+	return we.Code == code && strings.Contains(we.Message, message)
+}
+
+// serverError implements the ServerError interface.
+func (we WriteError) serverError() {}
 
 // WriteErrors is a group of write errors that occurred during execution of a write operation.
 type WriteErrors []WriteError
 
 // Error implements the error interface.
 func (we WriteErrors) Error() string {
-	var buf bytes.Buffer
-	fmt.Fprint(&buf, "write errors: [")
-	for idx, err := range we {
-		if idx != 0 {
-			fmt.Fprintf(&buf, ", ")
-		}
-		fmt.Fprintf(&buf, "{%s}", err)
+	errs := make([]error, len(we))
+	for i := 0; i < len(we); i++ {
+		errs[i] = we[i]
 	}
-	fmt.Fprint(&buf, "]")
-	return buf.String()
+	// WriteErrors isn't returned from batch operations, but we can still use the same formatter.
+	return "write errors: " + joinBatchErrors(errs)
 }
 
 func writeErrorsFromDriverWriteErrors(errs driver.WriteErrors) WriteErrors {
 	wes := make(WriteErrors, 0, len(errs))
 	for _, err := range errs {
-		wes = append(wes, WriteError{Index: int(err.Index), Code: int(err.Code), Message: err.Message})
+		wes = append(wes, WriteError{
+			Index:   int(err.Index),
+			Code:    int(err.Code),
+			Message: err.Message,
+			Details: bson.Raw(err.Details),
+			Raw:     bson.Raw(err.Raw),
+		})
 	}
 	return wes
 }
@@ -311,6 +351,7 @@ type WriteConcernError struct {
 	Code    int
 	Message string
 	Details bson.Raw
+	Raw     bson.Raw // The original write concern error from the server response.
 }
 
 // Error implements the error interface.
@@ -332,15 +373,28 @@ type WriteException struct {
 
 	// The categories to which the exception belongs.
 	Labels []string
+
+	// The original server response containing the error.
+	Raw bson.Raw
 }
 
 // Error implements the error interface.
 func (mwe WriteException) Error() string {
-	var buf bytes.Buffer
-	fmt.Fprint(&buf, "multiple write errors: [")
-	fmt.Fprintf(&buf, "{%s}, ", mwe.WriteErrors)
-	fmt.Fprintf(&buf, "{%s}]", mwe.WriteConcernError)
-	return buf.String()
+	causes := make([]string, 0, 2)
+	if mwe.WriteConcernError != nil {
+		causes = append(causes, "write concern error: "+mwe.WriteConcernError.Error())
+	}
+	if len(mwe.WriteErrors) > 0 {
+		// The WriteErrors error message already starts with "write errors:", so don't add it to the
+		// error message again.
+		causes = append(causes, mwe.WriteErrors.Error())
+	}
+
+	message := "write exception: "
+	if len(causes) == 0 {
+		return message + "no causes"
+	}
+	return message + strings.Join(causes, ", ")
 }
 
 // HasErrorCode returns true if the error has the specified code.
@@ -408,6 +462,7 @@ func convertDriverWriteConcernError(wce *driver.WriteConcernError) *WriteConcern
 		Code:    int(wce.Code),
 		Message: wce.Message,
 		Details: bson.Raw(wce.Details),
+		Raw:     bson.Raw(wce.Raw),
 	}
 }
 
@@ -420,9 +475,7 @@ type BulkWriteError struct {
 
 // Error implements the error interface.
 func (bwe BulkWriteError) Error() string {
-	var buf bytes.Buffer
-	fmt.Fprintf(&buf, "{%s}", bwe.WriteError)
-	return buf.String()
+	return bwe.WriteError.Error()
 }
 
 // BulkWriteException is the error type returned by BulkWrite and InsertMany operations.
@@ -439,11 +492,23 @@ type BulkWriteException struct {
 
 // Error implements the error interface.
 func (bwe BulkWriteException) Error() string {
-	var buf bytes.Buffer
-	fmt.Fprint(&buf, "bulk write error: [")
-	fmt.Fprintf(&buf, "{%s}, ", bwe.WriteErrors)
-	fmt.Fprintf(&buf, "{%s}]", bwe.WriteConcernError)
-	return buf.String()
+	causes := make([]string, 0, 2)
+	if bwe.WriteConcernError != nil {
+		causes = append(causes, "write concern error: "+bwe.WriteConcernError.Error())
+	}
+	if len(bwe.WriteErrors) > 0 {
+		errs := make([]error, len(bwe.WriteErrors))
+		for i := 0; i < len(bwe.WriteErrors); i++ {
+			errs[i] = &bwe.WriteErrors[i]
+		}
+		causes = append(causes, "write errors: "+joinBatchErrors(errs))
+	}
+
+	message := "bulk write exception: "
+	if len(causes) == 0 {
+		return message + "no causes"
+	}
+	return "bulk write exception: " + strings.Join(causes, ", ")
 }
 
 // HasErrorCode returns true if any of the errors have the specified code.
@@ -531,6 +596,7 @@ func processWriteError(err error) (returnResult, error) {
 				WriteConcernError: convertDriverWriteConcernError(tt.WriteConcernError),
 				WriteErrors:       writeErrorsFromDriverWriteErrors(tt.WriteErrors),
 				Labels:            tt.Labels,
+				Raw:               bson.Raw(tt.Raw),
 			}
 		default:
 			return rrNone, replaceErrors(err)
@@ -538,4 +604,35 @@ func processWriteError(err error) (returnResult, error) {
 	default:
 		return rrAll, nil
 	}
+}
+
+// batchErrorsTargetLength is the target length of error messages returned by batch operation
+// error types. Try to limit batch error messages to 2kb to prevent problems when printing error
+// messages from large batch operations.
+const batchErrorsTargetLength = 2000
+
+// joinBatchErrors appends messages from the given errors to a comma-separated string. If the
+// string exceeds 2kb, it stops appending error messages and appends the message "+N more errors..."
+// to the end.
+//
+// Example format:
+//     "[message 1, message 2, +8 more errors...]"
+func joinBatchErrors(errs []error) string {
+	var buf bytes.Buffer
+	fmt.Fprint(&buf, "[")
+	for idx, err := range errs {
+		if idx != 0 {
+			fmt.Fprint(&buf, ", ")
+		}
+		// If the error message has exceeded the target error message length, stop appending errors
+		// to the message and append the number of remaining errors instead.
+		if buf.Len() > batchErrorsTargetLength {
+			fmt.Fprintf(&buf, "+%d more errors...", len(errs)-idx)
+			break
+		}
+		fmt.Fprint(&buf, err.Error())
+	}
+	fmt.Fprint(&buf, "]")
+
+	return buf.String()
 }

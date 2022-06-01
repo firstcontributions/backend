@@ -53,26 +53,26 @@ type IssueQuery struct {
 		Edges []struct {
 			Node struct {
 				Issue struct {
-					Id         githubv4.ID
-					Url        githubv4.String
-					Title      githubv4.String
-					Body 	   githubv4.String
+					Id       githubv4.ID
+					Url      githubv4.String
+					Title    githubv4.String
+					Body     githubv4.String
 					Comments struct {
-						TotalCount	githubv4.Int
+						TotalCount githubv4.Int
 					}
 					Labels struct {
-						Edges [] struct {
+						Edges []struct {
 							Node struct {
-							  Name githubv4.String
+								Name githubv4.String
 							}
-						  }
+						}
 					} `graphql:"labels (first: 10)"`
 					Repository struct {
 						NameWithOwner githubv4.String
 						Owner         struct {
 							AvatarUrl githubv4.String
 						}
-						UpdatedAt	  githubv4.DateTime
+						UpdatedAt githubv4.DateTime
 					}
 				} `graphql:"... on Issue"`
 			}
@@ -137,20 +137,20 @@ func (g *GitHubStore) GetIssues(
 	issues := []*issuesstore.Issue{}
 
 	for _, i := range queryData.Search.Edges {
-		labels := [] *string {}
+		labels := []*string{}
 		for _, label := range i.Node.Issue.Labels.Edges {
 			strLabel := string(label.Node.Name)
 			labels = append(labels, &strLabel)
 		}
 		issues = append(issues, &issuesstore.Issue{
-			Id:                i.Node.Issue.Id.(string),
-			Title:             string(i.Node.Issue.Title),
-			Body: 				string(i.Node.Issue.Body),
-			Url:               string(i.Node.Issue.Url),
-			Labels: 			labels,
-			CommentCount:		int64(i.Node.Issue.Comments.TotalCount),
-			Repository:        string(i.Node.Issue.Repository.NameWithOwner),
-			RespositoryAvatar: string(i.Node.Issue.Repository.Owner.AvatarUrl),
+			Id:                  i.Node.Issue.Id.(string),
+			Title:               string(i.Node.Issue.Title),
+			Body:                string(i.Node.Issue.Body),
+			Url:                 string(i.Node.Issue.Url),
+			Labels:              labels,
+			CommentCount:        int64(i.Node.Issue.Comments.TotalCount),
+			Repository:          string(i.Node.Issue.Repository.NameWithOwner),
+			RespositoryAvatar:   string(i.Node.Issue.Repository.Owner.AvatarUrl),
 			RepositoryUpdatedAt: i.Node.Issue.Repository.UpdatedAt.Time,
 		})
 	}

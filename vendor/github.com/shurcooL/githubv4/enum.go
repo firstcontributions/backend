@@ -2,15 +2,13 @@
 
 package githubv4
 
-// ActionExecutionCapabilitySetting represents the possible capabilities for action executions setting.
-type ActionExecutionCapabilitySetting string
+// ActorType represents the actor's type.
+type ActorType string
 
-// The possible capabilities for action executions setting.
+// The actor's type.
 const (
-	ActionExecutionCapabilitySettingDisabled         ActionExecutionCapabilitySetting = "DISABLED"           // All action executions are disabled.
-	ActionExecutionCapabilitySettingAllActions       ActionExecutionCapabilitySetting = "ALL_ACTIONS"        // All action executions are enabled.
-	ActionExecutionCapabilitySettingLocalActionsOnly ActionExecutionCapabilitySetting = "LOCAL_ACTIONS_ONLY" // Only actions defined within the repo are allowed.
-	ActionExecutionCapabilitySettingNoPolicy         ActionExecutionCapabilitySetting = "NO_POLICY"          // Organization administrators action execution capabilities.
+	ActorTypeUser ActorType = "USER" // Indicates a user actor.
+	ActorTypeTeam ActorType = "TEAM" // Indicates a team actor.
 )
 
 // AuditLogOrderField represents properties by which Audit Log connections can be ordered.
@@ -19,6 +17,54 @@ type AuditLogOrderField string
 // Properties by which Audit Log connections can be ordered.
 const (
 	AuditLogOrderFieldCreatedAt AuditLogOrderField = "CREATED_AT" // Order audit log entries by timestamp.
+)
+
+// CheckAnnotationLevel represents represents an annotation's information level.
+type CheckAnnotationLevel string
+
+// Represents an annotation's information level.
+const (
+	CheckAnnotationLevelFailure CheckAnnotationLevel = "FAILURE" // An annotation indicating an inescapable error.
+	CheckAnnotationLevelNotice  CheckAnnotationLevel = "NOTICE"  // An annotation indicating some information.
+	CheckAnnotationLevelWarning CheckAnnotationLevel = "WARNING" // An annotation indicating an ignorable error.
+)
+
+// CheckConclusionState represents the possible states for a check suite or run conclusion.
+type CheckConclusionState string
+
+// The possible states for a check suite or run conclusion.
+const (
+	CheckConclusionStateActionRequired CheckConclusionState = "ACTION_REQUIRED" // The check suite or run requires action.
+	CheckConclusionStateTimedOut       CheckConclusionState = "TIMED_OUT"       // The check suite or run has timed out.
+	CheckConclusionStateCancelled      CheckConclusionState = "CANCELLED"       // The check suite or run has been cancelled.
+	CheckConclusionStateFailure        CheckConclusionState = "FAILURE"         // The check suite or run has failed.
+	CheckConclusionStateSuccess        CheckConclusionState = "SUCCESS"         // The check suite or run has succeeded.
+	CheckConclusionStateNeutral        CheckConclusionState = "NEUTRAL"         // The check suite or run was neutral.
+	CheckConclusionStateSkipped        CheckConclusionState = "SKIPPED"         // The check suite or run was skipped.
+	CheckConclusionStateStartupFailure CheckConclusionState = "STARTUP_FAILURE" // The check suite or run has failed at startup.
+	CheckConclusionStateStale          CheckConclusionState = "STALE"           // The check suite or run was marked stale by GitHub. Only GitHub can use this conclusion.
+)
+
+// CheckRunType represents the possible types of check runs.
+type CheckRunType string
+
+// The possible types of check runs.
+const (
+	CheckRunTypeAll    CheckRunType = "ALL"    // Every check run available.
+	CheckRunTypeLatest CheckRunType = "LATEST" // The latest check run.
+)
+
+// CheckStatusState represents the possible states for a check suite or run status.
+type CheckStatusState string
+
+// The possible states for a check suite or run status.
+const (
+	CheckStatusStateQueued     CheckStatusState = "QUEUED"      // The check suite or run has been queued.
+	CheckStatusStateInProgress CheckStatusState = "IN_PROGRESS" // The check suite or run is in progress.
+	CheckStatusStateCompleted  CheckStatusState = "COMPLETED"   // The check suite or run has been completed.
+	CheckStatusStateWaiting    CheckStatusState = "WAITING"     // The check suite or run is in waiting state.
+	CheckStatusStatePending    CheckStatusState = "PENDING"     // The check suite or run is in pending state.
+	CheckStatusStateRequested  CheckStatusState = "REQUESTED"   // The check suite or run has been requested.
 )
 
 // CollaboratorAffiliation represents collaborators affiliation level with a subject.
@@ -38,6 +84,7 @@ type CommentAuthorAssociation string
 const (
 	CommentAuthorAssociationMember               CommentAuthorAssociation = "MEMBER"                 // Author is a member of the organization that owns the repository.
 	CommentAuthorAssociationOwner                CommentAuthorAssociation = "OWNER"                  // Author is the owner of the repository.
+	CommentAuthorAssociationMannequin            CommentAuthorAssociation = "MANNEQUIN"              // Author is a placeholder for an unclaimed user.
 	CommentAuthorAssociationCollaborator         CommentAuthorAssociation = "COLLABORATOR"           // Author has been invited to collaborate on the repository.
 	CommentAuthorAssociationContributor          CommentAuthorAssociation = "CONTRIBUTOR"            // Author has previously committed to the repository.
 	CommentAuthorAssociationFirstTimeContributor CommentAuthorAssociation = "FIRST_TIME_CONTRIBUTOR" // Author has not previously committed to the repository.
@@ -68,15 +115,42 @@ const (
 	CommitContributionOrderFieldCommitCount CommitContributionOrderField = "COMMIT_COUNT" // Order commit contributions by how many commits they represent.
 )
 
-// DefaultRepositoryPermissionField represents the possible default permissions for repositories.
+// ContributionLevel represents varying levels of contributions from none to many.
+type ContributionLevel string
+
+// Varying levels of contributions from none to many.
+const (
+	ContributionLevelNone           ContributionLevel = "NONE"            // No contributions occurred.
+	ContributionLevelFirstQuartile  ContributionLevel = "FIRST_QUARTILE"  // Lowest 25% of days of contributions.
+	ContributionLevelSecondQuartile ContributionLevel = "SECOND_QUARTILE" // Second lowest 25% of days of contributions. More contributions than the first quartile.
+	ContributionLevelThirdQuartile  ContributionLevel = "THIRD_QUARTILE"  // Second highest 25% of days of contributions. More contributions than second quartile, less than the fourth quartile.
+	ContributionLevelFourthQuartile ContributionLevel = "FOURTH_QUARTILE" // Highest 25% of days of contributions. More contributions than the third quartile.
+)
+
+// DefaultRepositoryPermissionField represents the possible base permissions for repositories.
 type DefaultRepositoryPermissionField string
 
-// The possible default permissions for repositories.
+// The possible base permissions for repositories.
 const (
 	DefaultRepositoryPermissionFieldNone  DefaultRepositoryPermissionField = "NONE"  // No access.
 	DefaultRepositoryPermissionFieldRead  DefaultRepositoryPermissionField = "READ"  // Can read repos by default.
 	DefaultRepositoryPermissionFieldWrite DefaultRepositoryPermissionField = "WRITE" // Can read and write repos by default.
 	DefaultRepositoryPermissionFieldAdmin DefaultRepositoryPermissionField = "ADMIN" // Can read, write, and administrate repos by default.
+)
+
+// DependencyGraphEcosystem represents the possible ecosystems of a dependency graph package.
+type DependencyGraphEcosystem string
+
+// The possible ecosystems of a dependency graph package.
+const (
+	DependencyGraphEcosystemRubygems DependencyGraphEcosystem = "RUBYGEMS" // Ruby gems hosted at RubyGems.org.
+	DependencyGraphEcosystemNpm      DependencyGraphEcosystem = "NPM"      // JavaScript packages hosted at npmjs.com.
+	DependencyGraphEcosystemPip      DependencyGraphEcosystem = "PIP"      // Python packages hosted at PyPI.org.
+	DependencyGraphEcosystemMaven    DependencyGraphEcosystem = "MAVEN"    // Java artifacts hosted at the Maven central repository.
+	DependencyGraphEcosystemNuget    DependencyGraphEcosystem = "NUGET"    // .NET packages hosted at the NuGet Gallery.
+	DependencyGraphEcosystemComposer DependencyGraphEcosystem = "COMPOSER" // PHP packages hosted at packagist.org.
+	DependencyGraphEcosystemGo       DependencyGraphEcosystem = "GO"       // Go modules.
+	DependencyGraphEcosystemActions  DependencyGraphEcosystem = "ACTIONS"  // GitHub Actions.
 )
 
 // DeploymentOrderField represents properties by which deployment connections can be ordered.
@@ -85,6 +159,24 @@ type DeploymentOrderField string
 // Properties by which deployment connections can be ordered.
 const (
 	DeploymentOrderFieldCreatedAt DeploymentOrderField = "CREATED_AT" // Order collection by creation time.
+)
+
+// DeploymentProtectionRuleType represents the possible protection rule types.
+type DeploymentProtectionRuleType string
+
+// The possible protection rule types.
+const (
+	DeploymentProtectionRuleTypeRequiredReviewers DeploymentProtectionRuleType = "REQUIRED_REVIEWERS" // Required reviewers.
+	DeploymentProtectionRuleTypeWaitTimer         DeploymentProtectionRuleType = "WAIT_TIMER"         // Wait timer.
+)
+
+// DeploymentReviewState represents the possible states for a deployment review.
+type DeploymentReviewState string
+
+// The possible states for a deployment review.
+const (
+	DeploymentReviewStateApproved DeploymentReviewState = "APPROVED" // The deployment was approved.
+	DeploymentReviewStateRejected DeploymentReviewState = "REJECTED" // The deployment was rejected.
 )
 
 // DeploymentState represents the possible states in which a deployment can be.
@@ -101,6 +193,7 @@ const (
 	DeploymentStatePending    DeploymentState = "PENDING"     // The deployment is pending.
 	DeploymentStateQueued     DeploymentState = "QUEUED"      // The deployment has queued.
 	DeploymentStateInProgress DeploymentState = "IN_PROGRESS" // The deployment is in progress.
+	DeploymentStateWaiting    DeploymentState = "WAITING"     // The deployment is waiting.
 )
 
 // DeploymentStatusState represents the possible states for a deployment status.
@@ -115,6 +208,7 @@ const (
 	DeploymentStatusStateError      DeploymentStatusState = "ERROR"       // The deployment experienced an error.
 	DeploymentStatusStateQueued     DeploymentStatusState = "QUEUED"      // The deployment is queued.
 	DeploymentStatusStateInProgress DeploymentStatusState = "IN_PROGRESS" // The deployment is in progress.
+	DeploymentStatusStateWaiting    DeploymentStatusState = "WAITING"     // The deployment is waiting.
 )
 
 // DiffSide represents the possible sides of a diff.
@@ -124,6 +218,27 @@ type DiffSide string
 const (
 	DiffSideLeft  DiffSide = "LEFT"  // The left side of the diff.
 	DiffSideRight DiffSide = "RIGHT" // The right side of the diff.
+)
+
+// DiscussionOrderField represents properties by which discussion connections can be ordered.
+type DiscussionOrderField string
+
+// Properties by which discussion connections can be ordered.
+const (
+	DiscussionOrderFieldCreatedAt DiscussionOrderField = "CREATED_AT" // Order discussions by creation time.
+	DiscussionOrderFieldUpdatedAt DiscussionOrderField = "UPDATED_AT" // Order discussions by most recent modification time.
+)
+
+// DismissReason represents the possible reasons that a Dependabot alert was dismissed.
+type DismissReason string
+
+// The possible reasons that a Dependabot alert was dismissed.
+const (
+	DismissReasonFixStarted    DismissReason = "FIX_STARTED"    // A fix has already been started.
+	DismissReasonNoBandwidth   DismissReason = "NO_BANDWIDTH"   // No bandwidth to fix this.
+	DismissReasonTolerableRisk DismissReason = "TOLERABLE_RISK" // Risk is tolerable to this project.
+	DismissReasonInaccurate    DismissReason = "INACCURATE"     // This alert is inaccurate or incorrect.
+	DismissReasonNotUsed       DismissReason = "NOT_USED"       // Vulnerable code is not actually used.
 )
 
 // EnterpriseAdministratorInvitationOrderField represents properties by which enterprise administrator invitation connections can be ordered.
@@ -143,12 +258,12 @@ const (
 	EnterpriseAdministratorRoleBillingManager EnterpriseAdministratorRole = "BILLING_MANAGER" // Represents a billing manager of the enterprise account.
 )
 
-// EnterpriseDefaultRepositoryPermissionSettingValue represents the possible values for the enterprise default repository permission setting.
+// EnterpriseDefaultRepositoryPermissionSettingValue represents the possible values for the enterprise base repository permission setting.
 type EnterpriseDefaultRepositoryPermissionSettingValue string
 
-// The possible values for the enterprise default repository permission setting.
+// The possible values for the enterprise base repository permission setting.
 const (
-	EnterpriseDefaultRepositoryPermissionSettingValueNoPolicy EnterpriseDefaultRepositoryPermissionSettingValue = "NO_POLICY" // Organizations in the enterprise choose default repository permissions for their members.
+	EnterpriseDefaultRepositoryPermissionSettingValueNoPolicy EnterpriseDefaultRepositoryPermissionSettingValue = "NO_POLICY" // Organizations in the enterprise choose base repository permissions for their members.
 	EnterpriseDefaultRepositoryPermissionSettingValueAdmin    EnterpriseDefaultRepositoryPermissionSettingValue = "ADMIN"     // Organization members will be able to clone, pull, push, and add new collaborators to all organization repositories.
 	EnterpriseDefaultRepositoryPermissionSettingValueWrite    EnterpriseDefaultRepositoryPermissionSettingValue = "WRITE"     // Organization members will be able to clone, pull, and push all organization repositories.
 	EnterpriseDefaultRepositoryPermissionSettingValueRead     EnterpriseDefaultRepositoryPermissionSettingValue = "READ"      // Organization members will be able to clone and pull all organization repositories.
@@ -267,6 +382,16 @@ const (
 	EnterpriseUserDeploymentServer EnterpriseUserDeployment = "SERVER" // The user is part of a GitHub Enterprise Server deployment.
 )
 
+// FileViewedState represents the possible viewed states of a file .
+type FileViewedState string
+
+// The possible viewed states of a file .
+const (
+	FileViewedStateDismissed FileViewedState = "DISMISSED" // The file has new changes since last viewed.
+	FileViewedStateViewed    FileViewedState = "VIEWED"    // The file has been marked as viewed.
+	FileViewedStateUnviewed  FileViewedState = "UNVIEWED"  // The file has not been marked as viewed.
+)
+
 // FundingPlatform represents the possible funding platforms for repository funding links.
 type FundingPlatform string
 
@@ -279,8 +404,9 @@ const (
 	FundingPlatformTidelift        FundingPlatform = "TIDELIFT"         // Tidelift funding platform.
 	FundingPlatformCommunityBridge FundingPlatform = "COMMUNITY_BRIDGE" // Community Bridge funding platform.
 	FundingPlatformLiberapay       FundingPlatform = "LIBERAPAY"        // Liberapay funding platform.
-	FundingPlatformIssuehunt       FundingPlatform = "ISSUEHUNT"        // IssueHunt funding platform.
+	FundingPlatformIssueHunt       FundingPlatform = "ISSUEHUNT"        // IssueHunt funding platform.
 	FundingPlatformOtechie         FundingPlatform = "OTECHIE"          // Otechie funding platform.
+	FundingPlatformLFXCrowdfunding FundingPlatform = "LFX_CROWDFUNDING" // LFX Crowdfunding funding platform.
 	FundingPlatformCustom          FundingPlatform = "CUSTOM"           // Custom funding platform.
 )
 
@@ -323,7 +449,7 @@ const (
 	GitSignatureStateNotSigningKey        GitSignatureState = "NOT_SIGNING_KEY"       // The usage flags for the key that signed this don't allow signing.
 	GitSignatureStateExpiredKey           GitSignatureState = "EXPIRED_KEY"           // Signing key expired.
 	GitSignatureStateOcspPending          GitSignatureState = "OCSP_PENDING"          // Valid signature, pending certificate revocation checking.
-	GitSignatureStateOcspError            GitSignatureState = "OCSP_ERROR"            // Valid siganture, though certificate revocation check failed.
+	GitSignatureStateOcspError            GitSignatureState = "OCSP_ERROR"            // Valid signature, though certificate revocation check failed.
 	GitSignatureStateBadCert              GitSignatureState = "BAD_CERT"              // The signing certificate or its chain could not be verified.
 	GitSignatureStateOcspRevoked          GitSignatureState = "OCSP_REVOKED"          // One or more certificates in chain has been revoked.
 )
@@ -354,6 +480,23 @@ type IpAllowListEntryOrderField string
 const (
 	IpAllowListEntryOrderFieldCreatedAt      IpAllowListEntryOrderField = "CREATED_AT"       // Order IP allow list entries by creation time.
 	IpAllowListEntryOrderFieldAllowListValue IpAllowListEntryOrderField = "ALLOW_LIST_VALUE" // Order IP allow list entries by the allow list value.
+)
+
+// IpAllowListForInstalledAppsEnabledSettingValue represents the possible values for the IP allow list configuration for installed GitHub Apps setting.
+type IpAllowListForInstalledAppsEnabledSettingValue string
+
+// The possible values for the IP allow list configuration for installed GitHub Apps setting.
+const (
+	IpAllowListForInstalledAppsEnabledSettingValueEnabled  IpAllowListForInstalledAppsEnabledSettingValue = "ENABLED"  // The setting is enabled for the owner.
+	IpAllowListForInstalledAppsEnabledSettingValueDisabled IpAllowListForInstalledAppsEnabledSettingValue = "DISABLED" // The setting is disabled for the owner.
+)
+
+// IssueCommentOrderField represents properties by which issue comment connections can be ordered.
+type IssueCommentOrderField string
+
+// Properties by which issue comment connections can be ordered.
+const (
+	IssueCommentOrderFieldUpdatedAt IssueCommentOrderField = "UPDATED_AT" // Order issue comments by update time.
 )
 
 // IssueOrderField represents properties by which issue connections can be ordered.
@@ -388,6 +531,7 @@ const (
 	IssueTimelineItemsItemTypeCommentDeletedEvent        IssueTimelineItemsItemType = "COMMENT_DELETED_EVENT"          // Represents a 'comment_deleted' event on a given issue or pull request.
 	IssueTimelineItemsItemTypeConnectedEvent             IssueTimelineItemsItemType = "CONNECTED_EVENT"                // Represents a 'connected' event on a given issue or pull request.
 	IssueTimelineItemsItemTypeConvertedNoteToIssueEvent  IssueTimelineItemsItemType = "CONVERTED_NOTE_TO_ISSUE_EVENT"  // Represents a 'converted_note_to_issue' event on a given issue or pull request.
+	IssueTimelineItemsItemTypeConvertedToDiscussionEvent IssueTimelineItemsItemType = "CONVERTED_TO_DISCUSSION_EVENT"  // Represents a 'converted_to_discussion' event on a given issue.
 	IssueTimelineItemsItemTypeDemilestonedEvent          IssueTimelineItemsItemType = "DEMILESTONED_EVENT"             // Represents a 'demilestoned' event on a given issue or pull request.
 	IssueTimelineItemsItemTypeDisconnectedEvent          IssueTimelineItemsItemType = "DISCONNECTED_EVENT"             // Represents a 'disconnected' event on a given issue or pull request.
 	IssueTimelineItemsItemTypeLabeledEvent               IssueTimelineItemsItemType = "LABELED_EVENT"                  // Represents a 'labeled' event on a given issue or pull request.
@@ -450,6 +594,30 @@ const (
 	MergeableStateUnknown     MergeableState = "UNKNOWN"     // The mergeability of the pull request is still being calculated.
 )
 
+// MigrationSourceType represents represents the different Octoshift migration sources.
+type MigrationSourceType string
+
+// Represents the different Octoshift migration sources.
+const (
+	MigrationSourceTypeGitLab          MigrationSourceType = "GITLAB"           // A GitLab migration source.
+	MigrationSourceTypeAzureDevOps     MigrationSourceType = "AZURE_DEVOPS"     // An Azure DevOps migration source.
+	MigrationSourceTypeBitbucketServer MigrationSourceType = "BITBUCKET_SERVER" // A Bitbucket Server migration source.
+	MigrationSourceTypeGitHub          MigrationSourceType = "GITHUB"           // A GitHub migration source.
+	MigrationSourceTypeGitHubArchive   MigrationSourceType = "GITHUB_ARCHIVE"   // A GitHub Migration API source.
+)
+
+// MigrationState represents the Octoshift migration state.
+type MigrationState string
+
+// The Octoshift migration state.
+const (
+	MigrationStateNotStarted MigrationState = "NOT_STARTED" // The Octoshift migration has not started.
+	MigrationStateQueued     MigrationState = "QUEUED"      // The Octoshift migration has been queued.
+	MigrationStateInProgress MigrationState = "IN_PROGRESS" // The Octoshift migration is in progress.
+	MigrationStateSucceeded  MigrationState = "SUCCEEDED"   // The Octoshift migration has succeeded.
+	MigrationStateFailed     MigrationState = "FAILED"      // The Octoshift migration has failed.
+)
+
 // MilestoneOrderField represents properties by which milestone connections can be ordered.
 type MilestoneOrderField string
 
@@ -468,6 +636,23 @@ type MilestoneState string
 const (
 	MilestoneStateOpen   MilestoneState = "OPEN"   // A milestone that is still open.
 	MilestoneStateClosed MilestoneState = "CLOSED" // A milestone that has been closed.
+)
+
+// NotificationRestrictionSettingValue represents the possible values for the notification restriction setting.
+type NotificationRestrictionSettingValue string
+
+// The possible values for the notification restriction setting.
+const (
+	NotificationRestrictionSettingValueEnabled  NotificationRestrictionSettingValue = "ENABLED"  // The setting is enabled for the owner.
+	NotificationRestrictionSettingValueDisabled NotificationRestrictionSettingValue = "DISABLED" // The setting is disabled for the owner.
+)
+
+// OIDCProviderType represents the OIDC identity provider type.
+type OIDCProviderType string
+
+// The OIDC identity provider type.
+const (
+	OIDCProviderTypeAad OIDCProviderType = "AAD" // Azure Active Directory.
 )
 
 // OauthApplicationCreateAuditEntryState represents the state of an OAuth Application when it was created.
@@ -522,6 +707,14 @@ const (
 	OrgCreateAuditEntryBillingPlanBusinessPlus  OrgCreateAuditEntryBillingPlan = "BUSINESS_PLUS"   // Enterprise Cloud Plan.
 	OrgCreateAuditEntryBillingPlanUnlimited     OrgCreateAuditEntryBillingPlan = "UNLIMITED"       // Legacy Unlimited Plan.
 	OrgCreateAuditEntryBillingPlanTieredPerSeat OrgCreateAuditEntryBillingPlan = "TIERED_PER_SEAT" // Tiered Per Seat Plan.
+)
+
+// OrgEnterpriseOwnerOrderField represents properties by which enterprise owners can be ordered.
+type OrgEnterpriseOwnerOrderField string
+
+// Properties by which enterprise owners can be ordered.
+const (
+	OrgEnterpriseOwnerOrderFieldLogin OrgEnterpriseOwnerOrderField = "LOGIN" // Order enterprise owners by login.
 )
 
 // OrgRemoveBillingManagerAuditEntryReason represents the reason a billing manager was removed from an Organization.
@@ -648,6 +841,7 @@ type OrganizationMembersCanCreateRepositoriesSettingValue string
 const (
 	OrganizationMembersCanCreateRepositoriesSettingValueAll      OrganizationMembersCanCreateRepositoriesSettingValue = "ALL"      // Members will be able to create public and private repositories.
 	OrganizationMembersCanCreateRepositoriesSettingValuePrivate  OrganizationMembersCanCreateRepositoriesSettingValue = "PRIVATE"  // Members will be able to create only private repositories.
+	OrganizationMembersCanCreateRepositoriesSettingValueInternal OrganizationMembersCanCreateRepositoriesSettingValue = "INTERNAL" // Members will be able to create only internal repositories.
 	OrganizationMembersCanCreateRepositoriesSettingValueDisabled OrganizationMembersCanCreateRepositoriesSettingValue = "DISABLED" // Members will not be able to create public or private repositories.
 )
 
@@ -698,6 +892,19 @@ const (
 	PackageVersionOrderFieldCreatedAt PackageVersionOrderField = "CREATED_AT" // Order package versions by creation time.
 )
 
+// PatchStatus represents the possible types of patch statuses.
+type PatchStatus string
+
+// The possible types of patch statuses.
+const (
+	PatchStatusAdded    PatchStatus = "ADDED"    // The file was added. Git status 'A'.
+	PatchStatusDeleted  PatchStatus = "DELETED"  // The file was deleted. Git status 'D'.
+	PatchStatusRenamed  PatchStatus = "RENAMED"  // The file was renamed. Git status 'R'.
+	PatchStatusCopied   PatchStatus = "COPIED"   // The file was copied. Git status 'C'.
+	PatchStatusModified PatchStatus = "MODIFIED" // The file's contents were changed. Git status 'M'.
+	PatchStatusChanged  PatchStatus = "CHANGED"  // The file's type was changed. Git status 'T'.
+)
+
 // PinnableItemType represents represents items that can be pinned to a profile page or dashboard.
 type PinnableItemType string
 
@@ -711,6 +918,31 @@ const (
 	PinnableItemTypeUser         PinnableItemType = "USER"         // A user.
 	PinnableItemTypeOrganization PinnableItemType = "ORGANIZATION" // An organization.
 	PinnableItemTypeTeam         PinnableItemType = "TEAM"         // A team.
+)
+
+// PinnedDiscussionGradient represents preconfigured gradients that may be used to style discussions pinned within a repository.
+type PinnedDiscussionGradient string
+
+// Preconfigured gradients that may be used to style discussions pinned within a repository.
+const (
+	PinnedDiscussionGradientRedOrange   PinnedDiscussionGradient = "RED_ORANGE"   // A gradient of red to orange.
+	PinnedDiscussionGradientBlueMint    PinnedDiscussionGradient = "BLUE_MINT"    // A gradient of blue to mint.
+	PinnedDiscussionGradientBluePurple  PinnedDiscussionGradient = "BLUE_PURPLE"  // A gradient of blue to purple.
+	PinnedDiscussionGradientPinkBlue    PinnedDiscussionGradient = "PINK_BLUE"    // A gradient of pink to blue.
+	PinnedDiscussionGradientPurpleCoral PinnedDiscussionGradient = "PURPLE_CORAL" // A gradient of purple to coral.
+)
+
+// PinnedDiscussionPattern represents preconfigured background patterns that may be used to style discussions pinned within a repository.
+type PinnedDiscussionPattern string
+
+// Preconfigured background patterns that may be used to style discussions pinned within a repository.
+const (
+	PinnedDiscussionPatternDotFill   PinnedDiscussionPattern = "DOT_FILL"   // A solid dot pattern.
+	PinnedDiscussionPatternPlus      PinnedDiscussionPattern = "PLUS"       // A plus sign pattern.
+	PinnedDiscussionPatternZap       PinnedDiscussionPattern = "ZAP"        // A lightning bolt pattern.
+	PinnedDiscussionPatternChevronUp PinnedDiscussionPattern = "CHEVRON_UP" // An upward-facing chevron pattern.
+	PinnedDiscussionPatternDot       PinnedDiscussionPattern = "DOT"        // A hollow dot pattern.
+	PinnedDiscussionPatternHeartFill PinnedDiscussionPattern = "HEART_FILL" // A heart pattern.
 )
 
 // ProjectCardArchivedState represents the possible archived states of a project card.
@@ -742,6 +974,48 @@ const (
 	ProjectColumnPurposeDone       ProjectColumnPurpose = "DONE"        // The column contains cards which are complete.
 )
 
+// ProjectItemType represents the type of a project item.
+type ProjectItemType string
+
+// The type of a project item.
+const (
+	ProjectItemTypeIssue       ProjectItemType = "ISSUE"        // Issue.
+	ProjectItemTypePullRequest ProjectItemType = "PULL_REQUEST" // Pull Request.
+	ProjectItemTypeDraftIssue  ProjectItemType = "DRAFT_ISSUE"  // Draft Issue.
+	ProjectItemTypeRedacted    ProjectItemType = "REDACTED"     // Redacted Item.
+)
+
+// ProjectNextFieldType represents the type of a project next field.
+type ProjectNextFieldType string
+
+// The type of a project next field.
+const (
+	ProjectNextFieldTypeAssignees          ProjectNextFieldType = "ASSIGNEES"            // Assignees.
+	ProjectNextFieldTypeLinkedPullRequests ProjectNextFieldType = "LINKED_PULL_REQUESTS" // Linked Pull Requests.
+	ProjectNextFieldTypeReviewers          ProjectNextFieldType = "REVIEWERS"            // Reviewers.
+	ProjectNextFieldTypeLabels             ProjectNextFieldType = "LABELS"               // Labels.
+	ProjectNextFieldTypeMilestone          ProjectNextFieldType = "MILESTONE"            // Milestone.
+	ProjectNextFieldTypeRepository         ProjectNextFieldType = "REPOSITORY"           // Repository.
+	ProjectNextFieldTypeTitle              ProjectNextFieldType = "TITLE"                // Title.
+	ProjectNextFieldTypeText               ProjectNextFieldType = "TEXT"                 // Text.
+	ProjectNextFieldTypeSingleSelect       ProjectNextFieldType = "SINGLE_SELECT"        // Single Select.
+	ProjectNextFieldTypeNumber             ProjectNextFieldType = "NUMBER"               // Number.
+	ProjectNextFieldTypeDate               ProjectNextFieldType = "DATE"                 // Date.
+	ProjectNextFieldTypeIteration          ProjectNextFieldType = "ITERATION"            // Iteration.
+	ProjectNextFieldTypeTracks             ProjectNextFieldType = "TRACKS"               // Tracks.
+)
+
+// ProjectNextOrderField represents properties by which the return project can be ordered.
+type ProjectNextOrderField string
+
+// Properties by which the return project can be ordered.
+const (
+	ProjectNextOrderFieldTitle     ProjectNextOrderField = "TITLE"      // The project's title.
+	ProjectNextOrderFieldNumber    ProjectNextOrderField = "NUMBER"     // The project's number.
+	ProjectNextOrderFieldUpdatedAt ProjectNextOrderField = "UPDATED_AT" // The project's date and time of update.
+	ProjectNextOrderFieldCreatedAt ProjectNextOrderField = "CREATED_AT" // The project's date and time of creation.
+)
+
 // ProjectOrderField represents properties by which project connections can be ordered.
 type ProjectOrderField string
 
@@ -770,6 +1044,15 @@ const (
 	ProjectTemplateAutomatedKanbanV2      ProjectTemplate = "AUTOMATED_KANBAN_V2"      // Create a board with v2 triggers to automatically move cards across To do, In progress and Done columns.
 	ProjectTemplateAutomatedReviewsKanban ProjectTemplate = "AUTOMATED_REVIEWS_KANBAN" // Create a board with triggers to automatically move cards across columns with review automation.
 	ProjectTemplateBugTriage              ProjectTemplate = "BUG_TRIAGE"               // Create a board to triage and prioritize bugs with To do, priority, and Done columns.
+)
+
+// ProjectViewLayout represents the layout of a project view.
+type ProjectViewLayout string
+
+// The layout of a project view.
+const (
+	ProjectViewLayoutBoardLayout ProjectViewLayout = "BOARD_LAYOUT" // Board layout.
+	ProjectViewLayoutTableLayout ProjectViewLayout = "TABLE_LAYOUT" // Table layout.
 )
 
 // PullRequestMergeMethod represents represents available types of methods to use when merging a pull request.
@@ -855,6 +1138,10 @@ const (
 	PullRequestTimelineItemsItemTypePullRequestRevisionMarker         PullRequestTimelineItemsItemType = "PULL_REQUEST_REVISION_MARKER"          // Represents the latest point in the pull request timeline for which the viewer has seen the pull request's commits.
 	PullRequestTimelineItemsItemTypeAutomaticBaseChangeFailedEvent    PullRequestTimelineItemsItemType = "AUTOMATIC_BASE_CHANGE_FAILED_EVENT"    // Represents a 'automatic_base_change_failed' event on a given pull request.
 	PullRequestTimelineItemsItemTypeAutomaticBaseChangeSucceededEvent PullRequestTimelineItemsItemType = "AUTOMATIC_BASE_CHANGE_SUCCEEDED_EVENT" // Represents a 'automatic_base_change_succeeded' event on a given pull request.
+	PullRequestTimelineItemsItemTypeAutoMergeDisabledEvent            PullRequestTimelineItemsItemType = "AUTO_MERGE_DISABLED_EVENT"             // Represents a 'auto_merge_disabled' event on a given pull request.
+	PullRequestTimelineItemsItemTypeAutoMergeEnabledEvent             PullRequestTimelineItemsItemType = "AUTO_MERGE_ENABLED_EVENT"              // Represents a 'auto_merge_enabled' event on a given pull request.
+	PullRequestTimelineItemsItemTypeAutoRebaseEnabledEvent            PullRequestTimelineItemsItemType = "AUTO_REBASE_ENABLED_EVENT"             // Represents a 'auto_rebase_enabled' event on a given pull request.
+	PullRequestTimelineItemsItemTypeAutoSquashEnabledEvent            PullRequestTimelineItemsItemType = "AUTO_SQUASH_ENABLED_EVENT"             // Represents a 'auto_squash_enabled' event on a given pull request.
 	PullRequestTimelineItemsItemTypeBaseRefChangedEvent               PullRequestTimelineItemsItemType = "BASE_REF_CHANGED_EVENT"                // Represents a 'base_ref_changed' event on a given issue or pull request.
 	PullRequestTimelineItemsItemTypeBaseRefForcePushedEvent           PullRequestTimelineItemsItemType = "BASE_REF_FORCE_PUSHED_EVENT"           // Represents a 'base_ref_force_pushed' event on a given pull request.
 	PullRequestTimelineItemsItemTypeBaseRefDeletedEvent               PullRequestTimelineItemsItemType = "BASE_REF_DELETED_EVENT"                // Represents a 'base_ref_deleted' event on a given pull request.
@@ -869,6 +1156,8 @@ const (
 	PullRequestTimelineItemsItemTypeReviewRequestRemovedEvent         PullRequestTimelineItemsItemType = "REVIEW_REQUEST_REMOVED_EVENT"          // Represents an 'review_request_removed' event on a given pull request.
 	PullRequestTimelineItemsItemTypeReadyForReviewEvent               PullRequestTimelineItemsItemType = "READY_FOR_REVIEW_EVENT"                // Represents a 'ready_for_review' event on a given pull request.
 	PullRequestTimelineItemsItemTypeConvertToDraftEvent               PullRequestTimelineItemsItemType = "CONVERT_TO_DRAFT_EVENT"                // Represents a 'convert_to_draft' event on a given pull request.
+	PullRequestTimelineItemsItemTypeAddedToMergeQueueEvent            PullRequestTimelineItemsItemType = "ADDED_TO_MERGE_QUEUE_EVENT"            // Represents an 'added_to_merge_queue' event on a given pull request.
+	PullRequestTimelineItemsItemTypeRemovedFromMergeQueueEvent        PullRequestTimelineItemsItemType = "REMOVED_FROM_MERGE_QUEUE_EVENT"        // Represents a 'removed_from_merge_queue' event on a given pull request.
 	PullRequestTimelineItemsItemTypeIssueComment                      PullRequestTimelineItemsItemType = "ISSUE_COMMENT"                         // Represents a comment on an Issue.
 	PullRequestTimelineItemsItemTypeCrossReferencedEvent              PullRequestTimelineItemsItemType = "CROSS_REFERENCED_EVENT"                // Represents a mention made by one issue or pull request to another.
 	PullRequestTimelineItemsItemTypeAddedToProjectEvent               PullRequestTimelineItemsItemType = "ADDED_TO_PROJECT_EVENT"                // Represents a 'added_to_project' event on a given issue or pull request.
@@ -877,6 +1166,7 @@ const (
 	PullRequestTimelineItemsItemTypeCommentDeletedEvent               PullRequestTimelineItemsItemType = "COMMENT_DELETED_EVENT"                 // Represents a 'comment_deleted' event on a given issue or pull request.
 	PullRequestTimelineItemsItemTypeConnectedEvent                    PullRequestTimelineItemsItemType = "CONNECTED_EVENT"                       // Represents a 'connected' event on a given issue or pull request.
 	PullRequestTimelineItemsItemTypeConvertedNoteToIssueEvent         PullRequestTimelineItemsItemType = "CONVERTED_NOTE_TO_ISSUE_EVENT"         // Represents a 'converted_note_to_issue' event on a given issue or pull request.
+	PullRequestTimelineItemsItemTypeConvertedToDiscussionEvent        PullRequestTimelineItemsItemType = "CONVERTED_TO_DISCUSSION_EVENT"         // Represents a 'converted_to_discussion' event on a given issue.
 	PullRequestTimelineItemsItemTypeDemilestonedEvent                 PullRequestTimelineItemsItemType = "DEMILESTONED_EVENT"                    // Represents a 'demilestoned' event on a given issue or pull request.
 	PullRequestTimelineItemsItemTypeDisconnectedEvent                 PullRequestTimelineItemsItemType = "DISCONNECTED_EVENT"                    // Represents a 'disconnected' event on a given issue or pull request.
 	PullRequestTimelineItemsItemTypeLabeledEvent                      PullRequestTimelineItemsItemType = "LABELED_EVENT"                         // Represents a 'labeled' event on a given issue or pull request.
@@ -1056,13 +1346,45 @@ const (
 	RepositoryContributionTypePullRequestReview RepositoryContributionType = "PULL_REQUEST_REVIEW" // Reviewed a pull request.
 )
 
+// RepositoryInteractionLimit represents a repository interaction limit.
+type RepositoryInteractionLimit string
+
+// A repository interaction limit.
+const (
+	RepositoryInteractionLimitExistingUsers     RepositoryInteractionLimit = "EXISTING_USERS"     // Users that have recently created their account will be unable to interact with the repository.
+	RepositoryInteractionLimitContributorsOnly  RepositoryInteractionLimit = "CONTRIBUTORS_ONLY"  // Users that have not previously committed to a repository’s default branch will be unable to interact with the repository.
+	RepositoryInteractionLimitCollaboratorsOnly RepositoryInteractionLimit = "COLLABORATORS_ONLY" // Users that are not collaborators will not be able to interact with the repository.
+	RepositoryInteractionLimitNoLimit           RepositoryInteractionLimit = "NO_LIMIT"           // No interaction limits are enabled.
+)
+
+// RepositoryInteractionLimitExpiry represents the length for a repository interaction limit to be enabled for.
+type RepositoryInteractionLimitExpiry string
+
+// The length for a repository interaction limit to be enabled for.
+const (
+	RepositoryInteractionLimitExpiryOneDay    RepositoryInteractionLimitExpiry = "ONE_DAY"    // The interaction limit will expire after 1 day.
+	RepositoryInteractionLimitExpiryThreeDays RepositoryInteractionLimitExpiry = "THREE_DAYS" // The interaction limit will expire after 3 days.
+	RepositoryInteractionLimitExpiryOneWeek   RepositoryInteractionLimitExpiry = "ONE_WEEK"   // The interaction limit will expire after 1 week.
+	RepositoryInteractionLimitExpiryOneMonth  RepositoryInteractionLimitExpiry = "ONE_MONTH"  // The interaction limit will expire after 1 month.
+	RepositoryInteractionLimitExpirySixMonths RepositoryInteractionLimitExpiry = "SIX_MONTHS" // The interaction limit will expire after 6 months.
+)
+
+// RepositoryInteractionLimitOrigin represents indicates where an interaction limit is configured.
+type RepositoryInteractionLimitOrigin string
+
+// Indicates where an interaction limit is configured.
+const (
+	RepositoryInteractionLimitOriginRepository   RepositoryInteractionLimitOrigin = "REPOSITORY"   // A limit that is configured at the repository level.
+	RepositoryInteractionLimitOriginOrganization RepositoryInteractionLimitOrigin = "ORGANIZATION" // A limit that is configured at the organization level.
+	RepositoryInteractionLimitOriginUser         RepositoryInteractionLimitOrigin = "USER"         // A limit that is configured at the user-wide level.
+)
+
 // RepositoryInvitationOrderField represents properties by which repository invitation connections can be ordered.
 type RepositoryInvitationOrderField string
 
 // Properties by which repository invitation connections can be ordered.
 const (
-	RepositoryInvitationOrderFieldCreatedAt    RepositoryInvitationOrderField = "CREATED_AT"    // Order repository invitations by creation time.
-	RepositoryInvitationOrderFieldInviteeLogin RepositoryInvitationOrderField = "INVITEE_LOGIN" // Order repository invitations by invitee login.
+	RepositoryInvitationOrderFieldCreatedAt RepositoryInvitationOrderField = "CREATED_AT" // Order repository invitations by creation time.
 )
 
 // RepositoryLockReason represents the possible reasons a given repository could be in a locked state.
@@ -1074,6 +1396,23 @@ const (
 	RepositoryLockReasonBilling   RepositoryLockReason = "BILLING"   // The repository is locked due to a billing related reason.
 	RepositoryLockReasonRename    RepositoryLockReason = "RENAME"    // The repository is locked due to a rename.
 	RepositoryLockReasonMigrating RepositoryLockReason = "MIGRATING" // The repository is locked due to a migration.
+)
+
+// RepositoryMigrationOrderDirection represents possible directions in which to order a list of repository migrations when provided an `orderBy` argument.
+type RepositoryMigrationOrderDirection string
+
+// Possible directions in which to order a list of repository migrations when provided an `orderBy` argument.
+const (
+	RepositoryMigrationOrderDirectionAsc  RepositoryMigrationOrderDirection = "ASC"  // Specifies an ascending order for a given `orderBy` argument.
+	RepositoryMigrationOrderDirectionDesc RepositoryMigrationOrderDirection = "DESC" // Specifies a descending order for a given `orderBy` argument.
+)
+
+// RepositoryMigrationOrderField represents properties by which repository migrations can be ordered.
+type RepositoryMigrationOrderField string
+
+// Properties by which repository migrations can be ordered.
+const (
+	RepositoryMigrationOrderFieldCreatedAt RepositoryMigrationOrderField = "CREATED_AT" // Order mannequins why when they were created.
 )
 
 // RepositoryOrderField represents properties by which repository connections can be ordered.
@@ -1119,6 +1458,38 @@ const (
 	RepositoryVisibilityInternal RepositoryVisibility = "INTERNAL" // The repository is visible only to users in the same business.
 )
 
+// RepositoryVulnerabilityAlertState represents the possible states of an alert.
+type RepositoryVulnerabilityAlertState string
+
+// The possible states of an alert.
+const (
+	RepositoryVulnerabilityAlertStateOpen      RepositoryVulnerabilityAlertState = "OPEN"      // An alert that is still open.
+	RepositoryVulnerabilityAlertStateFixed     RepositoryVulnerabilityAlertState = "FIXED"     // An alert that has been resolved by a code change.
+	RepositoryVulnerabilityAlertStateDismissed RepositoryVulnerabilityAlertState = "DISMISSED" // An alert that has been manually closed by a user.
+)
+
+// RequestableCheckStatusState represents the possible states that can be requested when creating a check run.
+type RequestableCheckStatusState string
+
+// The possible states that can be requested when creating a check run.
+const (
+	RequestableCheckStatusStateQueued     RequestableCheckStatusState = "QUEUED"      // The check suite or run has been queued.
+	RequestableCheckStatusStateInProgress RequestableCheckStatusState = "IN_PROGRESS" // The check suite or run is in progress.
+	RequestableCheckStatusStateCompleted  RequestableCheckStatusState = "COMPLETED"   // The check suite or run has been completed.
+	RequestableCheckStatusStateWaiting    RequestableCheckStatusState = "WAITING"     // The check suite or run is in waiting state.
+	RequestableCheckStatusStatePending    RequestableCheckStatusState = "PENDING"     // The check suite or run is in pending state.
+)
+
+// RoleInOrganization represents possible roles a user may have in relation to an organization.
+type RoleInOrganization string
+
+// Possible roles a user may have in relation to an organization.
+const (
+	RoleInOrganizationOwner        RoleInOrganization = "OWNER"         // A user with full administrative access to the organization.
+	RoleInOrganizationDirectMember RoleInOrganization = "DIRECT_MEMBER" // A user who is a direct member of the organization.
+	RoleInOrganizationUnaffiliated RoleInOrganization = "UNAFFILIATED"  // A user who is unaffiliated with the organization.
+)
+
 // SamlDigestAlgorithm represents the possible digest algorithms used to sign SAML requests for an identity provider.
 type SamlDigestAlgorithm string
 
@@ -1157,6 +1528,7 @@ const (
 	SearchTypeIssue      SearchType = "ISSUE"      // Returns results matching issues in repositories.
 	SearchTypeRepository SearchType = "REPOSITORY" // Returns results matching repositories.
 	SearchTypeUser       SearchType = "USER"       // Returns results matching users and organizations on GitHub.
+	SearchTypeDiscussion SearchType = "DISCUSSION" // Returns matching discussions in repositories.
 )
 
 // SecurityAdvisoryEcosystem represents the possible ecosystems of a security vulnerability's package.
@@ -1164,12 +1536,14 @@ type SecurityAdvisoryEcosystem string
 
 // The possible ecosystems of a security vulnerability's package.
 const (
-	SecurityAdvisoryEcosystemRubygems SecurityAdvisoryEcosystem = "RUBYGEMS" // Ruby gems hosted at RubyGems.org.
-	SecurityAdvisoryEcosystemNpm      SecurityAdvisoryEcosystem = "NPM"      // JavaScript packages hosted at npmjs.com.
-	SecurityAdvisoryEcosystemPip      SecurityAdvisoryEcosystem = "PIP"      // Python packages hosted at PyPI.org.
-	SecurityAdvisoryEcosystemMaven    SecurityAdvisoryEcosystem = "MAVEN"    // Java artifacts hosted at the Maven central repository.
-	SecurityAdvisoryEcosystemNuget    SecurityAdvisoryEcosystem = "NUGET"    // .NET packages hosted at the NuGet Gallery.
 	SecurityAdvisoryEcosystemComposer SecurityAdvisoryEcosystem = "COMPOSER" // PHP packages hosted at packagist.org.
+	SecurityAdvisoryEcosystemGo       SecurityAdvisoryEcosystem = "GO"       // Go modules.
+	SecurityAdvisoryEcosystemMaven    SecurityAdvisoryEcosystem = "MAVEN"    // Java artifacts hosted at the Maven central repository.
+	SecurityAdvisoryEcosystemNpm      SecurityAdvisoryEcosystem = "NPM"      // JavaScript packages hosted at npmjs.com.
+	SecurityAdvisoryEcosystemNuget    SecurityAdvisoryEcosystem = "NUGET"    // .NET packages hosted at the NuGet Gallery.
+	SecurityAdvisoryEcosystemPip      SecurityAdvisoryEcosystem = "PIP"      // Python packages hosted at PyPI.org.
+	SecurityAdvisoryEcosystemRubygems SecurityAdvisoryEcosystem = "RUBYGEMS" // Ruby gems hosted at RubyGems.org.
+	SecurityAdvisoryEcosystemRust     SecurityAdvisoryEcosystem = "RUST"     // Rust crates.
 )
 
 // SecurityAdvisoryIdentifierType represents identifier formats available for advisories.
@@ -1209,6 +1583,64 @@ const (
 	SecurityVulnerabilityOrderFieldUpdatedAt SecurityVulnerabilityOrderField = "UPDATED_AT" // Order vulnerability by update time.
 )
 
+// SponsorOrderField represents properties by which sponsor connections can be ordered.
+type SponsorOrderField string
+
+// Properties by which sponsor connections can be ordered.
+const (
+	SponsorOrderFieldLogin     SponsorOrderField = "LOGIN"     // Order sponsorable entities by login (username).
+	SponsorOrderFieldRelevance SponsorOrderField = "RELEVANCE" // Order sponsors by their relevance to the viewer.
+)
+
+// SponsorableOrderField represents properties by which sponsorable connections can be ordered.
+type SponsorableOrderField string
+
+// Properties by which sponsorable connections can be ordered.
+const (
+	SponsorableOrderFieldLogin SponsorableOrderField = "LOGIN" // Order sponsorable entities by login (username).
+)
+
+// SponsorsActivityAction represents the possible actions that GitHub Sponsors activities can represent.
+type SponsorsActivityAction string
+
+// The possible actions that GitHub Sponsors activities can represent.
+const (
+	SponsorsActivityActionNewSponsorship       SponsorsActivityAction = "NEW_SPONSORSHIP"        // The activity was starting a sponsorship.
+	SponsorsActivityActionCancelledSponsorship SponsorsActivityAction = "CANCELLED_SPONSORSHIP"  // The activity was cancelling a sponsorship.
+	SponsorsActivityActionTierChange           SponsorsActivityAction = "TIER_CHANGE"            // The activity was changing the sponsorship tier, either directly by the sponsor or by a scheduled/pending change.
+	SponsorsActivityActionRefund               SponsorsActivityAction = "REFUND"                 // The activity was funds being refunded to the sponsor or GitHub.
+	SponsorsActivityActionPendingChange        SponsorsActivityAction = "PENDING_CHANGE"         // The activity was scheduling a downgrade or cancellation.
+	SponsorsActivityActionSponsorMatchDisabled SponsorsActivityAction = "SPONSOR_MATCH_DISABLED" // The activity was disabling matching for a previously matched sponsorship.
+)
+
+// SponsorsActivityOrderField represents properties by which GitHub Sponsors activity connections can be ordered.
+type SponsorsActivityOrderField string
+
+// Properties by which GitHub Sponsors activity connections can be ordered.
+const (
+	SponsorsActivityOrderFieldTimestamp SponsorsActivityOrderField = "TIMESTAMP" // Order activities by when they happened.
+)
+
+// SponsorsActivityPeriod represents the possible time periods for which Sponsors activities can be requested.
+type SponsorsActivityPeriod string
+
+// The possible time periods for which Sponsors activities can be requested.
+const (
+	SponsorsActivityPeriodDay   SponsorsActivityPeriod = "DAY"   // The previous calendar day.
+	SponsorsActivityPeriodWeek  SponsorsActivityPeriod = "WEEK"  // The previous seven days.
+	SponsorsActivityPeriodMonth SponsorsActivityPeriod = "MONTH" // The previous thirty days.
+	SponsorsActivityPeriodAll   SponsorsActivityPeriod = "ALL"   // Don't restrict the activity to any date range, include all activity.
+)
+
+// SponsorsGoalKind represents the different kinds of goals a GitHub Sponsors member can have.
+type SponsorsGoalKind string
+
+// The different kinds of goals a GitHub Sponsors member can have.
+const (
+	SponsorsGoalKindTotalSponsorsCount       SponsorsGoalKind = "TOTAL_SPONSORS_COUNT"       // The goal is about reaching a certain number of sponsors.
+	SponsorsGoalKindMonthlySponsorshipAmount SponsorsGoalKind = "MONTHLY_SPONSORSHIP_AMOUNT" // The goal is about getting a certain amount in USD from sponsorships each month.
+)
+
 // SponsorsTierOrderField represents properties by which Sponsors tiers connections can be ordered.
 type SponsorsTierOrderField string
 
@@ -1216,6 +1648,14 @@ type SponsorsTierOrderField string
 const (
 	SponsorsTierOrderFieldCreatedAt           SponsorsTierOrderField = "CREATED_AT"             // Order tiers by creation time.
 	SponsorsTierOrderFieldMonthlyPriceInCents SponsorsTierOrderField = "MONTHLY_PRICE_IN_CENTS" // Order tiers by their monthly price in cents.
+)
+
+// SponsorshipNewsletterOrderField represents properties by which sponsorship update connections can be ordered.
+type SponsorshipNewsletterOrderField string
+
+// Properties by which sponsorship update connections can be ordered.
+const (
+	SponsorshipNewsletterOrderFieldCreatedAt SponsorshipNewsletterOrderField = "CREATED_AT" // Order sponsorship newsletters by when they were created.
 )
 
 // SponsorshipOrderField represents properties by which sponsorship connections can be ordered.
@@ -1359,6 +1799,15 @@ const (
 	TopicSuggestionDeclineReasonTooGeneral         TopicSuggestionDeclineReason = "TOO_GENERAL"         // The suggested topic is too general for the repository.
 )
 
+// TrackedIssueStates represents the possible states of a tracked issue.
+type TrackedIssueStates string
+
+// The possible states of a tracked issue.
+const (
+	TrackedIssueStatesOpen   TrackedIssueStates = "OPEN"   // The tracked issue is open.
+	TrackedIssueStatesClosed TrackedIssueStates = "CLOSED" // The tracked issue is closed.
+)
+
 // UserBlockDuration represents the possible durations that a user can be blocked for.
 type UserBlockDuration string
 
@@ -1377,4 +1826,13 @@ type UserStatusOrderField string
 // Properties by which user status connections can be ordered.
 const (
 	UserStatusOrderFieldUpdatedAt UserStatusOrderField = "UPDATED_AT" // Order user statuses by when they were updated.
+)
+
+// VerifiableDomainOrderField represents properties by which verifiable domain connections can be ordered.
+type VerifiableDomainOrderField string
+
+// Properties by which verifiable domain connections can be ordered.
+const (
+	VerifiableDomainOrderFieldDomain    VerifiableDomainOrderField = "DOMAIN"     // Order verifiable domains by the domain name.
+	VerifiableDomainOrderFieldCreatedAt VerifiableDomainOrderField = "CREATED_AT" // Order verifiable domains by their creation date.
 )

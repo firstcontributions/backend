@@ -121,6 +121,14 @@ services:
     depends_on:
       - gateway
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+    networks:
+      docker_network:
+        ipv4_address: 172.30.1.9
 volumes:
   mongodb_data:
   es_data:

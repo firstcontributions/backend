@@ -15,6 +15,7 @@ import (
 	"github.com/firstcontributions/backend/internal/models/issuesstore/githubstore"
 	"github.com/firstcontributions/backend/internal/models/usersstore/mongo"
 	"github.com/firstcontributions/backend/internal/storemanager"
+	"github.com/opentracing/opentracing-go"
 
 	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/gorilla/mux"
@@ -111,7 +112,7 @@ func (s *Server) GetGraphqlSchema() (*graphql.Schema, error) {
 	}
 
 	resolver := &graphqlschema.Resolver{}
-	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
+	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers(), graphql.Tracer(opentracing.Tracer{})}
 	return graphql.MustParseSchema(string(schema), resolver, opts...), nil
 
 }
