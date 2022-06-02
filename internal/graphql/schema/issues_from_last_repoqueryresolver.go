@@ -13,7 +13,7 @@ type IssuesFromLastRepoInput struct {
 	Before *string
 }
 
-func (n *IssuesFeed) IssuesFromLastRepo(ctx context.Context, in *IssuesFromLastRepoInput) (*IssuesConnection, error) {
+func (n *User) IssuesFromLastRepo(ctx context.Context, in *IssuesFromLastRepoInput) (*IssuesConnection, error) {
 	var first, last *int64
 	if in.First != nil {
 		tmp := int64(*in.First)
@@ -29,6 +29,7 @@ func (n *IssuesFeed) IssuesFromLastRepo(ctx context.Context, in *IssuesFromLastR
 		ctx,
 		nil,
 		&issueType,
+		n.ref,
 		in.After,
 		in.Before,
 		first,

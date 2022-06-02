@@ -13,45 +13,23 @@ message RefByIDRequest {
 	string id= 1;
 }
 
-message User { 
-	string handle= 1; 
-	string id= 2; 
-	string name= 3; 
-	google.protobuf.Timestamp time_created= 4; 
-	google.protobuf.Timestamp time_updated= 5; 
-	Token token= 6;
-} 
-message GetUsersRequest {
-	string before= 1;
-	string after= 2;
-	int64 first= 3;
-	int64 last= 4;
-	repeated string ids= 5;
-	string search= 6;
-	string handle= 7;
-} 
-message GetUsersResponse {
-	bool has_next= 1;
-	bool has_previous= 2;
-	string first_cursor= 3;
-	string last_cursor= 4;
-	repeated User data=5;
-}
-
 message Badge { 
-	string display_name= 1; 
-	string id= 2; 
-	google.protobuf.Timestamp time_created= 3; 
-	google.protobuf.Timestamp time_updated= 4;
-	string user_id= 5;
+	int64 current_level= 1; 
+	string display_name= 2; 
+	string id= 3; 
+	int64 points= 4; 
+	int64 progress_percentage_to_next_level= 5; 
+	google.protobuf.Timestamp time_created= 6; 
+	google.protobuf.Timestamp time_updated= 7;
+	string user_id= 8;
 } 
 message GetBadgesRequest {
-	string before= 1;
-	string after= 2;
-	int64 first= 3;
-	int64 last= 4;
+	optional string before= 1;
+	optional string after= 2;
+	optional int64 first= 3;
+	optional int64 last= 4;
 	repeated string ids= 5;
-	string user_id= 6;
+	optional string user_id= 6;
 } 
 message GetBadgesResponse {
 	bool has_next= 1;
@@ -59,30 +37,80 @@ message GetBadgesResponse {
 	string first_cursor= 3;
 	string last_cursor= 4;
 	repeated Badge data=5;
+} 
+message UpdateBadgeRequest {
+	string id= 1; 
+	optional int64 current_level= 2; 
+	optional int64 points= 3; 
+	optional int64 progress_percentage_to_next_level= 4; 
+	optional google.protobuf.Timestamp time_updated= 5;
+}
+
+message CursorCheckpoints { 
+	string pull_requests= 1;
+}
+
+message Tags {
+	repeated string languages= 1;
+	repeated string recent_repos= 2;
+	repeated string topics= 3;
+}
+
+message User { 
+	CursorCheckpoints cursor_checkpoints= 1; 
+	string handle= 2; 
+	string id= 3; 
+	string name= 4; 
+	Tags tags= 5; 
+	google.protobuf.Timestamp time_created= 6; 
+	google.protobuf.Timestamp time_updated= 7; 
+	Token token= 8;
+} 
+message GetUsersRequest {
+	optional string before= 1;
+	optional string after= 2;
+	optional int64 first= 3;
+	optional int64 last= 4;
+	repeated string ids= 5;
+	optional string search= 6;
+	optional string handle= 7;
+} 
+message GetUsersResponse {
+	bool has_next= 1;
+	bool has_previous= 2;
+	string first_cursor= 3;
+	string last_cursor= 4;
+	repeated User data=5;
+} 
+message UpdateUserRequest {
+	string id= 1; 
+	optional CursorCheckpoints cursor_checkpoints= 2; 
+	optional string name= 3; 
+	optional Tags tags= 4; 
+	optional google.protobuf.Timestamp time_updated= 5; 
+	optional Token token= 6;
 }
 
 message Token { 
 	string access_token= 1; 
 	google.protobuf.Timestamp expiry= 2; 
 	string refresh_token= 3; 
-	google.protobuf.Timestamp time_created= 4; 
-	google.protobuf.Timestamp time_updated= 5; 
-	string token_type= 6;
+	string token_type= 4;
 }
 
 service UsersService {
-
-	// users crud operations
-	rpc CreateUser (User) returns (User) {}
-	rpc GetUserByID (RefByIDRequest) returns (User) {}
-	rpc GetUsers (GetUsersRequest) returns (GetUsersResponse){};
-	rpc UpdateUser (User) returns (User) {}
-	rpc DeleteUser (RefByIDRequest) returns  (StatusResponse){}
 
 	// badges crud operations
 	rpc CreateBadge (Badge) returns (Badge) {}
 	rpc GetBadgeByID (RefByIDRequest) returns (Badge) {}
 	rpc GetBadges (GetBadgesRequest) returns (GetBadgesResponse){};
-	rpc UpdateBadge (Badge) returns (Badge) {}
+	rpc UpdateBadge (UpdateBadgeRequest) returns (StatusResponse) {}
 	rpc DeleteBadge (RefByIDRequest) returns  (StatusResponse){}
+
+	// users crud operations
+	rpc CreateUser (User) returns (User) {}
+	rpc GetUserByID (RefByIDRequest) returns (User) {}
+	rpc GetUsers (GetUsersRequest) returns (GetUsersResponse){};
+	rpc UpdateUser (UpdateUserRequest) returns (StatusResponse) {}
+	rpc DeleteUser (RefByIDRequest) returns  (StatusResponse){}
 }

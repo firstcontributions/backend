@@ -9,6 +9,7 @@ import (
 )
 
 type Badge struct {
+	ref                           *usersstore.Badge
 	CurrentLevel                  int32
 	DisplayName                   string
 	Id                            string
@@ -23,6 +24,7 @@ func NewBadge(m *usersstore.Badge) *Badge {
 		return nil
 	}
 	return &Badge{
+		ref:                           m,
 		CurrentLevel:                  int32(m.CurrentLevel),
 		DisplayName:                   m.DisplayName,
 		Id:                            m.Id,

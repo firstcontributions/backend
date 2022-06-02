@@ -15,10 +15,11 @@ func (r ReputationSynchroniser) SyncTags(ctx context.Context, user *usersstore.U
 	}
 	languages := sets.NewSet()
 	topics := sets.NewSet()
-	repositories := []string{}
+	repositories := []*string{}
 
 	for _, repo := range query.Viewer.RepositoriesContributedTo.Edges {
-		repositories = append(repositories, string(repo.Node.NameWithOwner))
+		repoName := string(repo.Node.NameWithOwner)
+		repositories = append(repositories, &repoName)
 		if repo.Node.PrimaryLanguage.Name != "" {
 			languages.Add(string(repo.Node.PrimaryLanguage.Name))
 		}

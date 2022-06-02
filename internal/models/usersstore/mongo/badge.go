@@ -45,7 +45,7 @@ func (s *UsersStore) GetBadgeByID(ctx context.Context, id string) (*usersstore.B
 func (s *UsersStore) GetBadges(
 	ctx context.Context,
 	ids []string,
-	userID *string,
+	user *usersstore.User,
 	after *string,
 	before *string,
 	first *int64,
@@ -62,8 +62,8 @@ func (s *UsersStore) GetBadges(
 	if len(ids) > 0 {
 		qb.In("_id", ids)
 	}
-	if userID != nil {
-		qb.Eq("user_id", userID)
+	if user != nil {
+		qb.Eq("user_id", user.Id)
 	}
 
 	limit, order, cursorStr := utils.GetLimitAndSortOrderAndCursor(first, last, after, before)

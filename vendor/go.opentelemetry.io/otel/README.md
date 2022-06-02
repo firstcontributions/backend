@@ -1,80 +1,108 @@
 # OpenTelemetry-Go
 
-[![Circle CI](https://circleci.com/gh/open-telemetry/opentelemetry-go.svg?style=svg)](https://circleci.com/gh/open-telemetry/opentelemetry-go)
-[![Docs](https://godoc.org/go.opentelemetry.io/otel?status.svg)](https://pkg.go.dev/go.opentelemetry.io/otel)
+[![CI](https://github.com/open-telemetry/opentelemetry-go/workflows/ci/badge.svg)](https://github.com/open-telemetry/opentelemetry-go/actions?query=workflow%3Aci+branch%3Amain)
+[![codecov.io](https://codecov.io/gh/open-telemetry/opentelemetry-go/coverage.svg?branch=main)](https://app.codecov.io/gh/open-telemetry/opentelemetry-go?branch=main)
+[![PkgGoDev](https://pkg.go.dev/badge/go.opentelemetry.io/otel)](https://pkg.go.dev/go.opentelemetry.io/otel)
 [![Go Report Card](https://goreportcard.com/badge/go.opentelemetry.io/otel)](https://goreportcard.com/report/go.opentelemetry.io/otel)
-[![Gitter](https://badges.gitter.im/open-telemetry/opentelemetry-go.svg)](https://gitter.im/open-telemetry/opentelemetry-go?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Slack](https://img.shields.io/badge/slack-@cncf/otel--go-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C01NPAXACKT)
 
-The Go [OpenTelemetry](https://opentelemetry.io/) client.
+OpenTelemetry-Go is the [Go](https://golang.org/) implementation of [OpenTelemetry](https://opentelemetry.io/).
+It provides a set of APIs to directly measure performance and behavior of your software and send this data to observability platforms.
 
-## Installation
+## Project Status
 
-This repository includes multiple packages. The `api`
-package contains core data types, interfaces and no-op implementations that comprise the OpenTelemetry API following
-[the
-specification](https://github.com/open-telemetry/opentelemetry-specification).
-The `sdk` package is the reference implementation of the API.
+| Signal  | Status     | Project |
+| ------- | ---------- | ------- |
+| Traces  | Stable     | N/A     |
+| Metrics | Alpha      | N/A     |
+| Logs    | Frozen [1] | N/A     |
 
-Libraries that produce telemetry data should only depend on `api`
-and defer the choice of the SDK to the application developer. Applications may
-depend on `sdk` or another package that implements the API.
+- [1]: The Logs signal development is halted for this project while we develop both Traces and Metrics.
+   No Logs Pull Requests are currently being accepted.
 
-All packages are published to [go.opentelemetry.io/otel](https://pkg.go.dev/go.opentelemetry.io/otel) and is the preferred location to import from.
+Progress and status specific to this repository is tracked in our local
+[project boards](https://github.com/open-telemetry/opentelemetry-go/projects)
+and
+[milestones](https://github.com/open-telemetry/opentelemetry-go/milestones).
 
-Additional resources:
+Project versioning information and stability guarantees can be found in the
+[versioning documentation](./VERSIONING.md).
 
-- [Developing using Go Modules](https://blog.golang.org/using-go-modules)
-- [Adding dependencies and installing them](https://golang.org/cmd/go/#hdr-Add_dependencies_to_current_module_and_install_them)
+### Compatibility
 
-## Quick Start
+OpenTelemetry-Go attempts to track the current supported versions of the
+[Go language](https://golang.org/doc/devel/release#policy). The release
+schedule after a new minor version of go is as follows:
 
-Below is a brief example of importing OpenTelemetry, initializing a tracer and creating some simple spans.
+- The first release or one month, which ever is sooner, will add build steps for the new go version.
+- The first release after three months will remove support for the oldest go version.
 
-```go
-package main
+This project is tested on the following systems.
 
-import (
-	"context"
-	"log"
+| OS      | Go Version | Architecture |
+| ------- | ---------- | ------------ |
+| Ubuntu  | 1.18       | amd64        |
+| Ubuntu  | 1.17       | amd64        |
+| Ubuntu  | 1.16       | amd64        |
+| Ubuntu  | 1.18       | 386          |
+| Ubuntu  | 1.17       | 386          |
+| Ubuntu  | 1.16       | 386          |
+| MacOS   | 1.18       | amd64        |
+| MacOS   | 1.17       | amd64        |
+| MacOS   | 1.16       | amd64        |
+| Windows | 1.18       | amd64        |
+| Windows | 1.17       | amd64        |
+| Windows | 1.16       | amd64        |
+| Windows | 1.18       | 386          |
+| Windows | 1.17       | 386          |
+| Windows | 1.16       | 386          |
 
-	"go.opentelemetry.io/otel/api/global"
-	"go.opentelemetry.io/otel/exporters/stdout"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
-)
+While this project should work for other systems, no compatibility guarantees
+are made for those systems currently.
 
-func main() {
-	pusher, err := stdout.InstallNewPipeline(nil, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer pusher.Stop()
+Go 1.18 was added in March of 2022.
+Go 1.16 will be removed around June 2022.
 
-	tracer := global.Tracer("ex.com/basic")
-	ctx, span := tracer.Start(context.Background(), "main")
-	defer span.End()
-	/* … */
-}
-```
+## Getting Started
 
-See the [API
-documentation](https://pkg.go.dev/go.opentelemetry.io/otel) for more
-detail, and the
-[opentelemetry examples](./example/).
+You can find a getting started guide on [opentelemetry.io](https://opentelemetry.io/docs/go/getting-started/).
 
-## Compatible Exporters
+OpenTelemetry's goal is to provide a single set of APIs to capture distributed
+traces and metrics from your application and send them to an observability
+platform. This project allows you to do just that for applications written in
+Go. There are two steps to this process: instrument your application, and
+configure an exporter.
 
-See the Go packages depending upon
-[sdk/export/trace](https://pkg.go.dev/go.opentelemetry.io/otel/sdk/export/trace?tab=importedby)
-and [sdk/export/metric](https://pkg.go.dev/go.opentelemetry.io/otel/sdk/export/metric?tab=importedby)
-for a list of all exporters compatible with OpenTelemetry's Go SDK.
+### Instrumentation
 
-## Compatible Libraries
+To start capturing distributed traces and metric events from your application
+it first needs to be instrumented. The easiest way to do this is by using an
+instrumentation library for your code. Be sure to check out [the officially
+supported instrumentation
+libraries](https://github.com/open-telemetry/opentelemetry-go-contrib/tree/main/instrumentation).
 
-See the
-[opentelemetry-go-contrib](https://github.com/open-telemetry/opentelemetry-go-contrib)
-repo for packages that facilitates instrumenting other useful Go libraries
-with opentelemetry-go for distributed tracing and monitoring.
+If you need to extend the telemetry an instrumentation library provides or want
+to build your own instrumentation for your application directly you will need
+to use the
+[Go otel](https://pkg.go.dev/go.opentelemetry.io/otel)
+package. The included [examples](./example/) are a good way to see some
+practical uses of this process.
+
+### Export
+
+Now that your application is instrumented to collect telemetry, it needs an
+export pipeline to send that telemetry to an observability platform.
+
+All officially supported exporters for the OpenTelemetry project are contained in the [exporters directory](./exporters).
+
+| Exporter                              | Metrics | Traces |
+| :-----------------------------------: | :-----: | :----: |
+| [Jaeger](./exporters/jaeger/)         |         | ✓      |
+| [OTLP](./exporters/otlp/)             | ✓       | ✓      |
+| [Prometheus](./exporters/prometheus/) | ✓       |        |
+| [stdout](./exporters/stdout/)         | ✓       | ✓      |
+| [Zipkin](./exporters/zipkin/)         |         | ✓      |
 
 ## Contributing
 
-See the [contributing file](CONTRIBUTING.md).
+See the [contributing documentation](CONTRIBUTING.md).
