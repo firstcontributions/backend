@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/go-redis/redis/extra/redisotel/v8"
 	"github.com/go-redis/redis/v8"
 )
 
@@ -20,6 +21,7 @@ func NewCSRFStore(host, port, password string, sessionTime time.Duration) *CSRFS
 		Password: password, // no password set
 		DB:       0,        // use default DB
 	})
+	rdb.AddHook(redisotel.NewTracingHook())
 	return &CSRFStore{
 		client: rdb,
 		ttl:    sessionTime,

@@ -27,7 +27,7 @@ func (n *User) Badges(ctx context.Context, in *BadgesInput) (*BadgesConnection, 
 	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.UsersStore.GetBadges(
 		ctx,
 		nil,
-		&n.Id,
+		n.ref,
 		in.After,
 		in.Before,
 		first,

@@ -2,12 +2,11 @@
 package configs
 
 import (
-	"fmt"
-	"os"
-	"strconv"
-
 	commonconfigs "github.com/firstcontributions/backend/internal/configs"
 	"github.com/gokultp/go-envparser/pkg/envdecoder"
+	"os"
+	"strconv"
+	"fmt"
 )
 
 func (t *Config) DecodeEnv() error {
@@ -58,5 +57,10 @@ func (t *Config) DecodeEnv() error {
 		_recMongourl := _recMongourlStr
 		t.MongoURL = &_recMongourl
 	}
+	_recUsersserviceconfig := UsersServiceConfig{}
+	if err := envdecoder.Decode(&_recUsersserviceconfig); err != nil {
+		return fmt.Errorf("type UsersServiceConfignot implemts env Decoder interface, %w", envdecoder.ErrDecoderNotImplemented)
+	}
+	t.UsersServiceConfig = &_recUsersserviceconfig
 	return nil
 }

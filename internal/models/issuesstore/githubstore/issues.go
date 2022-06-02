@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/firstcontributions/backend/internal/models/issuesstore"
+	"github.com/firstcontributions/backend/internal/models/usersstore"
 	"github.com/shurcooL/githubv4"
 )
 
@@ -15,24 +15,23 @@ const (
 	IssueTypeRelevant   = "relevant_issues"
 )
 
-func getQuery(ctx context.Context, issueType string) string {
-	meta := session.FromContext(ctx)
+func getQuery(user *usersstore.User, issueType string) string {
 	query := "is:issue is:open  label:\"help wanted\",\"good first issue\",\"goodfirstissue\" no:assignee"
 
 	switch issueType {
 	case IssueTypeLastRepo:
-		return fmt.Sprintf("%s repo:%s", query, *meta.Tags.RecentRepos[0])
+		return fmt.Sprintf("%s repo:%s", query, *user.Tags.RecentRepos[0])
 	case IssueTypeRecentRepo:
-		ln := len(meta.Tags.RecentRepos)
+		ln := len(user.Tags.RecentRepos)
 		count := min(7, ln)
-		repos := meta.Tags.RecentRepos[1:count]
+		repos := user.Tags.RecentRepos[1:count]
 		for _, repo := range repos {
 			query += fmt.Sprintf(" repo:%s", *repo)
 		}
 		return query
 	default:
-		languageCount := min(3, len(meta.Tags.Languages))
-		languages := meta.Tags.Languages[:languageCount]
+		languageCount := min(3, len(user.Tags.Languages))
+		languages := user.Tags.Languages[:languageCount]
 
 		for _, lng := range languages {
 			query += fmt.Sprintf(" language:%s", *lng)
@@ -91,6 +90,7 @@ func (g *GitHubStore) GetIssues(
 	ctx context.Context,
 	ids []string,
 	issueType *string,
+	user *usersstore.User,
 	after *string,
 	before *string,
 	first *int64,
@@ -124,7 +124,7 @@ func (g *GitHubStore) GetIssues(
 		beforeGql = &tmp
 	}
 	params := map[string]interface{}{
-		"q":      githubv4.String(getQuery(ctx, *issueType)),
+		"q":      githubv4.String(getQuery(user, *issueType)),
 		"after":  afterGql,
 		"before": beforeGql,
 		"first":  firstGql,

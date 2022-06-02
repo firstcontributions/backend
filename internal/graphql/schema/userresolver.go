@@ -8,6 +8,7 @@ import (
 )
 
 type User struct {
+	ref         *usersstore.User
 	Handle      string
 	Id          string
 	Name        string
@@ -20,6 +21,7 @@ func NewUser(m *usersstore.User) *User {
 		return nil
 	}
 	return &User{
+		ref:         m,
 		Handle:      m.Handle,
 		Id:          m.Id,
 		Name:        m.Name,

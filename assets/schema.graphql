@@ -12,7 +12,6 @@ type Query {
 	  # The ID of an object
 	  id: ID!
 	): Node
-	issuesFeed: IssuesFeed!
 }
 
 interface Node {
@@ -73,7 +72,10 @@ type User implements Node {
 	badges(first: Int, last: Int, after: String, before: String): BadgesConnection!
 	handle: String!
 	id: ID!
+	issuesFromLastRepo(first: Int, last: Int, after: String, before: String): IssuesConnection!
+	issuesFromOtherRecentRepos(first: Int, last: Int, after: String, before: String): IssuesConnection!
 	name: String!
+	relevantIssues(first: Int, last: Int, after: String, before: String): IssuesConnection!
 	timeCreated: Time!
 	timeUpdated: Time!
 }
@@ -85,12 +87,6 @@ input CreateUserInput {
 
 input UpdateUserInput {
 	name: String!
-}
-
-type IssuesFeed {
-	issuesFromLastRepo(first: Int, last: Int, after: String, before: String): IssuesConnection!
-	issuesFromOtherRecentRepos(first: Int, last: Int, after: String, before: String): IssuesConnection!
-	relevantIssues(first: Int, last: Int, after: String, before: String): IssuesConnection!
 }
 
 type Mutation { 

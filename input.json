@@ -3,7 +3,7 @@
     "modules": [
         {
             "name": "users",
-            "data_source": "mongo",
+            "data_source": "grpc",
             "db": "mongo",
             "entities": {
                 "user":{
@@ -37,6 +37,33 @@
                         "tags" : {
                             "type": "object",
                             "schema": "tags"
+                        },
+                        "issues_from_last_repo" : {
+                            "type": "list",
+                            "schema": "issue",
+                            "joined_data": true,
+                            "paginated": true,
+                            "hardcoded_filters" : {
+                                "issue_type": "last_repo_issues"
+                            }
+                        },
+                        "issues_from_other_recent_repos" : {
+                            "type": "list",
+                            "schema": "issue",
+                            "joined_data": true,
+                            "paginated": true,
+                            "hardcoded_filters" : {
+                                "issue_type": "issues_from_other_recent_repos"
+                            }
+                        },
+                        "relevant_issues" : {
+                            "type": "list",
+                            "schema": "issue",
+                            "joined_data": true,
+                            "paginated": true,
+                            "hardcoded_filters" : {
+                                "issue_type": "relevant_issues"
+                            }
                         }
                     }
                 },
@@ -115,42 +142,5 @@
                 }
             }
         }
-    ],
-    "high_level_queries": [
-        {
-            "name": "issues_feed",
-            "type" :"object",
-
-            "properties" : {
-                "issues_from_last_repo" : {
-                    "type": "list",
-                    "schema": "issue",
-                    "joined_data": true,
-                    "paginated": true,
-                    "hardcoded_filters" : {
-                        "issue_type": "last_repo_issues"
-                    }
-                },
-                "issues_from_other_recent_repos" : {
-                    "type": "list",
-                    "schema": "issue",
-                    "joined_data": true,
-                    "paginated": true,
-                    "hardcoded_filters" : {
-                        "issue_type": "issues_from_other_recent_repos"
-                    }
-                },
-                "relevant_issues" : {
-                    "type": "list",
-                    "schema": "issue",
-                    "joined_data": true,
-                    "paginated": true,
-                    "hardcoded_filters" : {
-                        "issue_type": "relevant_issues"
-                    }
-                }
-            }
-        }
     ]
-
 }

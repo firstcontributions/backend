@@ -92,21 +92,21 @@ services:
       - redis
 
 
-  # profile:
-  #   build:
-  #     context: ./
-  #     dockerfile: deployments/profile.Dockerfile
-  #   image: profile:latest
-  #   container_name: profile
-  #   env_file: ./env/profile.env
-  #   networks:
-  #     docker_network:
-  #       ipv4_address: 172.30.1.7
-  #   restart: always
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     - mongo
+  userservice:
+    build:
+      context: ./
+      dockerfile: deployments/userservice.Dockerfile
+    image: userservice:latest
+    container_name: userservice
+    env_file: ./env/userservice.env
+    networks:
+      docker_network:
+        ipv4_address: 172.30.1.7
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
 
   explorer:
     

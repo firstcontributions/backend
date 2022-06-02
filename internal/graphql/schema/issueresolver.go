@@ -8,6 +8,7 @@ import (
 )
 
 type Issue struct {
+	ref                 *issuesstore.Issue
 	Body                string
 	CommentCount        int32
 	Id                  string
@@ -25,6 +26,7 @@ func NewIssue(m *issuesstore.Issue) *Issue {
 		return nil
 	}
 	return &Issue{
+		ref:                 m,
 		Body:                m.Body,
 		CommentCount:        int32(m.CommentCount),
 		Id:                  m.Id,

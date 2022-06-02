@@ -11,7 +11,8 @@ type Store interface {
 	DeleteUserByID(ctx context.Context, id string) error
 	// badge methods
 	GetBadgeByID(ctx context.Context, id string) (*Badge, error)
-	GetBadges(ctx context.Context, ids []string, user *string, after *string, before *string, first *int64, last *int64) ([]*Badge, bool, bool, string, string, error)
+	GetBadges(ctx context.Context, ids []string,
+		user *User, after *string, before *string, first *int64, last *int64) ([]*Badge, bool, bool, string, string, error)
 	CreateBadge(ctx context.Context, badge *Badge) (*Badge, error)
 	UpdateBadge(ctx context.Context, id string, update *BadgeUpdate) error
 	DeleteBadgeByID(ctx context.Context, id string) error

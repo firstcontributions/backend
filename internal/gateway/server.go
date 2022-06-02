@@ -14,7 +14,7 @@ import (
 	"github.com/firstcontributions/backend/internal/gateway/session"
 	graphqlschema "github.com/firstcontributions/backend/internal/graphql/schema"
 	"github.com/firstcontributions/backend/internal/models/issuesstore/githubstore"
-	"github.com/firstcontributions/backend/internal/models/usersstore/mongo"
+	"github.com/firstcontributions/backend/internal/models/usersstore/grpc"
 	"github.com/firstcontributions/backend/internal/storemanager"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/securecookie"
@@ -22,8 +22,10 @@ import (
 	"github.com/graph-gophers/graphql-go/relay"
 	otelgraphql "github.com/graph-gophers/graphql-go/trace/otel"
 	"github.com/rs/cors"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/propagation"
 
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -74,7 +76,7 @@ func (s *Server) Init() error {
 	s.CookieManager = securecookie.New([]byte(*s.HashKey), []byte(*s.BlockKey))
 
 	ctx := context.Background()
-	userStore, err := mongo.NewUsersStore(ctx, *s.MongoURL)
+	userStore, err := grpc.NewUsersStore(ctx, *s.UsersServiceConfig.URL, *s.UsersServiceConfig.InitConnections, *s.UsersServiceConfig.ConnectionCapacity, *s.UsersServiceConfig.TTL)
 	if err != nil {
 		return err
 	}
@@ -87,6 +89,7 @@ func (s *Server) Init() error {
 
 func (s *Server) InitRoutes() error {
 	r := mux.NewRouter()
+	r.Use(otelmux.Middleware("gateway"))
 	r.HandleFunc("/v1/auth/redirect", s.AuthRedirect)
 	r.HandleFunc("/v1/auth/callback", s.AuthCallback)
 
@@ -116,6 +119,7 @@ func (s *Server) ListenAndServe() error {
 	// Register our TracerProvider as the global so any imported
 	// instrumentation in the future will default to using it.
 	otel.SetTracerProvider(tp)
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

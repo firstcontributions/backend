@@ -3,6 +3,7 @@ package issuesstore
 import "time"
 
 type Issue struct {
+	UserID              string    `bson:"user_id"`
 	Body                string    `bson:"body,omitempty"`
 	CommentCount        int64     `bson:"comment_count,omitempty"`
 	Id                  string    `bson:"_id"`

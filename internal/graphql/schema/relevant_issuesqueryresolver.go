@@ -13,7 +13,7 @@ type RelevantIssuesInput struct {
 	Before *string
 }
 
-func (n *IssuesFeed) RelevantIssues(ctx context.Context, in *RelevantIssuesInput) (*IssuesConnection, error) {
+func (n *User) RelevantIssues(ctx context.Context, in *RelevantIssuesInput) (*IssuesConnection, error) {
 	var first, last *int64
 	if in.First != nil {
 		tmp := int64(*in.First)
@@ -29,6 +29,7 @@ func (n *IssuesFeed) RelevantIssues(ctx context.Context, in *RelevantIssuesInput
 		ctx,
 		nil,
 		&issueType,
+		n.ref,
 		in.After,
 		in.Before,
 		first,
