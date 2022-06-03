@@ -8,12 +8,14 @@ import (
 )
 
 type User struct {
-	ref         *usersstore.User
-	Handle      string
-	Id          string
-	Name        string
-	TimeCreated graphql.Time
-	TimeUpdated graphql.Time
+	ref                  *usersstore.User
+	GitContributionStats *GitContributionStats
+	Handle               string
+	Id                   string
+	Name                 string
+	Reputation           *Reputation
+	TimeCreated          graphql.Time
+	TimeUpdated          graphql.Time
 }
 
 func NewUser(m *usersstore.User) *User {
@@ -21,18 +23,22 @@ func NewUser(m *usersstore.User) *User {
 		return nil
 	}
 	return &User{
-		ref:         m,
-		Handle:      m.Handle,
-		Id:          m.Id,
-		Name:        m.Name,
-		TimeCreated: graphql.Time{Time: m.TimeCreated},
-		TimeUpdated: graphql.Time{Time: m.TimeUpdated},
+		ref:                  m,
+		GitContributionStats: NewGitContributionStats(m.GitContributionStats),
+		Handle:               m.Handle,
+		Id:                   m.Id,
+		Name:                 m.Name,
+		Reputation:           NewReputation(m.Reputation),
+		TimeCreated:          graphql.Time{Time: m.TimeCreated},
+		TimeUpdated:          graphql.Time{Time: m.TimeUpdated},
 	}
 }
 
 type CreateUserInput struct {
-	Handle string
-	Name   string
+	GitContributionStats *GitContributionStats
+	Handle               string
+	Name                 string
+	Reputation           *Reputation
 }
 
 func (n *CreateUserInput) ToModel() *usersstore.User {
@@ -40,13 +46,17 @@ func (n *CreateUserInput) ToModel() *usersstore.User {
 		return nil
 	}
 	return &usersstore.User{
-		Handle: n.Handle,
-		Name:   n.Name,
+		GitContributionStats: n.GitContributionStats.ToModel(),
+		Handle:               n.Handle,
+		Name:                 n.Name,
+		Reputation:           n.Reputation.ToModel(),
 	}
 }
 
 type UpdateUserInput struct {
-	Name *string
+	GitContributionStats *GitContributionStats
+	Name                 *string
+	Reputation           *Reputation
 }
 
 func (n *UpdateUserInput) ToModel() *usersstore.UserUpdate {
@@ -54,7 +64,9 @@ func (n *UpdateUserInput) ToModel() *usersstore.UserUpdate {
 		return nil
 	}
 	return &usersstore.UserUpdate{
-		Name: n.Name,
+		GitContributionStats: n.GitContributionStats.ToModel(),
+		Name:                 n.Name,
+		Reputation:           n.Reputation.ToModel(),
 	}
 }
 func (n *User) ID(ctx context.Context) graphql.ID {
