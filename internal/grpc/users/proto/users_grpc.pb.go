@@ -22,18 +22,18 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UsersServiceClient interface {
-	// badges crud operations
-	CreateBadge(ctx context.Context, in *Badge, opts ...grpc.CallOption) (*Badge, error)
-	GetBadgeByID(ctx context.Context, in *RefByIDRequest, opts ...grpc.CallOption) (*Badge, error)
-	GetBadges(ctx context.Context, in *GetBadgesRequest, opts ...grpc.CallOption) (*GetBadgesResponse, error)
-	UpdateBadge(ctx context.Context, in *UpdateBadgeRequest, opts ...grpc.CallOption) (*StatusResponse, error)
-	DeleteBadge(ctx context.Context, in *RefByIDRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	// users crud operations
 	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	GetUserByID(ctx context.Context, in *RefByIDRequest, opts ...grpc.CallOption) (*User, error)
 	GetUsers(ctx context.Context, in *GetUsersRequest, opts ...grpc.CallOption) (*GetUsersResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	DeleteUser(ctx context.Context, in *RefByIDRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	// badges crud operations
+	CreateBadge(ctx context.Context, in *Badge, opts ...grpc.CallOption) (*Badge, error)
+	GetBadgeByID(ctx context.Context, in *RefByIDRequest, opts ...grpc.CallOption) (*Badge, error)
+	GetBadges(ctx context.Context, in *GetBadgesRequest, opts ...grpc.CallOption) (*GetBadgesResponse, error)
+	UpdateBadge(ctx context.Context, in *UpdateBadgeRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	DeleteBadge(ctx context.Context, in *RefByIDRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 }
 
 type usersServiceClient struct {
@@ -42,51 +42,6 @@ type usersServiceClient struct {
 
 func NewUsersServiceClient(cc grpc.ClientConnInterface) UsersServiceClient {
 	return &usersServiceClient{cc}
-}
-
-func (c *usersServiceClient) CreateBadge(ctx context.Context, in *Badge, opts ...grpc.CallOption) (*Badge, error) {
-	out := new(Badge)
-	err := c.cc.Invoke(ctx, "/users.UsersService/CreateBadge", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *usersServiceClient) GetBadgeByID(ctx context.Context, in *RefByIDRequest, opts ...grpc.CallOption) (*Badge, error) {
-	out := new(Badge)
-	err := c.cc.Invoke(ctx, "/users.UsersService/GetBadgeByID", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *usersServiceClient) GetBadges(ctx context.Context, in *GetBadgesRequest, opts ...grpc.CallOption) (*GetBadgesResponse, error) {
-	out := new(GetBadgesResponse)
-	err := c.cc.Invoke(ctx, "/users.UsersService/GetBadges", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *usersServiceClient) UpdateBadge(ctx context.Context, in *UpdateBadgeRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
-	out := new(StatusResponse)
-	err := c.cc.Invoke(ctx, "/users.UsersService/UpdateBadge", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *usersServiceClient) DeleteBadge(ctx context.Context, in *RefByIDRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
-	out := new(StatusResponse)
-	err := c.cc.Invoke(ctx, "/users.UsersService/DeleteBadge", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *usersServiceClient) CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
@@ -134,22 +89,67 @@ func (c *usersServiceClient) DeleteUser(ctx context.Context, in *RefByIDRequest,
 	return out, nil
 }
 
+func (c *usersServiceClient) CreateBadge(ctx context.Context, in *Badge, opts ...grpc.CallOption) (*Badge, error) {
+	out := new(Badge)
+	err := c.cc.Invoke(ctx, "/users.UsersService/CreateBadge", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersServiceClient) GetBadgeByID(ctx context.Context, in *RefByIDRequest, opts ...grpc.CallOption) (*Badge, error) {
+	out := new(Badge)
+	err := c.cc.Invoke(ctx, "/users.UsersService/GetBadgeByID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersServiceClient) GetBadges(ctx context.Context, in *GetBadgesRequest, opts ...grpc.CallOption) (*GetBadgesResponse, error) {
+	out := new(GetBadgesResponse)
+	err := c.cc.Invoke(ctx, "/users.UsersService/GetBadges", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersServiceClient) UpdateBadge(ctx context.Context, in *UpdateBadgeRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+	out := new(StatusResponse)
+	err := c.cc.Invoke(ctx, "/users.UsersService/UpdateBadge", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersServiceClient) DeleteBadge(ctx context.Context, in *RefByIDRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+	out := new(StatusResponse)
+	err := c.cc.Invoke(ctx, "/users.UsersService/DeleteBadge", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsersServiceServer is the server API for UsersService service.
 // All implementations must embed UnimplementedUsersServiceServer
 // for forward compatibility
 type UsersServiceServer interface {
-	// badges crud operations
-	CreateBadge(context.Context, *Badge) (*Badge, error)
-	GetBadgeByID(context.Context, *RefByIDRequest) (*Badge, error)
-	GetBadges(context.Context, *GetBadgesRequest) (*GetBadgesResponse, error)
-	UpdateBadge(context.Context, *UpdateBadgeRequest) (*StatusResponse, error)
-	DeleteBadge(context.Context, *RefByIDRequest) (*StatusResponse, error)
 	// users crud operations
 	CreateUser(context.Context, *User) (*User, error)
 	GetUserByID(context.Context, *RefByIDRequest) (*User, error)
 	GetUsers(context.Context, *GetUsersRequest) (*GetUsersResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*StatusResponse, error)
 	DeleteUser(context.Context, *RefByIDRequest) (*StatusResponse, error)
+	// badges crud operations
+	CreateBadge(context.Context, *Badge) (*Badge, error)
+	GetBadgeByID(context.Context, *RefByIDRequest) (*Badge, error)
+	GetBadges(context.Context, *GetBadgesRequest) (*GetBadgesResponse, error)
+	UpdateBadge(context.Context, *UpdateBadgeRequest) (*StatusResponse, error)
+	DeleteBadge(context.Context, *RefByIDRequest) (*StatusResponse, error)
 	mustEmbedUnimplementedUsersServiceServer()
 }
 
@@ -157,21 +157,6 @@ type UsersServiceServer interface {
 type UnimplementedUsersServiceServer struct {
 }
 
-func (UnimplementedUsersServiceServer) CreateBadge(context.Context, *Badge) (*Badge, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateBadge not implemented")
-}
-func (UnimplementedUsersServiceServer) GetBadgeByID(context.Context, *RefByIDRequest) (*Badge, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBadgeByID not implemented")
-}
-func (UnimplementedUsersServiceServer) GetBadges(context.Context, *GetBadgesRequest) (*GetBadgesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBadges not implemented")
-}
-func (UnimplementedUsersServiceServer) UpdateBadge(context.Context, *UpdateBadgeRequest) (*StatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateBadge not implemented")
-}
-func (UnimplementedUsersServiceServer) DeleteBadge(context.Context, *RefByIDRequest) (*StatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteBadge not implemented")
-}
 func (UnimplementedUsersServiceServer) CreateUser(context.Context, *User) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
@@ -187,6 +172,21 @@ func (UnimplementedUsersServiceServer) UpdateUser(context.Context, *UpdateUserRe
 func (UnimplementedUsersServiceServer) DeleteUser(context.Context, *RefByIDRequest) (*StatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
+func (UnimplementedUsersServiceServer) CreateBadge(context.Context, *Badge) (*Badge, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBadge not implemented")
+}
+func (UnimplementedUsersServiceServer) GetBadgeByID(context.Context, *RefByIDRequest) (*Badge, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBadgeByID not implemented")
+}
+func (UnimplementedUsersServiceServer) GetBadges(context.Context, *GetBadgesRequest) (*GetBadgesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBadges not implemented")
+}
+func (UnimplementedUsersServiceServer) UpdateBadge(context.Context, *UpdateBadgeRequest) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBadge not implemented")
+}
+func (UnimplementedUsersServiceServer) DeleteBadge(context.Context, *RefByIDRequest) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBadge not implemented")
+}
 func (UnimplementedUsersServiceServer) mustEmbedUnimplementedUsersServiceServer() {}
 
 // UnsafeUsersServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -198,96 +198,6 @@ type UnsafeUsersServiceServer interface {
 
 func RegisterUsersServiceServer(s grpc.ServiceRegistrar, srv UsersServiceServer) {
 	s.RegisterService(&UsersService_ServiceDesc, srv)
-}
-
-func _UsersService_CreateBadge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Badge)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UsersServiceServer).CreateBadge(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/users.UsersService/CreateBadge",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).CreateBadge(ctx, req.(*Badge))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UsersService_GetBadgeByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RefByIDRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UsersServiceServer).GetBadgeByID(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/users.UsersService/GetBadgeByID",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).GetBadgeByID(ctx, req.(*RefByIDRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UsersService_GetBadges_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBadgesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UsersServiceServer).GetBadges(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/users.UsersService/GetBadges",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).GetBadges(ctx, req.(*GetBadgesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UsersService_UpdateBadge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateBadgeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UsersServiceServer).UpdateBadge(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/users.UsersService/UpdateBadge",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).UpdateBadge(ctx, req.(*UpdateBadgeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UsersService_DeleteBadge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RefByIDRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UsersServiceServer).DeleteBadge(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/users.UsersService/DeleteBadge",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).DeleteBadge(ctx, req.(*RefByIDRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _UsersService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -380,6 +290,96 @@ func _UsersService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UsersService_CreateBadge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Badge)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServiceServer).CreateBadge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/users.UsersService/CreateBadge",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServiceServer).CreateBadge(ctx, req.(*Badge))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UsersService_GetBadgeByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServiceServer).GetBadgeByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/users.UsersService/GetBadgeByID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServiceServer).GetBadgeByID(ctx, req.(*RefByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UsersService_GetBadges_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBadgesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServiceServer).GetBadges(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/users.UsersService/GetBadges",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServiceServer).GetBadges(ctx, req.(*GetBadgesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UsersService_UpdateBadge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBadgeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServiceServer).UpdateBadge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/users.UsersService/UpdateBadge",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServiceServer).UpdateBadge(ctx, req.(*UpdateBadgeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UsersService_DeleteBadge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServiceServer).DeleteBadge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/users.UsersService/DeleteBadge",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServiceServer).DeleteBadge(ctx, req.(*RefByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UsersService_ServiceDesc is the grpc.ServiceDesc for UsersService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -387,26 +387,6 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "users.UsersService",
 	HandlerType: (*UsersServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "CreateBadge",
-			Handler:    _UsersService_CreateBadge_Handler,
-		},
-		{
-			MethodName: "GetBadgeByID",
-			Handler:    _UsersService_GetBadgeByID_Handler,
-		},
-		{
-			MethodName: "GetBadges",
-			Handler:    _UsersService_GetBadges_Handler,
-		},
-		{
-			MethodName: "UpdateBadge",
-			Handler:    _UsersService_UpdateBadge_Handler,
-		},
-		{
-			MethodName: "DeleteBadge",
-			Handler:    _UsersService_DeleteBadge_Handler,
-		},
 		{
 			MethodName: "CreateUser",
 			Handler:    _UsersService_CreateUser_Handler,
@@ -426,6 +406,26 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUser",
 			Handler:    _UsersService_DeleteUser_Handler,
+		},
+		{
+			MethodName: "CreateBadge",
+			Handler:    _UsersService_CreateBadge_Handler,
+		},
+		{
+			MethodName: "GetBadgeByID",
+			Handler:    _UsersService_GetBadgeByID_Handler,
+		},
+		{
+			MethodName: "GetBadges",
+			Handler:    _UsersService_GetBadges_Handler,
+		},
+		{
+			MethodName: "UpdateBadge",
+			Handler:    _UsersService_UpdateBadge_Handler,
+		},
+		{
+			MethodName: "DeleteBadge",
+			Handler:    _UsersService_DeleteBadge_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

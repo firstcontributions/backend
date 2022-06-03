@@ -52,8 +52,8 @@ type Issue implements Node {
 	issueType: String!
 	labels: [String]!
 	repository: String!
+	repositoryAvatar: String!
 	repositoryUpdatedAt: Time!
-	respositoryAvatar: String!
 	title: String!
 	url: String!
 } 

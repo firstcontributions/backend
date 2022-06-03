@@ -15,8 +15,8 @@ type Issue struct {
 	IssueType           string
 	Labels              []*string
 	Repository          string
+	RepositoryAvatar    string
 	RepositoryUpdatedAt graphql.Time
-	RespositoryAvatar   string
 	Title               string
 	Url                 string
 }
@@ -33,8 +33,8 @@ func NewIssue(m *issuesstore.Issue) *Issue {
 		IssueType:           m.IssueType,
 		Labels:              m.Labels,
 		Repository:          m.Repository,
+		RepositoryAvatar:    m.RepositoryAvatar,
 		RepositoryUpdatedAt: graphql.Time{Time: m.RepositoryUpdatedAt},
-		RespositoryAvatar:   m.RespositoryAvatar,
 		Title:               m.Title,
 		Url:                 m.Url,
 	}
@@ -46,8 +46,8 @@ type CreateIssueInput struct {
 	IssueType           string
 	Labels              []*string
 	Repository          string
+	RepositoryAvatar    string
 	RepositoryUpdatedAt graphql.Time
-	RespositoryAvatar   string
 	Title               string
 	Url                 string
 }
@@ -62,8 +62,8 @@ func (n *CreateIssueInput) ToModel() *issuesstore.Issue {
 		IssueType:           n.IssueType,
 		Labels:              n.Labels,
 		Repository:          n.Repository,
+		RepositoryAvatar:    n.RepositoryAvatar,
 		RepositoryUpdatedAt: n.RepositoryUpdatedAt.Time,
-		RespositoryAvatar:   n.RespositoryAvatar,
 		Title:               n.Title,
 		Url:                 n.Url,
 	}

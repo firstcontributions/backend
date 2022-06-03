@@ -14,7 +14,7 @@ import (
 	"github.com/firstcontributions/backend/internal/gateway/session"
 	graphqlschema "github.com/firstcontributions/backend/internal/graphql/schema"
 	"github.com/firstcontributions/backend/internal/models/issuesstore/githubstore"
-	"github.com/firstcontributions/backend/internal/models/usersstore/grpc"
+	"github.com/firstcontributions/backend/internal/models/usersstore/mongo"
 	"github.com/firstcontributions/backend/internal/storemanager"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/securecookie"
@@ -76,7 +76,7 @@ func (s *Server) Init() error {
 	s.CookieManager = securecookie.New([]byte(*s.HashKey), []byte(*s.BlockKey))
 
 	ctx := context.Background()
-	userStore, err := grpc.NewUsersStore(ctx, *s.UsersServiceConfig.URL, *s.UsersServiceConfig.InitConnections, *s.UsersServiceConfig.ConnectionCapacity, *s.UsersServiceConfig.TTL)
+	userStore, err := mongo.NewUsersStore(ctx, *s.Config.MongoURL)
 	if err != nil {
 		return err
 	}
