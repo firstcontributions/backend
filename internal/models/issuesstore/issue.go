@@ -10,8 +10,8 @@ type Issue struct {
 	IssueType           string    `bson:"issue_type,omitempty"`
 	Labels              []*string `bson:"labels,omitempty"`
 	Repository          string    `bson:"repository,omitempty"`
+	RepositoryAvatar    string    `bson:"repository_avatar,omitempty"`
 	RepositoryUpdatedAt time.Time `bson:"repository_updated_at,omitempty"`
-	RespositoryAvatar   string    `bson:"respository_avatar,omitempty"`
 	Title               string    `bson:"title,omitempty"`
 	Url                 string    `bson:"url,omitempty"`
 	Cursor              string

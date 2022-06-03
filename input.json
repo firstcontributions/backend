@@ -3,7 +3,7 @@
     "modules": [
         {
             "name": "users",
-            "data_source": "grpc",
+            "data_source": "mongo",
             "db": "mongo",
             "entities": {
                 "user":{
@@ -129,7 +129,7 @@
                         "title": "string",
                         "body": "string",
                         "repository": "string",
-                        "respository_avatar": "string",
+                        "repository_avatar": "string",
                         "repository_updated_at": "time",
                         "comment_count": "int",
                         "labels": {

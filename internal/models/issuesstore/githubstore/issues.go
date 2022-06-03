@@ -161,7 +161,7 @@ func issueFromGithubIssue(i GitIssue) *issuesstore.Issue {
 		Labels:              labels,
 		CommentCount:        int64(i.Comments.TotalCount),
 		Repository:          string(i.Repository.NameWithOwner),
-		RespositoryAvatar:   string(i.Repository.Owner.AvatarUrl),
+		RepositoryAvatar:    string(i.Repository.Owner.AvatarUrl),
 		RepositoryUpdatedAt: i.Repository.UpdatedAt.Time,
 	}
 }
