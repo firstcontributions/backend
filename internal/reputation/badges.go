@@ -29,13 +29,33 @@ func (r ReputationSynchroniser) SyncBadges(ctx context.Context, user *usersstore
 		}
 	}
 	log.Printf("look %d ms\n", (time.Since(start))*time.Millisecond)
-	if cursor != nil {
-		userUpdate := &usersstore.UserUpdate{
-			CursorCheckpoints: &usersstore.CursorCheckpoints{PullRequests: string(*cursor)},
-		}
-		return r.userStore.UpdateUser(ctx, user.Id, userUpdate)
+	reputation := user.Reputation
+	if reputation == nil {
+		reputation = usersstore.NewReputation()
 	}
-	return nil
+	updateReputationFromFileChanges(reputation, fileChanges)
+	userUpdate := &usersstore.UserUpdate{
+		Reputation: reputation,
+	}
+	if cursor != nil {
+		userUpdate.CursorCheckpoints = &usersstore.CursorCheckpoints{PullRequests: string(*cursor)}
+	}
+	return r.userStore.UpdateUser(ctx, user.Id, userUpdate)
+}
+
+func updateReputationFromFileChanges(reputation *usersstore.Reputation, fileChanges []FileChange) {
+	for _, fc := range fileChanges {
+		if fc.stars >= 100 {
+			reputation.ContributionsToPopularRepos += int64(fc.additions)
+		} else {
+			reputation.ContributionsToUnpopularRepos += int64(fc.additions)
+		}
+	}
+	reputationValue := (reputation.ContributionsToPopularRepos / 64) * 2
+	reputationValue += (reputation.ContributionsToUnpopularRepos / 64)
+
+	reputationValue += (reputation.ContributionsToPopularRepos % 64) + (reputation.ContributionsToUnpopularRepos%64)/64
+	reputation.Value = float64(reputationValue)
 }
 
 func (r ReputationSynchroniser) updateBadge(ctx context.Context, badge *usersstore.Badge, user *usersstore.User) error {
@@ -81,6 +101,7 @@ func (r ReputationSynchroniser) getPRFileChangesFromGitHub(ctx context.Context, 
 type FileChange struct {
 	path      string
 	additions int
+	stars     int
 }
 
 type GitQuery struct {
@@ -90,6 +111,9 @@ type GitQuery struct {
 		PullRequests struct {
 			Edges []struct {
 				Node struct {
+					Repository struct {
+						StargazerCount githubv4.Int
+					}
 					Files struct {
 						Edges []struct {
 							Node struct {
@@ -132,6 +156,7 @@ func (r ReputationSynchroniser) getPullRequestDataFromGitHub(
 			files = append(files, FileChange{
 				path:      string(f.Node.Path),
 				additions: int(f.Node.Additions),
+				stars:     int(pr.Node.Repository.StargazerCount),
 			})
 		}
 	}

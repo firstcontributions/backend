@@ -2,7 +2,6 @@ package githubclient
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/firstcontributions/backend/internal/configs"
 	"github.com/firstcontributions/backend/internal/gateway/session"
@@ -29,7 +28,6 @@ func NewGitHubClient(config configs.GithubConfig) *GitHubClient {
 
 func (g *GitHubClient) Query(ctx context.Context, query interface{}, params map[string]interface{}) error {
 	meta := session.FromContext(ctx)
-	fmt.Println("-------------- meta", meta)
 	token := &oauth2.Token{
 		AccessToken: meta.Token.AccessToken,
 	}
