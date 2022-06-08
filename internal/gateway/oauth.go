@@ -99,6 +99,7 @@ func (s *Server) getProfileFromGithub(ctx context.Context, token *oauth2.Token) 
 		Viewer struct {
 			Login     githubv4.String
 			AvatarURL githubv4.URI
+			Bio		githubv4.String
 			Name      githubv4.String
 		}
 	}
@@ -110,6 +111,8 @@ func (s *Server) getProfileFromGithub(ctx context.Context, token *oauth2.Token) 
 	return &usersstore.User{
 		Name:   string(query.Viewer.Name),
 		Handle: string(query.Viewer.Login),
+		Avatar: query.Viewer.AvatarURL.String(),
+		Bio: string(query.Viewer.Bio),
 		Token: &usersstore.Token{
 			AccessToken:  token.AccessToken,
 			RefreshToken: token.RefreshToken,
