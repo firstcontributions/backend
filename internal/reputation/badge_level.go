@@ -57,8 +57,8 @@ func GetLevelFromPoints(points int) BadgeLevel {
 
 func GetProgressPercentageToNextLevel(points int) int64 {
 	currLevel := GetLevelFromPoints(points)
-	prevTarget := GetLevelTarget(currLevel)
-	nextTarget := GetLevelTarget(currLevel + 1)
+	prevTarget := GetLevelTarget(currLevel - 1)
+	nextTarget := GetLevelTarget(currLevel)
 
 	return int64((float64(points-prevTarget) / float64(nextTarget-prevTarget)) * 100)
 }
