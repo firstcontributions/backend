@@ -87,7 +87,9 @@ input ReputationInput {
 }
 
 type User implements Node {
+	avatar: String!
 	badges(first: Int, last: Int, after: String, before: String): BadgesConnection!
+	bio: String!
 	gitContributionStats: GitContributionStats!
 	handle: String!
 	id: ID!
@@ -100,7 +102,9 @@ type User implements Node {
 	timeUpdated: Time!
 }
 
-input UserInput { 
+input UserInput {
+	avatar: String!
+	bio: String! 
 	gitContributionStats: GitContributionStatsInput!
 	handle: String!
 	name: String! 

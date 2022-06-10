@@ -19,6 +19,8 @@
                         "id": "id",
                         "name": "string",
                         "handle": "string",
+                        "avatar": "string",
+                        "bio": "string",
                         "badges": {
                             "type": "list",
                             "schema": "badge",
