@@ -9,6 +9,8 @@ import (
 
 type User struct {
 	ref                  *usersstore.User
+	Avatar               string
+	Bio                  string
 	GitContributionStats *GitContributionStats
 	Handle               string
 	Id                   string
@@ -24,6 +26,8 @@ func NewUser(m *usersstore.User) *User {
 	}
 	return &User{
 		ref:                  m,
+		Avatar:               m.Avatar,
+		Bio:                  m.Bio,
 		GitContributionStats: NewGitContributionStats(m.GitContributionStats),
 		Handle:               m.Handle,
 		Id:                   m.Id,
@@ -35,6 +39,8 @@ func NewUser(m *usersstore.User) *User {
 }
 
 type CreateUserInput struct {
+	Avatar               string
+	Bio                  string
 	GitContributionStats *GitContributionStats
 	Handle               string
 	Name                 string
@@ -46,6 +52,8 @@ func (n *CreateUserInput) ToModel() *usersstore.User {
 		return nil
 	}
 	return &usersstore.User{
+		Avatar:               n.Avatar,
+		Bio:                  n.Bio,
 		GitContributionStats: n.GitContributionStats.ToModel(),
 		Handle:               n.Handle,
 		Name:                 n.Name,
