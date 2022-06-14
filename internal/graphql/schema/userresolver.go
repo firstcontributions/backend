@@ -62,6 +62,9 @@ func (n *CreateUserInput) ToModel() *usersstore.User {
 }
 
 type UpdateUserInput struct {
+	ID                   graphql.ID
+	Avatar               *string
+	Bio                  *string
 	GitContributionStats *GitContributionStats
 	Name                 *string
 	Reputation           *Reputation
@@ -72,6 +75,8 @@ func (n *UpdateUserInput) ToModel() *usersstore.UserUpdate {
 		return nil
 	}
 	return &usersstore.UserUpdate{
+		Avatar:               n.Avatar,
+		Bio:                  n.Bio,
 		GitContributionStats: n.GitContributionStats.ToModel(),
 		Name:                 n.Name,
 		Reputation:           n.Reputation.ToModel(),

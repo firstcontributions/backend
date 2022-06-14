@@ -12,7 +12,7 @@
                     "meta": {
                         "search_fields": ["name", "handle"],
                         "filters": ["handle"],
-                        "mutatable_fields" :["name", "cursor_checkpoints", "token", "tags", "reputation", "git_contribution_stats"],
+                        "mutatable_fields" :["name", "cursor_checkpoints", "token", "tags", "reputation", "git_contribution_stats", "bio", "avatar"],
                         "graphql_ops": "CRUD"
                     },
                     "properties":{

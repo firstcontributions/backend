@@ -1,8 +1,6 @@
 package gateway
 
 import (
-	"context"
-	"errors"
 	"log"
 	"net/http"
 	"time"
@@ -10,7 +8,6 @@ import (
 	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/firstcontributions/backend/internal/models/usersstore"
 	"github.com/firstcontributions/backend/internal/storemanager"
-	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 )
 
@@ -19,7 +16,8 @@ func (s *Server) HandleSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("fc_session")
 		if err != nil {
-			ErrorResponse(ErrUnauthorized(), w)
+			log.Print("error on reading cookie ", err)
+			next.ServeHTTP(w, r)
 			return
 		}
 		cookieValue := make(map[string]string)
@@ -32,22 +30,14 @@ func (s *Server) HandleSession(next http.Handler) http.Handler {
 		}
 		var sessionData session.MetaData
 		if err := s.SessionManager.Get(r.Context(), cookieValue["id"], &sessionData); err != nil {
-			if errors.Is(err, redis.Nil) {
-				ErrorResponse(ErrUnauthorized(), w)
-				return
-			}
 			log.Print("error on getting session ", err)
-			ErrorResponse(ErrInternalServerError(), w)
+			next.ServeHTTP(w, r)
 			return
 		}
-
-		if sessionData.Handle() == "" {
-			ErrorResponse(ErrUnauthorized(), w)
-			return
-		}
+		log.Println("with cookie", sessionData.Handle())
 		r = r.WithContext(
 			storemanager.ContextWithStore(
-				context.WithValue(r.Context(), session.CxtKeySession, sessionData),
+				session.WithContext(r.Context(), &sessionData),
 				s.Store,
 			),
 		)

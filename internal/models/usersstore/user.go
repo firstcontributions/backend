@@ -22,6 +22,8 @@ func NewUser() *User {
 }
 
 type UserUpdate struct {
+	Avatar               *string               `bson:"avatar,omitempty"`
+	Bio                  *string               `bson:"bio,omitempty"`
 	CursorCheckpoints    *CursorCheckpoints    `bson:"cursor_checkpoints,omitempty"`
 	GitContributionStats *GitContributionStats `bson:"git_contribution_stats,omitempty"`
 	Name                 *string               `bson:"name,omitempty"`
