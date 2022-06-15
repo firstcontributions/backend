@@ -6,14 +6,14 @@ import (
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
-type UserIssuesFromOtherRecentReposInputInput struct {
+type UserIssuesFromOtherRecentReposInput struct {
 	First  *int32
 	Last   *int32
 	After  *string
 	Before *string
 }
 
-func (n *User) IssuesFromOtherRecentRepos(ctx context.Context, in *UserIssuesFromOtherRecentReposInputInput) (*IssuesConnection, error) {
+func (n *User) IssuesFromOtherRecentRepos(ctx context.Context, in *UserIssuesFromOtherRecentReposInput) (*IssuesConnection, error) {
 	var first, last *int64
 	if in.First != nil {
 		tmp := int64(*in.First)

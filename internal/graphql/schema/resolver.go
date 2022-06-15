@@ -15,10 +15,13 @@ type Resolver struct {
 }
 
 func (r *Resolver) Viewer(ctx context.Context) (*User, error) {
-	id := session.FromContext(ctx).UserID()
+	session := session.FromContext(ctx)
+	if session == nil {
+		return nil, errors.New("Unauthorized")
+	}
 	store := storemanager.FromContext(ctx)
 
-	data, err := store.UsersStore.GetUserByID(ctx, id)
+	data, err := store.UsersStore.GetUserByID(ctx, session.UserID())
 	if err != nil {
 		return nil, err
 	}

@@ -81,6 +81,8 @@ github.com/go-redis/redis/v8 v8.11.5 h1:AcZZR7igkdvfVmQTPnu9WE37LRrO/YrBH5zWyjDC
 github.com/go-redis/redis/v8 v8.11.5/go.mod h1:gREzHqY1hg6oD9ngVRbLStwAWKhA0FEgq8Jd4h5lpwo=
 github.com/go-stack/stack v1.8.0 h1:5SgMzNM5HxrEjV0ww2lTmX6E2Izsfxas4+YHWRs3Lsk=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
+github.com/go-stack/stack v1.8.1 h1:ntEHSVwIt7PNXNpgPmVfMrNhLtgjlmnZha2kOpuRiDw=
+github.com/go-stack/stack v1.8.1/go.mod h1:dcoOX6HbPZSZptuspn9bctJ+N/CnF5gGygcUP3XYfe4=
 github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
 github.com/gobuffalo/attrs v0.0.0-20190224210810-a9411de4debd/go.mod h1:4duuawTqi2wkkpB4ePgWMaai6/Kc6WEz83bhFwpHzj0=
 github.com/gobuffalo/depgen v0.0.0-20190329151759-d478694a28d3/go.mod h1:3STtPUQYuzV0gBVOY3vy6CfMm/ljR4pABfrTeHNLHUY=
@@ -110,6 +112,8 @@ github.com/gokultp/go-envparser v0.0.0-20220210005632-0a897ee86128 h1:KFolwkxt+j
 github.com/gokultp/go-envparser v0.0.0-20220210005632-0a897ee86128/go.mod h1:VszzUwH43NpNZ+Klg7RoBPejuR/faLtsEgecXGKTeok=
 github.com/gokultp/go-mongoqb v0.0.0-20210803124046-b45d2a746e99 h1:634TbYzcvtbtVOo7kA4ZeST4l2g2S1Ue2HGoilEJceI=
 github.com/gokultp/go-mongoqb v0.0.0-20210803124046-b45d2a746e99/go.mod h1:hPlSi/UmInVVL96Vgaat+BU7hPS4/SNMXYlqdSNW/t8=
+github.com/gokultp/go-mongoqb v1.0.1 h1:A2Z4+Vl10zcA/kN7sr5i+4kt+A854GFQPSdVhFTMIQ0=
+github.com/gokultp/go-mongoqb v1.0.1/go.mod h1:hPlSi/UmInVVL96Vgaat+BU7hPS4/SNMXYlqdSNW/t8=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
 github.com/golang/groupcache v0.0.0-20191227052852-215e87163ea7/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
