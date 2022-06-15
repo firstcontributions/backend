@@ -2,7 +2,9 @@ package schema
 
 import (
 	"context"
+	"errors"
 
+	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
@@ -12,8 +14,17 @@ func (m *Resolver) CreateUser(
 		User *CreateUserInput
 	},
 ) (*User, error) {
-	store := storemanager.FromContext(ctx)
-	user, err := store.UsersStore.CreateUser(ctx, args.User.ToModel())
+	session := session.FromContext(ctx)
+	if session == nil {
+		return nil, errors.New("unauthorized")
+	}
+
+	userModelInput, err := args.User.ToModel()
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := storemanager.FromContext(ctx).UsersStore.CreateUser(ctx, userModelInput)
 	if err != nil {
 		return nil, err
 	}

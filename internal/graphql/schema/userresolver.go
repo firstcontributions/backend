@@ -47,10 +47,11 @@ type CreateUserInput struct {
 	Reputation           *Reputation
 }
 
-func (n *CreateUserInput) ToModel() *usersstore.User {
+func (n *CreateUserInput) ToModel() (*usersstore.User, error) {
 	if n == nil {
-		return nil
+		return nil, nil
 	}
+
 	return &usersstore.User{
 		Avatar:               n.Avatar,
 		Bio:                  n.Bio,
@@ -58,7 +59,7 @@ func (n *CreateUserInput) ToModel() *usersstore.User {
 		Handle:               n.Handle,
 		Name:                 n.Name,
 		Reputation:           n.Reputation.ToModel(),
-	}
+	}, nil
 }
 
 type UpdateUserInput struct {

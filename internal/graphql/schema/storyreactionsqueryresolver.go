@@ -6,14 +6,14 @@ import (
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
-type RelevantIssuesInput struct {
+type StoryReactionsInputInput struct {
 	First  *int32
 	Last   *int32
 	After  *string
 	Before *string
 }
 
-func (n *User) RelevantIssues(ctx context.Context, in *RelevantIssuesInput) (*IssuesConnection, error) {
+func (n *Story) Reactions(ctx context.Context, in *StoryReactionsInputInput) (*ReactionsConnection, error) {
 	var first, last *int64
 	if in.First != nil {
 		tmp := int64(*in.First)
@@ -24,11 +24,10 @@ func (n *User) RelevantIssues(ctx context.Context, in *RelevantIssuesInput) (*Is
 		last = &tmp
 	}
 	store := storemanager.FromContext(ctx)
-	issueType := "relevant_issues"
-	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.IssuesStore.GetIssues(
+	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.StoriesStore.GetReactions(
 		ctx,
 		nil,
-		&issueType,
+		nil,
 		n.ref,
 		in.After,
 		in.Before,
@@ -38,5 +37,5 @@ func (n *User) RelevantIssues(ctx context.Context, in *RelevantIssuesInput) (*Is
 	if err != nil {
 		return nil, err
 	}
-	return NewIssuesConnection(data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewReactionsConnection(data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
 }

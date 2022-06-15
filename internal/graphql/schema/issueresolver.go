@@ -50,12 +50,18 @@ type CreateIssueInput struct {
 	RepositoryUpdatedAt graphql.Time
 	Title               string
 	Url                 string
+	UserID              graphql.ID
 }
 
-func (n *CreateIssueInput) ToModel() *issuesstore.Issue {
+func (n *CreateIssueInput) ToModel() (*issuesstore.Issue, error) {
 	if n == nil {
-		return nil
+		return nil, nil
 	}
+	userID, err := ParseGraphqlID(n.UserID)
+	if err != nil {
+		return nil, err
+	}
+
 	return &issuesstore.Issue{
 		Body:                n.Body,
 		CommentCount:        int64(n.CommentCount),
@@ -66,7 +72,8 @@ func (n *CreateIssueInput) ToModel() *issuesstore.Issue {
 		RepositoryUpdatedAt: n.RepositoryUpdatedAt.Time,
 		Title:               n.Title,
 		Url:                 n.Url,
-	}
+		UserID:              userID.ID,
+	}, nil
 }
 func (n *Issue) ID(ctx context.Context) graphql.ID {
 	return NewIDMarshaller("issue", n.Id).

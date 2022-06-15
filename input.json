@@ -1,5 +1,8 @@
 {
     "repo": "github.com/firstcontributions/backend",
+    "defaults": {
+        "viewer_type": "user"
+    },
     "modules": [
         {
             "name": "users",
@@ -47,6 +50,12 @@
                         "git_contribution_stats": {
                             "type": "object",
                             "schema": "git_contribution_stats"
+                        },
+                        "stories" : {
+                            "type": "list",
+                            "schema": "story",
+                            "joined_data": true,
+                            "paginated": true
                         },
                         "issues_from_last_repo" : {
                             "type": "list",
@@ -177,6 +186,94 @@
                         },
                         "url": "string",
                         "issue_type": "string"
+                    }
+                }
+            }
+        },
+        {
+            "name": "stories",
+            "data_source": "mongo",
+            "db": "mongo",
+            "entities": {
+                "story": {
+                    "name": "story",
+                    "type": "object",
+                    "meta": {
+                        "search_fields": [],
+                        "filters": [],
+                        "mutatable_fields" :[],
+                        "graphql_ops": "CRUD"
+                    },
+                    "properties":{
+                        "id": "id",
+                        "content_json": "string",
+                        "abstract_content": "string",
+                        "url_suffix": "string",
+                        "thumbanil": "string",
+                        "comments": {
+                            "type": "list",
+                            "schema": "comment",
+                            "joined_data": true,
+                            "paginated": true
+                        },
+                        "reactions":{
+                            "type": "list",
+                            "schema": "reaction",
+                            "joined_data": true,
+                            "paginated": true
+                        },
+                        "created_by" : {
+                            "type": "object",
+                            "schema": "user",
+                            "joined_data": true,
+                            "viewer_reference": true
+                        }
+                    }
+                },
+                "comment": {
+                    "name": "comment",
+                    "type": "object",
+                    "meta": {
+                        "search_fields": [],
+                        "filters": [],
+                        "mutatable_fields" :[],
+                        "graphql_ops": "CRUD"
+                    },
+                    "properties":{
+                        "id": "id",
+                        "content_json": "string",
+                        "abstract_content": "string",
+                        "reactions":{
+                            "type": "list",
+                            "schema": "reaction",
+                            "joined_data": true,
+                            "paginated": true
+                        },
+                        "created_by" : {
+                            "type": "object",
+                            "schema": "user",
+                            "joined_data": true,
+                            "viewer_reference": true
+                        }
+                    }
+                },
+                "reaction": {
+                    "name": "reaction",
+                    "type": "object",
+                    "meta": {
+                        "search_fields": [],
+                        "filters": [],
+                        "mutatable_fields" :[],
+                        "graphql_ops": "CRUD"
+                    },
+                    "properties":{
+                        "id": "id",
+                        "created_by" : {
+                            "type": "object",
+                            "schema": "user",
+                            "joined_data": true,
+                            "viewer_reference": true
+                        }
                     }
                 }
             }
