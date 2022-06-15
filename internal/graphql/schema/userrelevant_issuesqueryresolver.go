@@ -6,14 +6,14 @@ import (
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
-type IssuesFromLastRepoInput struct {
+type UserRelevantIssuesInputInput struct {
 	First  *int32
 	Last   *int32
 	After  *string
 	Before *string
 }
 
-func (n *User) IssuesFromLastRepo(ctx context.Context, in *IssuesFromLastRepoInput) (*IssuesConnection, error) {
+func (n *User) RelevantIssues(ctx context.Context, in *UserRelevantIssuesInputInput) (*IssuesConnection, error) {
 	var first, last *int64
 	if in.First != nil {
 		tmp := int64(*in.First)
@@ -24,7 +24,7 @@ func (n *User) IssuesFromLastRepo(ctx context.Context, in *IssuesFromLastRepoInp
 		last = &tmp
 	}
 	store := storemanager.FromContext(ctx)
-	issueType := "last_repo_issues"
+	issueType := "relevant_issues"
 	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.IssuesStore.GetIssues(
 		ctx,
 		nil,

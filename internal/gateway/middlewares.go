@@ -1,6 +1,7 @@
 package gateway
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"time"
@@ -14,36 +15,41 @@ import (
 // HandleSession checks session data
 func (s *Server) HandleSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie("fc_session")
+		ctx, err := s.getConetxWithSession(r)
 		if err != nil {
-			log.Print("error on reading cookie ", err)
-			next.ServeHTTP(w, r)
+			ErrorResponse(err, w)
 			return
 		}
-		cookieValue := make(map[string]string)
-
-		err = s.CookieManager.Decode("fc_session", cookie.Value, &cookieValue)
-		if err != nil {
-			log.Print("error on decoding cookie ", err)
-			ErrorResponse(ErrInternalServerError(), w)
-			return
-		}
-		var sessionData session.MetaData
-		if err := s.SessionManager.Get(r.Context(), cookieValue["id"], &sessionData); err != nil {
-			log.Print("error on getting session ", err)
-			next.ServeHTTP(w, r)
-			return
-		}
-		log.Println("with cookie", sessionData.Handle())
 		r = r.WithContext(
 			storemanager.ContextWithStore(
-				session.WithContext(r.Context(), &sessionData),
+				ctx,
 				s.Store,
 			),
 		)
-		// Our middleware logic goes here...
 		next.ServeHTTP(w, r)
 	})
+}
+
+func (s *Server) getConetxWithSession(r *http.Request) (context.Context, *Error) {
+	cookie, err := r.Cookie("fc_session")
+	if err != nil {
+		log.Print("error on reading cookie ", err)
+		return r.Context(), nil
+	}
+	cookieValue := make(map[string]string)
+
+	err = s.CookieManager.Decode("fc_session", cookie.Value, &cookieValue)
+	if err != nil {
+		log.Print("error on decoding cookie ", err)
+		return nil, ErrInternalServerError()
+	}
+	var sessionData session.MetaData
+	if err := s.SessionManager.Get(r.Context(), cookieValue["id"], &sessionData); err != nil {
+		log.Print("error on getting session ", err)
+		return r.Context(), nil
+	}
+	log.Println("with cookie", sessionData.Handle())
+	return session.WithContext(r.Context(), &sessionData), nil
 }
 
 func (s *Server) setSession(w http.ResponseWriter, r *http.Request, profile *usersstore.User) (string, error) {

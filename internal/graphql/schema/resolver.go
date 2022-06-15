@@ -15,11 +15,7 @@ type Resolver struct {
 }
 
 func (r *Resolver) Viewer(ctx context.Context) (*User, error) {
-	sessionData := session.FromContext(ctx)
-	if sessionData == nil {
-		return nil, errors.New("Unauthorized")
-	}
-	id := sessionData.UserID()
+	id := session.FromContext(ctx).UserID()
 	store := storemanager.FromContext(ctx)
 
 	data, err := store.UsersStore.GetUserByID(ctx, id)

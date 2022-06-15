@@ -6,14 +6,14 @@ import (
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
-type BadgesInput struct {
+type UserBadgesInputInput struct {
 	First  *int32
 	Last   *int32
 	After  *string
 	Before *string
 }
 
-func (n *User) Badges(ctx context.Context, in *BadgesInput) (*BadgesConnection, error) {
+func (n *User) Badges(ctx context.Context, in *UserBadgesInputInput) (*BadgesConnection, error) {
 	var first, last *int64
 	if in.First != nil {
 		tmp := int64(*in.First)

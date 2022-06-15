@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/firstcontributions/backend/internal/models/issuesstore"
+	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/models/usersstore"
 )
 
@@ -14,17 +15,20 @@ const (
 )
 
 type Store struct {
-	IssuesStore issuesstore.Store
-	UsersStore  usersstore.Store
+	IssuesStore  issuesstore.Store
+	StoriesStore storiesstore.Store
+	UsersStore   usersstore.Store
 }
 
 func NewStore(
 	issuesStore issuesstore.Store,
+	storiesStore storiesstore.Store,
 	usersStore usersstore.Store,
 ) *Store {
 	return &Store{
-		IssuesStore: issuesStore,
-		UsersStore:  usersStore,
+		IssuesStore:  issuesStore,
+		StoriesStore: storiesStore,
+		UsersStore:   usersStore,
 	}
 }
 
