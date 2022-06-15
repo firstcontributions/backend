@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
 	"github.com/shurcooL/githubv4"
@@ -28,6 +29,17 @@ func (s *Server) AuthRedirect(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(ErrInternalServerError(), w)
 		return
 	}
+	origin := "http://explorer.firstcontributions.com"
+	if originFromQuery := r.URL.Query().Get("origin"); originFromQuery != "" {
+		origin = originFromQuery
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:    "fc_origin",
+		Value:   origin,
+		Expires: time.Now().Add(5 * time.Minute * 5),
+		Path:    "/",
+		Domain:  "firstcontributions.com",
+	})
 	http.Redirect(w, r, conf.AuthCodeURL(state), http.StatusSeeOther)
 }
 
@@ -50,9 +62,12 @@ func (s *Server) AuthCallback(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(ErrInternalServerError(), w)
 	}
 	go s.UpdateProfileReputation(p, sessionID)
-	http.Redirect(w, r, "http://app.firstcontributions.com", http.StatusSeeOther)
-	// JSONResponse(w, http.StatusOK, p)
-
+	redirect := "http://explorer.firstcontributions.com"
+	cookie, _ := r.Cookie("fc_origin")
+	if cookie != nil && cookie.Value != "" {
+		redirect = cookie.Value
+	}
+	http.Redirect(w, r, redirect, http.StatusSeeOther)
 }
 
 func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*usersstore.User, *Error) {

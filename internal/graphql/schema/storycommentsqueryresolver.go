@@ -6,14 +6,14 @@ import (
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
-type StoryCommentsInputInput struct {
+type StoryCommentsInput struct {
 	First  *int32
 	Last   *int32
 	After  *string
 	Before *string
 }
 
-func (n *Story) Comments(ctx context.Context, in *StoryCommentsInputInput) (*CommentsConnection, error) {
+func (n *Story) Comments(ctx context.Context, in *StoryCommentsInput) (*CommentsConnection, error) {
 	var first, last *int64
 	if in.First != nil {
 		tmp := int64(*in.First)

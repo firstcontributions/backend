@@ -21,9 +21,14 @@ func NewLogicalQuery(operation string, queries ...IQuery) *LogicalQuery {
 }
 
 func (q *LogicalQuery) Build() bson.M {
+	if len(q.queries) == 0 {
+		return nil
+	}
 	queries := []bson.M{}
 	for _, q := range q.queries {
-		queries = append(queries, q.Build())
+		if generatedQuery := q.Build(); generatedQuery != nil {
+			queries = append(queries, generatedQuery)
+		}
 	}
 	return bson.M{
 		q.operation: queries,

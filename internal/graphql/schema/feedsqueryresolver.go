@@ -6,14 +6,14 @@ import (
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
-type UserRelevantIssuesInput struct {
+type FeedsInput struct {
 	First  *int32
 	Last   *int32
 	After  *string
 	Before *string
 }
 
-func (n *User) RelevantIssues(ctx context.Context, in *UserRelevantIssuesInput) (*IssuesConnection, error) {
+func (r *Resolver) Feeds(ctx context.Context, in *FeedsInput) (*StoriesConnection, error) {
 	var first, last *int64
 	if in.First != nil {
 		tmp := int64(*in.First)
@@ -24,12 +24,10 @@ func (n *User) RelevantIssues(ctx context.Context, in *UserRelevantIssuesInput) 
 		last = &tmp
 	}
 	store := storemanager.FromContext(ctx)
-	issueType := "relevant_issues"
-	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.IssuesStore.GetIssues(
+	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.StoriesStore.GetStories(
 		ctx,
 		nil,
-		&issueType,
-		n.ref,
+		nil,
 		in.After,
 		in.Before,
 		first,
@@ -38,5 +36,5 @@ func (n *User) RelevantIssues(ctx context.Context, in *UserRelevantIssuesInput) 
 	if err != nil {
 		return nil, err
 	}
-	return NewIssuesConnection(data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewStoriesConnection(data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
 }

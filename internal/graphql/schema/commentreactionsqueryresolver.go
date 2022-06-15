@@ -6,14 +6,14 @@ import (
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
-type CommentReactionsInputInput struct {
+type CommentReactionsInput struct {
 	First  *int32
 	Last   *int32
 	After  *string
 	Before *string
 }
 
-func (n *Comment) Reactions(ctx context.Context, in *CommentReactionsInputInput) (*ReactionsConnection, error) {
+func (n *Comment) Reactions(ctx context.Context, in *CommentReactionsInput) (*ReactionsConnection, error) {
 	var first, last *int64
 	if in.First != nil {
 		tmp := int64(*in.First)

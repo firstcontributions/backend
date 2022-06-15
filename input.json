@@ -3,6 +3,14 @@
     "defaults": {
         "viewer_type": "user"
     },
+    "high_level_queries": [
+        {
+            "name": "feeds",
+            "type" :"list",
+            "paginated": true,
+            "schema" : "story"
+        }
+    ],
     "modules": [
         {
             "name": "users",

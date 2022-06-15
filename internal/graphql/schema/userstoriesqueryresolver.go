@@ -6,14 +6,14 @@ import (
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
-type UserStoriesInputInput struct {
+type UserStoriesInput struct {
 	First  *int32
 	Last   *int32
 	After  *string
 	Before *string
 }
 
-func (n *User) Stories(ctx context.Context, in *UserStoriesInputInput) (*StoriesConnection, error) {
+func (n *User) Stories(ctx context.Context, in *UserStoriesInput) (*StoriesConnection, error) {
 	var first, last *int64
 	if in.First != nil {
 		tmp := int64(*in.First)

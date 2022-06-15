@@ -12,6 +12,7 @@ type Query {
 	  # The ID of an object
 	  id: ID!
 	): Node
+	feeds(first: Int, last: Int, after: String, before: String): StoriesConnection!
 }
 
 interface Node {
