@@ -50,7 +50,7 @@ func (s *Server) AuthCallback(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(ErrInternalServerError(), w)
 	}
 	go s.UpdateProfileReputation(p, sessionID)
-	http.Redirect(w, r, "http://explorer.firstcontributions.com", http.StatusSeeOther)
+	http.Redirect(w, r, "http://app.firstcontributions.com", http.StatusSeeOther)
 	// JSONResponse(w, http.StatusOK, p)
 
 }
@@ -66,30 +66,32 @@ func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*u
 		log.Printf("error on gettimg token by code %v", err)
 		return nil, ErrForbidden()
 	}
-	data, err := s.getProfileFromGithub(ctx, token)
+	profile, err := s.getProfileFromGithub(ctx, token)
 	if err != nil {
 		log.Printf("error on gettimg profile from github %v", err)
 		return nil, ErrInternalServerError()
 	}
-	users, _, _, _, _, err := s.Store.UsersStore.GetUsers(ctx, nil, nil, &data.Handle, nil, nil, nil, nil)
+	users, _, _, _, _, err := s.Store.UsersStore.GetUsers(ctx, nil, nil, &profile.Handle, nil, nil, nil, nil)
 	if err != nil {
 		log.Printf("error on gettimg profile grpc %v", err)
 		return nil, ErrInternalServerError()
 	}
 	if len(users) == 0 {
-		data, err = s.Store.UsersStore.CreateUser(ctx, data)
+		data, err := s.Store.UsersStore.CreateUser(ctx, profile)
 		if err != nil {
 			log.Printf("error on creating profile grpc %v", err)
 			return nil, ErrInternalServerError()
 		}
-	} else {
-		token := data.Token
-		data = users[0]
-		data.Token = token
-		go s.Store.UsersStore.UpdateUser(ctx, data.Id, &usersstore.UserUpdate{
-			Token: token,
-		})
+		return data, nil
 	}
+	data := users[0]
+	data.Token = profile.Token
+	data.Avatar = profile.Avatar
+	go s.Store.UsersStore.UpdateUser(ctx, data.Id, &usersstore.UserUpdate{
+		Token:  profile.Token,
+		Avatar: &profile.Avatar,
+	})
+
 	return data, nil
 }
 
@@ -99,7 +101,7 @@ func (s *Server) getProfileFromGithub(ctx context.Context, token *oauth2.Token) 
 		Viewer struct {
 			Login     githubv4.String
 			AvatarURL githubv4.URI
-			Bio		githubv4.String
+			Bio       githubv4.String
 			Name      githubv4.String
 		}
 	}
@@ -112,7 +114,7 @@ func (s *Server) getProfileFromGithub(ctx context.Context, token *oauth2.Token) 
 		Name:   string(query.Viewer.Name),
 		Handle: string(query.Viewer.Login),
 		Avatar: query.Viewer.AvatarURL.String(),
-		Bio: string(query.Viewer.Bio),
+		Bio:    string(query.Viewer.Bio),
 		Token: &usersstore.Token{
 			AccessToken:  token.AccessToken,
 			RefreshToken: token.RefreshToken,

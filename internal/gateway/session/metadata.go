@@ -18,18 +18,21 @@ type MetaData struct {
 	usersstore.User
 }
 
-func NewMetaData(user *usersstore.User) MetaData {
-	return MetaData{
+func NewMetaData(user *usersstore.User) *MetaData {
+	return &MetaData{
 		User: *user,
 	}
 }
 
-func WithContext(ctx context.Context, m MetaData) context.Context {
+func WithContext(ctx context.Context, m *MetaData) context.Context {
 	return context.WithValue(ctx, CxtKeySession, m)
 }
 
-func FromContext(ctx context.Context) MetaData {
-	return ctx.Value(CxtKeySession).(MetaData)
+func FromContext(ctx context.Context) *MetaData {
+	if m := ctx.Value(CxtKeySession); m != nil {
+		return m.(*MetaData)
+	}
+	return nil
 }
 func (m MetaData) SetHandle(h string) MetaData {
 	m.User.Handle = h

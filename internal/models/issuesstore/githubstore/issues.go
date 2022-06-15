@@ -16,7 +16,7 @@ const (
 )
 
 func getQuery(user *usersstore.User, issueType string) string {
-	query := "is:issue is:open  label:\"help wanted\",\"good first issue\",\"goodfirstissue\" no:assignee"
+	query := "is:issue is:open  no:assignee"
 
 	switch issueType {
 	case IssueTypeLastRepo:
@@ -28,7 +28,7 @@ func getQuery(user *usersstore.User, issueType string) string {
 		for _, repo := range repos {
 			query += fmt.Sprintf(" repo:%s", *repo)
 		}
-		return query
+		return query + " label:\"help wanted\",\"good first issue\",\"goodfirstissue\""
 	default:
 		languageCount := min(3, len(user.Tags.Languages))
 		languages := user.Tags.Languages[:languageCount]
@@ -36,7 +36,7 @@ func getQuery(user *usersstore.User, issueType string) string {
 		for _, lng := range languages {
 			query += fmt.Sprintf(" language:%s", *lng)
 		}
-		return query
+		return query + " label:\"good first issue\",\"goodfirstissue\""
 	}
 }
 
