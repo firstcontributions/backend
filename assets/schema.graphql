@@ -151,6 +151,7 @@ type Story implements Node {
 	thumbanil: String!
 	timeCreated: Time!
 	timeUpdated: Time!
+	title: String!
 	urlSuffix: String!
 }
 
@@ -158,6 +159,7 @@ input StoryInput {
 	abstractContent: String!
 	contentJson: String!
 	thumbanil: String!
+	title: String!
 	urlSuffix: String!
 }
 input UpdateStoryInput {

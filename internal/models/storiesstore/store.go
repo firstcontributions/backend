@@ -7,13 +7,6 @@ import (
 )
 
 type Store interface {
-	// story methods
-	GetStoryByID(ctx context.Context, id string) (*Story, error)
-	GetStories(ctx context.Context, ids []string,
-		user *usersstore.User, after *string, before *string, first *int64, last *int64) ([]*Story, bool, bool, string, string, error)
-	CreateStory(ctx context.Context, story *Story) (*Story, error)
-	UpdateStory(ctx context.Context, id string, update *StoryUpdate) error
-	DeleteStoryByID(ctx context.Context, id string) error
 	// comment methods
 	GetCommentByID(ctx context.Context, id string) (*Comment, error)
 	GetComments(ctx context.Context, ids []string,
@@ -29,4 +22,11 @@ type Store interface {
 	CreateReaction(ctx context.Context, reaction *Reaction) (*Reaction, error)
 	UpdateReaction(ctx context.Context, id string, update *ReactionUpdate) error
 	DeleteReactionByID(ctx context.Context, id string) error
+	// story methods
+	GetStoryByID(ctx context.Context, id string) (*Story, error)
+	GetStories(ctx context.Context, ids []string,
+		user *usersstore.User, after *string, before *string, first *int64, last *int64) ([]*Story, bool, bool, string, string, error)
+	CreateStory(ctx context.Context, story *Story) (*Story, error)
+	UpdateStory(ctx context.Context, id string, update *StoryUpdate) error
+	DeleteStoryByID(ctx context.Context, id string) error
 }
