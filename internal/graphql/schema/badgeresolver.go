@@ -47,17 +47,12 @@ func (n *CreateBadgeInput) ToModel() (*usersstore.Badge, error) {
 	if n == nil {
 		return nil, nil
 	}
-	userID, err := ParseGraphqlID(n.UserID)
-	if err != nil {
-		return nil, err
-	}
 
 	return &usersstore.Badge{
 		CurrentLevel:                  int64(n.CurrentLevel),
 		DisplayName:                   n.DisplayName,
 		Points:                        int64(n.Points),
 		ProgressPercentageToNextLevel: int64(n.ProgressPercentageToNextLevel),
-		UserID:                        userID.ID,
 	}, nil
 }
 func (n *Badge) ID(ctx context.Context) graphql.ID {

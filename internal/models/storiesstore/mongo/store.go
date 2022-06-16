@@ -11,9 +11,9 @@ import (
 
 const (
 	DBStories           = "stories"
-	CollectionComments  = "comments"
 	CollectionReactions = "reactions"
 	CollectionStories   = "stories"
+	CollectionComments  = "comments"
 )
 
 type StoriesStore struct {

@@ -61,10 +61,6 @@ func (n *CreateStoryInput) ToModel() (*storiesstore.Story, error) {
 	if n == nil {
 		return nil, nil
 	}
-	userID, err := ParseGraphqlID(n.UserID)
-	if err != nil {
-		return nil, err
-	}
 
 	return &storiesstore.Story{
 		AbstractContent: n.AbstractContent,
@@ -72,7 +68,6 @@ func (n *CreateStoryInput) ToModel() (*storiesstore.Story, error) {
 		Thumbanil:       n.Thumbanil,
 		Title:           n.Title,
 		UrlSuffix:       n.UrlSuffix,
-		UserID:          userID.ID,
 	}, nil
 }
 
