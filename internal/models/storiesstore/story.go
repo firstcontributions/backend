@@ -11,6 +11,7 @@ type Story struct {
 	Thumbanil       string    `bson:"thumbanil,omitempty"`
 	TimeCreated     time.Time `bson:"time_created,omitempty"`
 	TimeUpdated     time.Time `bson:"time_updated,omitempty"`
+	Title           string    `bson:"title,omitempty"`
 	UrlSuffix       string    `bson:"url_suffix,omitempty"`
 }
 

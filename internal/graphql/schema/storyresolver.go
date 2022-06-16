@@ -18,6 +18,7 @@ type Story struct {
 	Thumbanil       string
 	TimeCreated     graphql.Time
 	TimeUpdated     graphql.Time
+	Title           string
 	UrlSuffix       string
 }
 
@@ -34,6 +35,7 @@ func NewStory(m *storiesstore.Story) *Story {
 		Thumbanil:       m.Thumbanil,
 		TimeCreated:     graphql.Time{Time: m.TimeCreated},
 		TimeUpdated:     graphql.Time{Time: m.TimeUpdated},
+		Title:           m.Title,
 		UrlSuffix:       m.UrlSuffix,
 	}
 }
@@ -50,6 +52,7 @@ type CreateStoryInput struct {
 	AbstractContent string
 	ContentJson     string
 	Thumbanil       string
+	Title           string
 	UrlSuffix       string
 	UserID          graphql.ID
 }
@@ -67,6 +70,7 @@ func (n *CreateStoryInput) ToModel() (*storiesstore.Story, error) {
 		AbstractContent: n.AbstractContent,
 		ContentJson:     n.ContentJson,
 		Thumbanil:       n.Thumbanil,
+		Title:           n.Title,
 		UrlSuffix:       n.UrlSuffix,
 		UserID:          userID.ID,
 	}, nil

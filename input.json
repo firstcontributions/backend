@@ -214,6 +214,7 @@
                     },
                     "properties":{
                         "id": "id",
+                        "title": "string",
                         "content_json": "string",
                         "abstract_content": "string",
                         "url_suffix": "string",
