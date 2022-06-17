@@ -57,10 +57,6 @@ func (n *CreateIssueInput) ToModel() (*issuesstore.Issue, error) {
 	if n == nil {
 		return nil, nil
 	}
-	userID, err := ParseGraphqlID(n.UserID)
-	if err != nil {
-		return nil, err
-	}
 
 	return &issuesstore.Issue{
 		Body:                n.Body,
@@ -72,7 +68,6 @@ func (n *CreateIssueInput) ToModel() (*issuesstore.Issue, error) {
 		RepositoryUpdatedAt: n.RepositoryUpdatedAt.Time,
 		Title:               n.Title,
 		Url:                 n.Url,
-		UserID:              userID.ID,
 	}, nil
 }
 func (n *Issue) ID(ctx context.Context) graphql.ID {

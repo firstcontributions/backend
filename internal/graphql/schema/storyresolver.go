@@ -15,7 +15,7 @@ type Story struct {
 	ContentJson     string
 	createdBy       string
 	Id              string
-	Thumbanil       string
+	Thumbnail       string
 	TimeCreated     graphql.Time
 	TimeUpdated     graphql.Time
 	Title           string
@@ -32,7 +32,7 @@ func NewStory(m *storiesstore.Story) *Story {
 		ContentJson:     m.ContentJson,
 		createdBy:       m.CreatedBy,
 		Id:              m.Id,
-		Thumbanil:       m.Thumbanil,
+		Thumbnail:       m.Thumbnail,
 		TimeCreated:     graphql.Time{Time: m.TimeCreated},
 		TimeUpdated:     graphql.Time{Time: m.TimeUpdated},
 		Title:           m.Title,
@@ -51,7 +51,7 @@ func (n *Story) CreatedBy(ctx context.Context) (*User, error) {
 type CreateStoryInput struct {
 	AbstractContent string
 	ContentJson     string
-	Thumbanil       string
+	Thumbnail       string
 	Title           string
 	UrlSuffix       string
 	UserID          graphql.ID
@@ -61,18 +61,13 @@ func (n *CreateStoryInput) ToModel() (*storiesstore.Story, error) {
 	if n == nil {
 		return nil, nil
 	}
-	userID, err := ParseGraphqlID(n.UserID)
-	if err != nil {
-		return nil, err
-	}
 
 	return &storiesstore.Story{
 		AbstractContent: n.AbstractContent,
 		ContentJson:     n.ContentJson,
-		Thumbanil:       n.Thumbanil,
+		Thumbnail:       n.Thumbnail,
 		Title:           n.Title,
 		UrlSuffix:       n.UrlSuffix,
-		UserID:          userID.ID,
 	}, nil
 }
 
