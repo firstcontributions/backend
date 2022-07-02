@@ -5,14 +5,17 @@ package schema
 import (
 	"context"
 
+	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
 type StoryReactionsInput struct {
-	First  *int32
-	Last   *int32
-	After  *string
-	Before *string
+	First     *int32
+	Last      *int32
+	After     *string
+	Before    *string
+	SortBy    *string
+	SortOrder *string
 }
 
 func (n *Story) Reactions(ctx context.Context, in *StoryReactionsInput) (*ReactionsConnection, error) {
@@ -26,18 +29,22 @@ func (n *Story) Reactions(ctx context.Context, in *StoryReactionsInput) (*Reacti
 		last = &tmp
 	}
 	store := storemanager.FromContext(ctx)
+
+	filters := &storiesstore.ReactionFilters{
+		Story: n.ref,
+	}
 	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.StoriesStore.GetReactions(
 		ctx,
-		nil,
-		nil,
-		n.ref,
+		filters,
 		in.After,
 		in.Before,
 		first,
 		last,
+		in.SortBy,
+		in.SortOrder,
 	)
 	if err != nil {
 		return nil, err
 	}
-	return NewReactionsConnection(data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewReactionsConnection(filters, data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
 }

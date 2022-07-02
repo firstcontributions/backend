@@ -20,3 +20,10 @@ func NewReaction() *Reaction {
 type ReactionUpdate struct {
 	TimeUpdated *time.Time `bson:"time_updated,omitempty"`
 }
+
+type ReactionFilters struct {
+	Ids []string
+
+	Comment *Comment
+	Story   *Story
+}

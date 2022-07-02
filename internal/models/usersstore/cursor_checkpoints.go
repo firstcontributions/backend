@@ -9,3 +9,7 @@ type CursorCheckpoints struct {
 func NewCursorCheckpoints() *CursorCheckpoints {
 	return &CursorCheckpoints{}
 }
+
+type CursorCheckpointsFilters struct {
+	Ids []string
+}

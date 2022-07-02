@@ -16,6 +16,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func reactionFiltersToQuery(filters *storiesstore.ReactionFilters) *mongoqb.QueryBuilder {
+	qb := mongoqb.NewQueryBuilder()
+	if len(filters.Ids) > 0 {
+		qb.In("_id", filters.Ids)
+	}
+	if filters.Comment != nil {
+		qb.Eq("comment_id", filters.Comment.Id)
+	}
+	if filters.Story != nil {
+		qb.Eq("story_id", filters.Story.Id)
+	}
+	return qb
+}
 func (s *StoriesStore) CreateReaction(ctx context.Context, reaction *storiesstore.Reaction) (*storiesstore.Reaction, error) {
 	now := time.Now()
 	reaction.TimeCreated = now
@@ -44,15 +57,40 @@ func (s *StoriesStore) GetReactionByID(ctx context.Context, id string) (*stories
 	return &reaction, nil
 }
 
+func (s *StoriesStore) GetOneReaction(ctx context.Context, filters *storiesstore.ReactionFilters) (*storiesstore.Reaction, error) {
+	qb := reactionFiltersToQuery(filters)
+	var reaction storiesstore.Reaction
+	if err := s.getCollection(CollectionReactions).FindOne(ctx, qb.Build()).Decode(&reaction); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &reaction, nil
+}
+
+func (s *StoriesStore) CountReactions(ctx context.Context, filters *storiesstore.ReactionFilters) (
+	int64,
+	error,
+) {
+	qb := reactionFiltersToQuery(filters)
+
+	count, err := s.getCollection(CollectionReactions).CountDocuments(ctx, qb.Build())
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func (s *StoriesStore) GetReactions(
 	ctx context.Context,
-	ids []string,
-	comment *storiesstore.Comment,
-	story *storiesstore.Story,
+	filters *storiesstore.ReactionFilters,
 	after *string,
 	before *string,
 	first *int64,
 	last *int64,
+	sortBy *string,
+	sortOrder *string,
 ) (
 	[]*storiesstore.Reaction,
 	bool,
@@ -61,16 +99,7 @@ func (s *StoriesStore) GetReactions(
 	string,
 	error,
 ) {
-	qb := mongoqb.NewQueryBuilder()
-	if len(ids) > 0 {
-		qb.In("_id", ids)
-	}
-	if comment != nil {
-		qb.Eq("comment_id", comment.Id)
-	}
-	if story != nil {
-		qb.Eq("story_id", story.Id)
-	}
+	qb := reactionFiltersToQuery(filters)
 
 	limit, order, cursorStr := utils.GetLimitAndSortOrderAndCursor(first, last, after, before)
 	var c *cursor.Cursor
@@ -86,12 +115,11 @@ func (s *StoriesStore) GetReactions(
 			}
 		}
 	}
-	sortOrder := utils.GetSortOrder(order)
 	// incrementing limit by 2 to check if next, prev elements are present
 	limit += 2
 	options := &options.FindOptions{
 		Limit: &limit,
-		Sort:  sortOrder,
+		Sort:  utils.GetSortOrder(sortBy, sortOrder, order),
 	}
 
 	var firstCursor, lastCursor string
@@ -132,9 +160,11 @@ func (s *StoriesStore) GetReactions(
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
 		firstCursor, lastCursor = lastCursor, firstCursor
+		reactions = utils.ReverseList(reactions)
 	}
 	return reactions, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
 }
+
 func (s *StoriesStore) UpdateReaction(ctx context.Context, id string, reactionUpdate *storiesstore.ReactionUpdate) error {
 	qb := mongoqb.NewQueryBuilder().
 		Eq("_id", id)

@@ -84,9 +84,16 @@ func (n *Comment) ID(ctx context.Context) graphql.ID {
 type CommentsConnection struct {
 	Edges    []*CommentEdge
 	PageInfo *PageInfo
+	filters  *storiesstore.CommentFilters
+}
+
+func (c CommentsConnection) TotalCount(ctx context.Context) (int32, error) {
+	count, err := storemanager.FromContext(ctx).StoriesStore.CountComments(ctx, c.filters)
+	return int32(count), err
 }
 
 func NewCommentsConnection(
+	filters *storiesstore.CommentFilters,
 	data []*storiesstore.Comment,
 	hasNextPage bool,
 	hasPreviousPage bool,
@@ -103,7 +110,8 @@ func NewCommentsConnection(
 		})
 	}
 	return &CommentsConnection{
-		Edges: edges,
+		filters: filters,
+		Edges:   edges,
 		PageInfo: &PageInfo{
 			HasNextPage:     hasNextPage,
 			HasPreviousPage: hasPreviousPage,

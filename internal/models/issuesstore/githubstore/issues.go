@@ -86,15 +86,35 @@ type IssueQuery struct {
 	} `graphql:"search(query:$q, type:ISSUE, first:$first, last:$last, after:$after, before:$before)"`
 }
 
+func (g *GitHubStore) CountIssues(
+	ctx context.Context,
+	filters *issuesstore.IssueFilters,
+) (
+	int64,
+	error,
+) {
+	return 0, nil
+}
+
+func (g *GitHubStore) GetOneIssue(
+	ctx context.Context,
+	filters *issuesstore.IssueFilters,
+) (
+	*issuesstore.Issue,
+	error,
+) {
+	return nil, nil
+}
+
 func (g *GitHubStore) GetIssues(
 	ctx context.Context,
-	ids []string,
-	issueType *string,
-	user *usersstore.User,
+	filters *issuesstore.IssueFilters,
 	after *string,
 	before *string,
 	first *int64,
 	last *int64,
+	sortBy *string,
+	sortOrder *string,
 ) (
 	[]*issuesstore.Issue,
 	bool,
@@ -124,7 +144,7 @@ func (g *GitHubStore) GetIssues(
 		beforeGql = &tmp
 	}
 	params := map[string]interface{}{
-		"q":      githubv4.String(getQuery(user, *issueType)),
+		"q":      githubv4.String(getQuery(filters.User, *filters.IssueType)),
 		"after":  afterGql,
 		"before": beforeGql,
 		"first":  firstGql,

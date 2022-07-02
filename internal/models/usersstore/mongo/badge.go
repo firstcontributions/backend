@@ -16,6 +16,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func badgeFiltersToQuery(filters *usersstore.BadgeFilters) *mongoqb.QueryBuilder {
+	qb := mongoqb.NewQueryBuilder()
+	if len(filters.Ids) > 0 {
+		qb.In("_id", filters.Ids)
+	}
+	if filters.User != nil {
+		qb.Eq("user_id", filters.User.Id)
+	}
+	return qb
+}
 func (s *UsersStore) CreateBadge(ctx context.Context, badge *usersstore.Badge) (*usersstore.Badge, error) {
 	now := time.Now()
 	badge.TimeCreated = now
@@ -44,14 +54,40 @@ func (s *UsersStore) GetBadgeByID(ctx context.Context, id string) (*usersstore.B
 	return &badge, nil
 }
 
+func (s *UsersStore) GetOneBadge(ctx context.Context, filters *usersstore.BadgeFilters) (*usersstore.Badge, error) {
+	qb := badgeFiltersToQuery(filters)
+	var badge usersstore.Badge
+	if err := s.getCollection(CollectionBadges).FindOne(ctx, qb.Build()).Decode(&badge); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &badge, nil
+}
+
+func (s *UsersStore) CountBadges(ctx context.Context, filters *usersstore.BadgeFilters) (
+	int64,
+	error,
+) {
+	qb := badgeFiltersToQuery(filters)
+
+	count, err := s.getCollection(CollectionBadges).CountDocuments(ctx, qb.Build())
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func (s *UsersStore) GetBadges(
 	ctx context.Context,
-	ids []string,
-	user *usersstore.User,
+	filters *usersstore.BadgeFilters,
 	after *string,
 	before *string,
 	first *int64,
 	last *int64,
+	sortBy *string,
+	sortOrder *string,
 ) (
 	[]*usersstore.Badge,
 	bool,
@@ -60,13 +96,7 @@ func (s *UsersStore) GetBadges(
 	string,
 	error,
 ) {
-	qb := mongoqb.NewQueryBuilder()
-	if len(ids) > 0 {
-		qb.In("_id", ids)
-	}
-	if user != nil {
-		qb.Eq("user_id", user.Id)
-	}
+	qb := badgeFiltersToQuery(filters)
 
 	limit, order, cursorStr := utils.GetLimitAndSortOrderAndCursor(first, last, after, before)
 	var c *cursor.Cursor
@@ -82,12 +112,11 @@ func (s *UsersStore) GetBadges(
 			}
 		}
 	}
-	sortOrder := utils.GetSortOrder(order)
 	// incrementing limit by 2 to check if next, prev elements are present
 	limit += 2
 	options := &options.FindOptions{
 		Limit: &limit,
-		Sort:  sortOrder,
+		Sort:  utils.GetSortOrder(sortBy, sortOrder, order),
 	}
 
 	var firstCursor, lastCursor string
@@ -128,9 +157,11 @@ func (s *UsersStore) GetBadges(
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
 		firstCursor, lastCursor = lastCursor, firstCursor
+		badges = utils.ReverseList(badges)
 	}
 	return badges, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
 }
+
 func (s *UsersStore) UpdateBadge(ctx context.Context, id string, badgeUpdate *usersstore.BadgeUpdate) error {
 	qb := mongoqb.NewQueryBuilder().
 		Eq("_id", id)

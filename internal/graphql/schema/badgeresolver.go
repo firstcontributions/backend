@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
+	"github.com/firstcontributions/backend/internal/storemanager"
 	"github.com/firstcontributions/backend/pkg/cursor"
 	graphql "github.com/graph-gophers/graphql-go"
 )
@@ -65,9 +66,16 @@ func (n *Badge) ID(ctx context.Context) graphql.ID {
 type BadgesConnection struct {
 	Edges    []*BadgeEdge
 	PageInfo *PageInfo
+	filters  *usersstore.BadgeFilters
+}
+
+func (c BadgesConnection) TotalCount(ctx context.Context) (int32, error) {
+	count, err := storemanager.FromContext(ctx).UsersStore.CountBadges(ctx, c.filters)
+	return int32(count), err
 }
 
 func NewBadgesConnection(
+	filters *usersstore.BadgeFilters,
 	data []*usersstore.Badge,
 	hasNextPage bool,
 	hasPreviousPage bool,
@@ -84,7 +92,8 @@ func NewBadgesConnection(
 		})
 	}
 	return &BadgesConnection{
-		Edges: edges,
+		filters: filters,
+		Edges:   edges,
 		PageInfo: &PageInfo{
 			HasNextPage:     hasNextPage,
 			HasPreviousPage: hasPreviousPage,

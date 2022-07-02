@@ -16,6 +16,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func userFiltersToQuery(filters *usersstore.UserFilters) *mongoqb.QueryBuilder {
+	qb := mongoqb.NewQueryBuilder()
+	if len(filters.Ids) > 0 {
+		qb.In("_id", filters.Ids)
+	}
+	if filters.Handle != nil {
+		qb.Eq("handle", filters.Handle)
+	}
+	if filters.Search != nil {
+		qb.Search(*filters.Search)
+	}
+	return qb
+}
 func (s *UsersStore) CreateUser(ctx context.Context, user *usersstore.User) (*usersstore.User, error) {
 	now := time.Now()
 	user.TimeCreated = now
@@ -44,15 +57,40 @@ func (s *UsersStore) GetUserByID(ctx context.Context, id string) (*usersstore.Us
 	return &user, nil
 }
 
+func (s *UsersStore) GetOneUser(ctx context.Context, filters *usersstore.UserFilters) (*usersstore.User, error) {
+	qb := userFiltersToQuery(filters)
+	var user usersstore.User
+	if err := s.getCollection(CollectionUsers).FindOne(ctx, qb.Build()).Decode(&user); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (s *UsersStore) CountUsers(ctx context.Context, filters *usersstore.UserFilters) (
+	int64,
+	error,
+) {
+	qb := userFiltersToQuery(filters)
+
+	count, err := s.getCollection(CollectionUsers).CountDocuments(ctx, qb.Build())
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func (s *UsersStore) GetUsers(
 	ctx context.Context,
-	ids []string,
-	search *string,
-	handle *string,
+	filters *usersstore.UserFilters,
 	after *string,
 	before *string,
 	first *int64,
 	last *int64,
+	sortBy *string,
+	sortOrder *string,
 ) (
 	[]*usersstore.User,
 	bool,
@@ -61,16 +99,7 @@ func (s *UsersStore) GetUsers(
 	string,
 	error,
 ) {
-	qb := mongoqb.NewQueryBuilder()
-	if len(ids) > 0 {
-		qb.In("_id", ids)
-	}
-	if handle != nil {
-		qb.Eq("handle", handle)
-	}
-	if search != nil {
-		qb.Search(*search)
-	}
+	qb := userFiltersToQuery(filters)
 
 	limit, order, cursorStr := utils.GetLimitAndSortOrderAndCursor(first, last, after, before)
 	var c *cursor.Cursor
@@ -86,12 +115,11 @@ func (s *UsersStore) GetUsers(
 			}
 		}
 	}
-	sortOrder := utils.GetSortOrder(order)
 	// incrementing limit by 2 to check if next, prev elements are present
 	limit += 2
 	options := &options.FindOptions{
 		Limit: &limit,
-		Sort:  sortOrder,
+		Sort:  utils.GetSortOrder(sortBy, sortOrder, order),
 	}
 
 	var firstCursor, lastCursor string
@@ -132,9 +160,11 @@ func (s *UsersStore) GetUsers(
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
 		firstCursor, lastCursor = lastCursor, firstCursor
+		users = utils.ReverseList(users)
 	}
 	return users, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
 }
+
 func (s *UsersStore) UpdateUser(ctx context.Context, id string, userUpdate *usersstore.UserUpdate) error {
 	qb := mongoqb.NewQueryBuilder().
 		Eq("_id", id)

@@ -86,7 +86,8 @@ func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*u
 		log.Printf("error on gettimg profile from github %v", err)
 		return nil, ErrInternalServerError()
 	}
-	users, _, _, _, _, err := s.Store.UsersStore.GetUsers(ctx, nil, nil, &profile.Handle, nil, nil, nil, nil)
+	filters := &usersstore.UserFilters{Handle: &profile.Handle}
+	users, _, _, _, _, err := s.Store.UsersStore.GetUsers(ctx, filters, nil, nil, nil, nil, nil, nil)
 	if err != nil {
 		log.Printf("error on gettimg profile grpc %v", err)
 		return nil, ErrInternalServerError()

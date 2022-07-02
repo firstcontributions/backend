@@ -5,14 +5,17 @@ package schema
 import (
 	"context"
 
+	"github.com/firstcontributions/backend/internal/models/issuesstore"
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
 type UserIssuesFromLastRepoInput struct {
-	First  *int32
-	Last   *int32
-	After  *string
-	Before *string
+	First     *int32
+	Last      *int32
+	After     *string
+	Before    *string
+	SortBy    *string
+	SortOrder *string
 }
 
 func (n *User) IssuesFromLastRepo(ctx context.Context, in *UserIssuesFromLastRepoInput) (*IssuesConnection, error) {
@@ -27,18 +30,23 @@ func (n *User) IssuesFromLastRepo(ctx context.Context, in *UserIssuesFromLastRep
 	}
 	store := storemanager.FromContext(ctx)
 	issueType := "last_repo_issues"
+
+	filters := &issuesstore.IssueFilters{
+		IssueType: &issueType,
+		User:      n.ref,
+	}
 	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.IssuesStore.GetIssues(
 		ctx,
-		nil,
-		&issueType,
-		n.ref,
+		filters,
 		in.After,
 		in.Before,
 		first,
 		last,
+		in.SortBy,
+		in.SortOrder,
 	)
 	if err != nil {
 		return nil, err
 	}
-	return NewIssuesConnection(data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewIssuesConnection(filters, data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
 }

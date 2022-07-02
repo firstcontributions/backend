@@ -82,9 +82,16 @@ func (n *Reaction) ID(ctx context.Context) graphql.ID {
 type ReactionsConnection struct {
 	Edges    []*ReactionEdge
 	PageInfo *PageInfo
+	filters  *storiesstore.ReactionFilters
+}
+
+func (c ReactionsConnection) TotalCount(ctx context.Context) (int32, error) {
+	count, err := storemanager.FromContext(ctx).StoriesStore.CountReactions(ctx, c.filters)
+	return int32(count), err
 }
 
 func NewReactionsConnection(
+	filters *storiesstore.ReactionFilters,
 	data []*storiesstore.Reaction,
 	hasNextPage bool,
 	hasPreviousPage bool,
@@ -101,7 +108,8 @@ func NewReactionsConnection(
 		})
 	}
 	return &ReactionsConnection{
-		Edges: edges,
+		filters: filters,
+		Edges:   edges,
 		PageInfo: &PageInfo{
 			HasNextPage:     hasNextPage,
 			HasPreviousPage: hasPreviousPage,

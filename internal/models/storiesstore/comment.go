@@ -21,3 +21,9 @@ func NewComment() *Comment {
 type CommentUpdate struct {
 	TimeUpdated *time.Time `bson:"time_updated,omitempty"`
 }
+
+type CommentFilters struct {
+	Ids []string
+
+	Story *Story
+}

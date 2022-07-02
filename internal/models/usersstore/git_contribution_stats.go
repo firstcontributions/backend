@@ -10,3 +10,7 @@ type GitContributionStats struct {
 func NewGitContributionStats() *GitContributionStats {
 	return &GitContributionStats{}
 }
+
+type GitContributionStatsFilters struct {
+	Ids []string
+}

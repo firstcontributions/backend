@@ -16,6 +16,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func commentFiltersToQuery(filters *storiesstore.CommentFilters) *mongoqb.QueryBuilder {
+	qb := mongoqb.NewQueryBuilder()
+	if len(filters.Ids) > 0 {
+		qb.In("_id", filters.Ids)
+	}
+	if filters.Story != nil {
+		qb.Eq("story_id", filters.Story.Id)
+	}
+	return qb
+}
 func (s *StoriesStore) CreateComment(ctx context.Context, comment *storiesstore.Comment) (*storiesstore.Comment, error) {
 	now := time.Now()
 	comment.TimeCreated = now
@@ -44,14 +54,40 @@ func (s *StoriesStore) GetCommentByID(ctx context.Context, id string) (*storiess
 	return &comment, nil
 }
 
+func (s *StoriesStore) GetOneComment(ctx context.Context, filters *storiesstore.CommentFilters) (*storiesstore.Comment, error) {
+	qb := commentFiltersToQuery(filters)
+	var comment storiesstore.Comment
+	if err := s.getCollection(CollectionComments).FindOne(ctx, qb.Build()).Decode(&comment); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &comment, nil
+}
+
+func (s *StoriesStore) CountComments(ctx context.Context, filters *storiesstore.CommentFilters) (
+	int64,
+	error,
+) {
+	qb := commentFiltersToQuery(filters)
+
+	count, err := s.getCollection(CollectionComments).CountDocuments(ctx, qb.Build())
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func (s *StoriesStore) GetComments(
 	ctx context.Context,
-	ids []string,
-	story *storiesstore.Story,
+	filters *storiesstore.CommentFilters,
 	after *string,
 	before *string,
 	first *int64,
 	last *int64,
+	sortBy *string,
+	sortOrder *string,
 ) (
 	[]*storiesstore.Comment,
 	bool,
@@ -60,13 +96,7 @@ func (s *StoriesStore) GetComments(
 	string,
 	error,
 ) {
-	qb := mongoqb.NewQueryBuilder()
-	if len(ids) > 0 {
-		qb.In("_id", ids)
-	}
-	if story != nil {
-		qb.Eq("story_id", story.Id)
-	}
+	qb := commentFiltersToQuery(filters)
 
 	limit, order, cursorStr := utils.GetLimitAndSortOrderAndCursor(first, last, after, before)
 	var c *cursor.Cursor
@@ -82,12 +112,11 @@ func (s *StoriesStore) GetComments(
 			}
 		}
 	}
-	sortOrder := utils.GetSortOrder(order)
 	// incrementing limit by 2 to check if next, prev elements are present
 	limit += 2
 	options := &options.FindOptions{
 		Limit: &limit,
-		Sort:  sortOrder,
+		Sort:  utils.GetSortOrder(sortBy, sortOrder, order),
 	}
 
 	var firstCursor, lastCursor string
@@ -128,9 +157,11 @@ func (s *StoriesStore) GetComments(
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
 		firstCursor, lastCursor = lastCursor, firstCursor
+		comments = utils.ReverseList(comments)
 	}
 	return comments, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
 }
+
 func (s *StoriesStore) UpdateComment(ctx context.Context, id string, commentUpdate *storiesstore.CommentUpdate) error {
 	qb := mongoqb.NewQueryBuilder().
 		Eq("_id", id)

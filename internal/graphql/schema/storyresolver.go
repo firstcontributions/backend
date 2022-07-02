@@ -91,9 +91,16 @@ func (n *Story) ID(ctx context.Context) graphql.ID {
 type StoriesConnection struct {
 	Edges    []*StoryEdge
 	PageInfo *PageInfo
+	filters  *storiesstore.StoryFilters
+}
+
+func (c StoriesConnection) TotalCount(ctx context.Context) (int32, error) {
+	count, err := storemanager.FromContext(ctx).StoriesStore.CountStories(ctx, c.filters)
+	return int32(count), err
 }
 
 func NewStoriesConnection(
+	filters *storiesstore.StoryFilters,
 	data []*storiesstore.Story,
 	hasNextPage bool,
 	hasPreviousPage bool,
@@ -110,7 +117,8 @@ func NewStoriesConnection(
 		})
 	}
 	return &StoriesConnection{
-		Edges: edges,
+		filters: filters,
+		Edges:   edges,
 		PageInfo: &PageInfo{
 			HasNextPage:     hasNextPage,
 			HasPreviousPage: hasPreviousPage,
