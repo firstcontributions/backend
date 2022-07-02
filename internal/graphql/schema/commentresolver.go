@@ -4,7 +4,9 @@ package schema
 
 import (
 	"context"
+	"errors"
 
+	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/storemanager"
 	"github.com/firstcontributions/backend/pkg/cursor"
@@ -87,11 +89,6 @@ type CommentsConnection struct {
 	filters  *storiesstore.CommentFilters
 }
 
-func (c CommentsConnection) TotalCount(ctx context.Context) (int32, error) {
-	count, err := storemanager.FromContext(ctx).StoriesStore.CountComments(ctx, c.filters)
-	return int32(count), err
-}
-
 func NewCommentsConnection(
 	filters *storiesstore.CommentFilters,
 	data []*storiesstore.Comment,
@@ -119,6 +116,27 @@ func NewCommentsConnection(
 			EndCursor:       lastCursor,
 		},
 	}
+}
+
+func (c CommentsConnection) TotalCount(ctx context.Context) (int32, error) {
+	count, err := storemanager.FromContext(ctx).StoriesStore.CountComments(ctx, c.filters)
+	return int32(count), err
+}
+func (c CommentsConnection) HasViewerAssociation(ctx context.Context) (bool, error) {
+	session := session.FromContext(ctx)
+	if session == nil {
+		return false, errors.New("Unauthorized")
+	}
+	userID := session.UserID()
+
+	newFilter := *c.filters
+	newFilter.CreatedBy = &userID
+
+	data, err := storemanager.FromContext(ctx).StoriesStore.GetOneComment(ctx, c.filters)
+	if err != nil {
+		return false, err
+	}
+	return data != nil, nil
 }
 
 type CommentEdge struct {

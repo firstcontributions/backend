@@ -30,7 +30,7 @@ type StoryUpdate struct {
 }
 
 type StoryFilters struct {
-	Ids []string
-
-	User *usersstore.User
+	Ids       []string
+	CreatedBy *string
+	User      *usersstore.User
 }

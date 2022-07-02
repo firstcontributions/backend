@@ -84,11 +84,6 @@ type IssuesConnection struct {
 	filters  *issuesstore.IssueFilters
 }
 
-func (c IssuesConnection) TotalCount(ctx context.Context) (int32, error) {
-	count, err := storemanager.FromContext(ctx).IssuesStore.CountIssues(ctx, c.filters)
-	return int32(count), err
-}
-
 func NewIssuesConnection(
 	filters *issuesstore.IssueFilters,
 	data []*issuesstore.Issue,
@@ -116,6 +111,11 @@ func NewIssuesConnection(
 			EndCursor:       lastCursor,
 		},
 	}
+}
+
+func (c IssuesConnection) TotalCount(ctx context.Context) (int32, error) {
+	count, err := storemanager.FromContext(ctx).IssuesStore.CountIssues(ctx, c.filters)
+	return int32(count), err
 }
 
 type IssueEdge struct {

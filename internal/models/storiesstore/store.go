@@ -5,14 +5,6 @@ package storiesstore
 import "context"
 
 type Store interface {
-	// story methods
-	GetStoryByID(ctx context.Context, id string) (*Story, error)
-	GetOneStory(ctx context.Context, filters *StoryFilters) (*Story, error)
-	GetStories(ctx context.Context, filters *StoryFilters, after *string, before *string, first *int64, last *int64, sortBy *string, sortOrder *string) ([]*Story, bool, bool, string, string, error)
-	CountStories(ctx context.Context, filters *StoryFilters) (int64, error)
-	CreateStory(ctx context.Context, story *Story) (*Story, error)
-	UpdateStory(ctx context.Context, id string, update *StoryUpdate) error
-	DeleteStoryByID(ctx context.Context, id string) error
 	// comment methods
 	GetCommentByID(ctx context.Context, id string) (*Comment, error)
 	GetOneComment(ctx context.Context, filters *CommentFilters) (*Comment, error)
@@ -29,4 +21,12 @@ type Store interface {
 	CreateReaction(ctx context.Context, reaction *Reaction) (*Reaction, error)
 	UpdateReaction(ctx context.Context, id string, update *ReactionUpdate) error
 	DeleteReactionByID(ctx context.Context, id string) error
+	// story methods
+	GetStoryByID(ctx context.Context, id string) (*Story, error)
+	GetOneStory(ctx context.Context, filters *StoryFilters) (*Story, error)
+	GetStories(ctx context.Context, filters *StoryFilters, after *string, before *string, first *int64, last *int64, sortBy *string, sortOrder *string) ([]*Story, bool, bool, string, string, error)
+	CountStories(ctx context.Context, filters *StoryFilters) (int64, error)
+	CreateStory(ctx context.Context, story *Story) (*Story, error)
+	UpdateStory(ctx context.Context, id string, update *StoryUpdate) error
+	DeleteStoryByID(ctx context.Context, id string) error
 }

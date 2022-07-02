@@ -23,7 +23,7 @@ type CommentUpdate struct {
 }
 
 type CommentFilters struct {
-	Ids []string
-
-	Story *Story
+	Ids       []string
+	CreatedBy *string
+	Story     *Story
 }

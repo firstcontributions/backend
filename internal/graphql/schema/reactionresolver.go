@@ -4,7 +4,9 @@ package schema
 
 import (
 	"context"
+	"errors"
 
+	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/storemanager"
 	"github.com/firstcontributions/backend/pkg/cursor"
@@ -41,17 +43,12 @@ func (n *Reaction) CreatedBy(ctx context.Context) (*User, error) {
 }
 
 type CreateReactionInput struct {
-	CommentID graphql.ID
-	StoryID   graphql.ID
+	StoryID graphql.ID
 }
 
 func (n *CreateReactionInput) ToModel() (*storiesstore.Reaction, error) {
 	if n == nil {
 		return nil, nil
-	}
-	commentID, err := ParseGraphqlID(n.CommentID)
-	if err != nil {
-		return nil, err
 	}
 	storyID, err := ParseGraphqlID(n.StoryID)
 	if err != nil {
@@ -59,8 +56,7 @@ func (n *CreateReactionInput) ToModel() (*storiesstore.Reaction, error) {
 	}
 
 	return &storiesstore.Reaction{
-		CommentID: commentID.ID,
-		StoryID:   storyID.ID,
+		StoryID: storyID.ID,
 	}, nil
 }
 
@@ -83,11 +79,6 @@ type ReactionsConnection struct {
 	Edges    []*ReactionEdge
 	PageInfo *PageInfo
 	filters  *storiesstore.ReactionFilters
-}
-
-func (c ReactionsConnection) TotalCount(ctx context.Context) (int32, error) {
-	count, err := storemanager.FromContext(ctx).StoriesStore.CountReactions(ctx, c.filters)
-	return int32(count), err
 }
 
 func NewReactionsConnection(
@@ -117,6 +108,27 @@ func NewReactionsConnection(
 			EndCursor:       lastCursor,
 		},
 	}
+}
+
+func (c ReactionsConnection) TotalCount(ctx context.Context) (int32, error) {
+	count, err := storemanager.FromContext(ctx).StoriesStore.CountReactions(ctx, c.filters)
+	return int32(count), err
+}
+func (c ReactionsConnection) HasViewerAssociation(ctx context.Context) (bool, error) {
+	session := session.FromContext(ctx)
+	if session == nil {
+		return false, errors.New("Unauthorized")
+	}
+	userID := session.UserID()
+
+	newFilter := *c.filters
+	newFilter.CreatedBy = &userID
+
+	data, err := storemanager.FromContext(ctx).StoriesStore.GetOneReaction(ctx, c.filters)
+	if err != nil {
+		return false, err
+	}
+	return data != nil, nil
 }
 
 type ReactionEdge struct {

@@ -62,7 +62,6 @@ type Comment implements Node {
 	contentJson: String!
 	createdBy: User!
 	id: ID!
-	reactions(first: Int, last: Int, after: String, before: String, sortBy: String, sortOrder: SortOrder): ReactionsConnection!
 	timeCreated: Time!
 	timeUpdated: Time!
 }
@@ -80,6 +79,7 @@ type CommentsConnection {
 	edges: [CommentEdge]!
 	pageInfo: PageInfo!
 	totalCount: Int!
+	hasViewerAssociation: Boolean!
 } 
 
 type CommentEdge {
@@ -137,7 +137,6 @@ type Reaction implements Node {
 }
 
 input ReactionInput {
-	commentID: ID!
 	storyID: ID!
 }
 input UpdateReactionInput {
@@ -148,6 +147,7 @@ type ReactionsConnection {
 	edges: [ReactionEdge]!
 	pageInfo: PageInfo!
 	totalCount: Int!
+	hasViewerAssociation: Boolean!
 } 
 
 type ReactionEdge {
@@ -196,6 +196,7 @@ type StoriesConnection {
 	edges: [StoryEdge]!
 	pageInfo: PageInfo!
 	totalCount: Int!
+	hasViewerAssociation: Boolean!
 } 
 
 type StoryEdge {

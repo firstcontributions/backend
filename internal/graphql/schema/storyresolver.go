@@ -4,7 +4,9 @@ package schema
 
 import (
 	"context"
+	"errors"
 
+	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/storemanager"
 	"github.com/firstcontributions/backend/pkg/cursor"
@@ -94,11 +96,6 @@ type StoriesConnection struct {
 	filters  *storiesstore.StoryFilters
 }
 
-func (c StoriesConnection) TotalCount(ctx context.Context) (int32, error) {
-	count, err := storemanager.FromContext(ctx).StoriesStore.CountStories(ctx, c.filters)
-	return int32(count), err
-}
-
 func NewStoriesConnection(
 	filters *storiesstore.StoryFilters,
 	data []*storiesstore.Story,
@@ -126,6 +123,27 @@ func NewStoriesConnection(
 			EndCursor:       lastCursor,
 		},
 	}
+}
+
+func (c StoriesConnection) TotalCount(ctx context.Context) (int32, error) {
+	count, err := storemanager.FromContext(ctx).StoriesStore.CountStories(ctx, c.filters)
+	return int32(count), err
+}
+func (c StoriesConnection) HasViewerAssociation(ctx context.Context) (bool, error) {
+	session := session.FromContext(ctx)
+	if session == nil {
+		return false, errors.New("Unauthorized")
+	}
+	userID := session.UserID()
+
+	newFilter := *c.filters
+	newFilter.CreatedBy = &userID
+
+	data, err := storemanager.FromContext(ctx).StoriesStore.GetOneStory(ctx, c.filters)
+	if err != nil {
+		return false, err
+	}
+	return data != nil, nil
 }
 
 type StoryEdge struct {

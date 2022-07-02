@@ -69,11 +69,6 @@ type BadgesConnection struct {
 	filters  *usersstore.BadgeFilters
 }
 
-func (c BadgesConnection) TotalCount(ctx context.Context) (int32, error) {
-	count, err := storemanager.FromContext(ctx).UsersStore.CountBadges(ctx, c.filters)
-	return int32(count), err
-}
-
 func NewBadgesConnection(
 	filters *usersstore.BadgeFilters,
 	data []*usersstore.Badge,
@@ -101,6 +96,11 @@ func NewBadgesConnection(
 			EndCursor:       lastCursor,
 		},
 	}
+}
+
+func (c BadgesConnection) TotalCount(ctx context.Context) (int32, error) {
+	count, err := storemanager.FromContext(ctx).UsersStore.CountBadges(ctx, c.filters)
+	return int32(count), err
 }
 
 type BadgeEdge struct {

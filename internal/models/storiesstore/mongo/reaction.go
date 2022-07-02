@@ -21,8 +21,8 @@ func reactionFiltersToQuery(filters *storiesstore.ReactionFilters) *mongoqb.Quer
 	if len(filters.Ids) > 0 {
 		qb.In("_id", filters.Ids)
 	}
-	if filters.Comment != nil {
-		qb.Eq("comment_id", filters.Comment.Id)
+	if filters.CreatedBy != nil {
+		qb.Eq("created_by", filters.CreatedBy)
 	}
 	if filters.Story != nil {
 		qb.Eq("story_id", filters.Story.Id)

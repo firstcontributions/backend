@@ -21,6 +21,9 @@ func storyFiltersToQuery(filters *storiesstore.StoryFilters) *mongoqb.QueryBuild
 	if len(filters.Ids) > 0 {
 		qb.In("_id", filters.Ids)
 	}
+	if filters.CreatedBy != nil {
+		qb.Eq("created_by", filters.CreatedBy)
+	}
 	if filters.User != nil {
 		qb.Eq("user_id", filters.User.Id)
 	}

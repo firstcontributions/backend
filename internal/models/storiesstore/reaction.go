@@ -5,7 +5,6 @@ package storiesstore
 import "time"
 
 type Reaction struct {
-	CommentID   string    `bson:"comment_id"`
 	StoryID     string    `bson:"story_id"`
 	CreatedBy   string    `bson:"created_by,omitempty"`
 	Id          string    `bson:"_id"`
@@ -22,8 +21,7 @@ type ReactionUpdate struct {
 }
 
 type ReactionFilters struct {
-	Ids []string
-
-	Comment *Comment
-	Story   *Story
+	Ids       []string
+	CreatedBy *string
+	Story     *Story
 }
