@@ -16,7 +16,7 @@ func Test_SchemaWorks(t *testing.T) {
 	}
 
 	resolver := &graphqlschema.Resolver{}
-	if _, err := graphql.ParseSchema(string(schema), resolver); err != nil {
+	if _, err := graphql.ParseSchema(string(schema), resolver, graphql.UseFieldResolvers()); err != nil {
 		t.Errorf("unexpected error on parsing schema schema %v", err)
 	}
 }
