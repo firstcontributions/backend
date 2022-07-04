@@ -9,6 +9,11 @@
             "type" :"list",
             "paginated": true,
             "schema" : "story"
+        },
+        {
+            "name": "user",
+            "type" :"object",
+            "schema" : "user"
         }
     ],
     "modules": [

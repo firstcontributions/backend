@@ -19,6 +19,7 @@ type Query {
 	  id: ID!
 	): Node
 	feeds(first: Int, last: Int, after: String, before: String, sortBy: String, sortOrder: SortOrder): StoriesConnection!
+	user(handle: String): User!
 }
 
 interface Node {
@@ -240,6 +241,21 @@ input UpdateUserInput {
 	gitContributionStats: GitContributionStatsInput
 	name: String 
 	reputation: ReputationInput
+} 
+
+type UsersConnection {
+	edges: [UserEdge]!
+	pageInfo: PageInfo!
+	totalCount: Int!
+} 
+
+type UserEdge {
+	node: User!
+	cursor: String!
+} 
+
+enum UserSortBy {
+	time_created,
 }
 
 type Mutation { 
