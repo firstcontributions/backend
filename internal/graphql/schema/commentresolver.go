@@ -103,7 +103,7 @@ func NewCommentsConnection(
 
 		edges = append(edges, &CommentEdge{
 			Node:   node,
-			Cursor: cursor.NewCursor(d.Id, d.TimeCreated).String(),
+			Cursor: cursor.NewCursor(d.Id, "time_created", d.TimeCreated).String(),
 		})
 	}
 	return &CommentsConnection{

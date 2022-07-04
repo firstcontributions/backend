@@ -107,10 +107,10 @@ func (s *StoriesStore) GetStories(
 		c = cursor.FromString(*cursorStr)
 		if c != nil {
 			if order == 1 {
-				qb.Lte("time_created", c.TimeStamp)
+				qb.Lte("time_created", c.OffsetValue)
 				qb.Lte("_id", c.ID)
 			} else {
-				qb.Gte("time_created", c.TimeStamp)
+				qb.Gte("time_created", c.OffsetValue)
 				qb.Gte("_id", c.ID)
 			}
 		}
@@ -154,8 +154,8 @@ func (s *StoriesStore) GetStories(
 	}
 
 	if count > 0 {
-		firstCursor = cursor.NewCursor(stories[0].Id, stories[0].TimeCreated).String()
-		lastCursor = cursor.NewCursor(stories[count-1].Id, stories[count-1].TimeCreated).String()
+		firstCursor = cursor.NewCursor(stories[0].Id, "time_created", stories[0].TimeCreated).String()
+		lastCursor = cursor.NewCursor(stories[count-1].Id, "time_created", stories[count-1].TimeCreated).String()
 	}
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage

@@ -107,10 +107,10 @@ func (s *StoriesStore) GetComments(
 		c = cursor.FromString(*cursorStr)
 		if c != nil {
 			if order == 1 {
-				qb.Lte("time_created", c.TimeStamp)
+				qb.Lte("time_created", c.OffsetValue)
 				qb.Lte("_id", c.ID)
 			} else {
-				qb.Gte("time_created", c.TimeStamp)
+				qb.Gte("time_created", c.OffsetValue)
 				qb.Gte("_id", c.ID)
 			}
 		}
@@ -154,8 +154,8 @@ func (s *StoriesStore) GetComments(
 	}
 
 	if count > 0 {
-		firstCursor = cursor.NewCursor(comments[0].Id, comments[0].TimeCreated).String()
-		lastCursor = cursor.NewCursor(comments[count-1].Id, comments[count-1].TimeCreated).String()
+		firstCursor = cursor.NewCursor(comments[0].Id, "time_created", comments[0].TimeCreated).String()
+		lastCursor = cursor.NewCursor(comments[count-1].Id, "time_created", comments[count-1].TimeCreated).String()
 	}
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage

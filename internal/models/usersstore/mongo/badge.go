@@ -104,10 +104,10 @@ func (s *UsersStore) GetBadges(
 		c = cursor.FromString(*cursorStr)
 		if c != nil {
 			if order == 1 {
-				qb.Lte("time_created", c.TimeStamp)
+				qb.Lte("time_created", c.OffsetValue)
 				qb.Lte("_id", c.ID)
 			} else {
-				qb.Gte("time_created", c.TimeStamp)
+				qb.Gte("time_created", c.OffsetValue)
 				qb.Gte("_id", c.ID)
 			}
 		}
@@ -151,8 +151,8 @@ func (s *UsersStore) GetBadges(
 	}
 
 	if count > 0 {
-		firstCursor = cursor.NewCursor(badges[0].Id, badges[0].TimeCreated).String()
-		lastCursor = cursor.NewCursor(badges[count-1].Id, badges[count-1].TimeCreated).String()
+		firstCursor = cursor.NewCursor(badges[0].Id, "time_created", badges[0].TimeCreated).String()
+		lastCursor = cursor.NewCursor(badges[count-1].Id, "time_created", badges[count-1].TimeCreated).String()
 	}
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage

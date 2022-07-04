@@ -83,7 +83,7 @@ func NewBadgesConnection(
 
 		edges = append(edges, &BadgeEdge{
 			Node:   node,
-			Cursor: cursor.NewCursor(d.Id, d.TimeCreated).String(),
+			Cursor: cursor.NewCursor(d.Id, "time_created", d.TimeCreated).String(),
 		})
 	}
 	return &BadgesConnection{

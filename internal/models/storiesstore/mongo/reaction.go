@@ -107,10 +107,10 @@ func (s *StoriesStore) GetReactions(
 		c = cursor.FromString(*cursorStr)
 		if c != nil {
 			if order == 1 {
-				qb.Lte("time_created", c.TimeStamp)
+				qb.Lte("time_created", c.OffsetValue)
 				qb.Lte("_id", c.ID)
 			} else {
-				qb.Gte("time_created", c.TimeStamp)
+				qb.Gte("time_created", c.OffsetValue)
 				qb.Gte("_id", c.ID)
 			}
 		}
@@ -154,8 +154,8 @@ func (s *StoriesStore) GetReactions(
 	}
 
 	if count > 0 {
-		firstCursor = cursor.NewCursor(reactions[0].Id, reactions[0].TimeCreated).String()
-		lastCursor = cursor.NewCursor(reactions[count-1].Id, reactions[count-1].TimeCreated).String()
+		firstCursor = cursor.NewCursor(reactions[0].Id, "time_created", reactions[0].TimeCreated).String()
+		lastCursor = cursor.NewCursor(reactions[count-1].Id, "time_created", reactions[count-1].TimeCreated).String()
 	}
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
