@@ -112,13 +112,10 @@ func getData(after, before, sortOrder, sortBy *string, first, last *int64) ([]ma
 	if cursorStr != nil {
 		c = cursor.FromString(*cursorStr)
 		if c != nil {
-			fmt.Println("cursort", c.ID, c.OffsetValue)
 			if order == 1 {
-				qb.Gte("time_created", c.OffsetValue)
-				qb.Gte("_id", c.ID)
+				qb.Gte(c.SortBy, c.OffsetValue)
 			} else {
-				qb.Lte("time_created", c.OffsetValue)
-				qb.Lte("_id", c.ID)
+				qb.Lte(c.SortBy, c.OffsetValue)
 			}
 		}
 	}
@@ -142,6 +139,10 @@ func getData(after, before, sortOrder, sortBy *string, first, last *int64) ([]ma
 	if c != nil && results[0]["_id"] == c.ID {
 		hasPreviousPage = true
 		results = results[1:]
+		count--
+	} else if c != nil && results[count-1]["_id"] == c.ID {
+		hasNextPage = true
+		results = results[:count-1]
 		count--
 	}
 
@@ -173,14 +174,18 @@ func reverseMapList(list []map[string]string) []map[string]string {
 }
 
 func Test_SortOrder_Mock(t *testing.T) {
-	afterTimeCteated2 := cursor.NewCursor("2", "time_created", "2022-01-02").String()
-	afterTimeUpdated3 := cursor.NewCursor("3", "time_updated", "2022-05-28").String()
+	cursorTimeCreated2 := cursor.NewCursor("2", "time_created", "2022-01-02").String()
+	cursorTimeUpdated3 := cursor.NewCursor("3", "time_updated", "2022-05-28").String()
+
+	cursorTimeCreated5 := cursor.NewCursor("5", "time_created", "2022-01-05").String()
+	cursorTimeUpdated5 := cursor.NewCursor("5", "time_updated", "2022-05-26").String()
 
 	asc := "asc"
 	timeCreated := "time_created"
 	timeUpdated := "time_updated"
 
 	first := int64(3)
+	last := int64(2)
 
 	desc := "desc"
 
@@ -196,7 +201,7 @@ func Test_SortOrder_Mock(t *testing.T) {
 	}{
 		{
 			name:      "should work for asc order of time_created with after cursor",
-			after:     &afterTimeCteated2,
+			after:     &cursorTimeCreated2,
 			sortOrder: &asc,
 			sortBy:    &timeCreated,
 			first:     &first,
@@ -204,27 +209,59 @@ func Test_SortOrder_Mock(t *testing.T) {
 		},
 		{
 			name:      "should work for desc order of time_created with after cursor",
-			after:     &afterTimeCteated2,
+			after:     &cursorTimeCreated2,
 			sortOrder: &desc,
 			sortBy:    &timeCreated,
 			first:     &first,
 			want:      []string{"8", "7", "6"},
 		},
 		{
-			name:      "should work for asc order of created_at with after cursor",
-			after:     &afterTimeUpdated3,
+			name:      "should work for asc order of time_updated with after cursor",
+			after:     &cursorTimeUpdated3,
 			sortOrder: &asc,
 			sortBy:    &timeUpdated,
 			first:     &first,
-			want:      []string{"8", "7", "6"},
+			want:      []string{"2", "1"},
 		},
 		{
-			name:      "should work for desc order of created_at with after cursor",
-			after:     &afterTimeUpdated3,
+			name:      "should work for desc order of time_updated with after cursor",
+			after:     &cursorTimeUpdated3,
 			sortOrder: &desc,
 			sortBy:    &timeUpdated,
 			first:     &first,
-			want:      []string{"3", "4", "5"},
+			want:      []string{"1", "2"},
+		},
+		{
+			name:      "should work for asc order of time_created with before cursor",
+			before:    &cursorTimeCreated5,
+			sortOrder: &asc,
+			sortBy:    &timeCreated,
+			last:      &last,
+			want:      []string{"3", "4"},
+		},
+		{
+			name:      "should work for desc order of time_created with before cursor",
+			before:    &cursorTimeCreated5,
+			sortOrder: &desc,
+			sortBy:    &timeCreated,
+			last:      &last,
+			want:      []string{"2", "1"},
+		},
+		{
+			name:      "should work for asc order of time_updated with before cursor",
+			before:    &cursorTimeUpdated5,
+			sortOrder: &asc,
+			sortBy:    &timeUpdated,
+			last:      &last,
+			want:      []string{"7", "6"},
+		},
+		{
+			name:      "should work for desc order of time_updated with before cursor",
+			before:    &cursorTimeUpdated5,
+			sortOrder: &desc,
+			sortBy:    &timeUpdated,
+			last:      &last,
+			want:      []string{"7", "8"},
 		},
 	}
 	for _, tt := range tests {
@@ -232,6 +269,7 @@ func Test_SortOrder_Mock(t *testing.T) {
 			data, _, _, _, _, _ := getData(tt.after, tt.before, tt.sortOrder, tt.sortBy, tt.first, tt.last)
 			if len(data) != len(tt.want) {
 				t.Error("length of result did not match")
+				return
 			}
 			for i := 0; i < len(tt.want); i++ {
 				if data[i]["_id"] != tt.want[i] {

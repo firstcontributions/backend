@@ -107,11 +107,21 @@ func (s *StoriesStore) GetReactions(
 		c = cursor.FromString(*cursorStr)
 		if c != nil {
 			if order == 1 {
-				qb.Lte("time_created", c.OffsetValue)
-				qb.Lte("_id", c.ID)
+				qb.Or(
+					qb.And(
+						qb.Eq(c.SortBy, c.OffsetValue),
+						qb.Gt("_id", c.ID),
+					),
+					qb.Gt(c.SortBy, c.OffsetValue),
+				)
 			} else {
-				qb.Gte("time_created", c.OffsetValue)
-				qb.Gte("_id", c.ID)
+				qb.Or(
+					qb.And(
+						qb.Eq(c.SortBy, c.OffsetValue),
+						qb.Lt("_id", c.ID),
+					),
+					qb.Lt(c.SortBy, c.OffsetValue),
+				)
 			}
 		}
 	}
