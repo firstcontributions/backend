@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/firstcontributions/backend/internal/models/issuesstore"
+	"github.com/firstcontributions/backend/internal/storemanager"
 	graphql "github.com/graph-gophers/graphql-go"
 )
 
@@ -80,9 +81,11 @@ func (n *Issue) ID(ctx context.Context) graphql.ID {
 type IssuesConnection struct {
 	Edges    []*IssueEdge
 	PageInfo *PageInfo
+	filters  *issuesstore.IssueFilters
 }
 
 func NewIssuesConnection(
+	filters *issuesstore.IssueFilters,
 	data []*issuesstore.Issue,
 	hasNextPage bool,
 	hasPreviousPage bool,
@@ -99,7 +102,8 @@ func NewIssuesConnection(
 		})
 	}
 	return &IssuesConnection{
-		Edges: edges,
+		filters: filters,
+		Edges:   edges,
 		PageInfo: &PageInfo{
 			HasNextPage:     hasNextPage,
 			HasPreviousPage: hasPreviousPage,
@@ -107,6 +111,11 @@ func NewIssuesConnection(
 			EndCursor:       lastCursor,
 		},
 	}
+}
+
+func (c IssuesConnection) TotalCount(ctx context.Context) (int32, error) {
+	count, err := storemanager.FromContext(ctx).IssuesStore.CountIssues(ctx, c.filters)
+	return int32(count), err
 }
 
 type IssueEdge struct {

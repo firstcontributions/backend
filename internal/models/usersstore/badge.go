@@ -25,3 +25,9 @@ type BadgeUpdate struct {
 	ProgressPercentageToNextLevel *int64     `bson:"progress_percentage_to_next_level,omitempty"`
 	TimeUpdated                   *time.Time `bson:"time_updated,omitempty"`
 }
+
+type BadgeFilters struct {
+	Ids []string
+
+	User *User
+}

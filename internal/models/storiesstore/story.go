@@ -2,7 +2,11 @@
 
 package storiesstore
 
-import "time"
+import (
+	"time"
+
+	"github.com/firstcontributions/backend/internal/models/usersstore"
+)
 
 type Story struct {
 	UserID          string    `bson:"user_id"`
@@ -23,4 +27,10 @@ func NewStory() *Story {
 
 type StoryUpdate struct {
 	TimeUpdated *time.Time `bson:"time_updated,omitempty"`
+}
+
+type StoryFilters struct {
+	Ids       []string
+	CreatedBy *string
+	User      *usersstore.User
 }

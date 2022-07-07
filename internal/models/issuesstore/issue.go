@@ -2,7 +2,11 @@
 
 package issuesstore
 
-import "time"
+import (
+	"time"
+
+	"github.com/firstcontributions/backend/internal/models/usersstore"
+)
 
 type Issue struct {
 	UserID              string    `bson:"user_id"`
@@ -21,4 +25,10 @@ type Issue struct {
 
 func NewIssue() *Issue {
 	return &Issue{}
+}
+
+type IssueFilters struct {
+	Ids       []string
+	IssueType *string
+	User      *usersstore.User
 }

@@ -5,14 +5,17 @@ package schema
 import (
 	"context"
 
+	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/storemanager"
 )
 
 type FeedsInput struct {
-	First  *int32
-	Last   *int32
-	After  *string
-	Before *string
+	First     *int32
+	Last      *int32
+	After     *string
+	Before    *string
+	SortBy    *string
+	SortOrder *string
 }
 
 func (r *Resolver) Feeds(ctx context.Context, in *FeedsInput) (*StoriesConnection, error) {
@@ -26,17 +29,20 @@ func (r *Resolver) Feeds(ctx context.Context, in *FeedsInput) (*StoriesConnectio
 		last = &tmp
 	}
 	store := storemanager.FromContext(ctx)
+
+	filters := &storiesstore.StoryFilters{}
 	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.StoriesStore.GetStories(
 		ctx,
-		nil,
-		nil,
+		filters,
 		in.After,
 		in.Before,
 		first,
 		last,
+		in.SortBy,
+		in.SortOrder,
 	)
 	if err != nil {
 		return nil, err
 	}
-	return NewStoriesConnection(data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewStoriesConnection(filters, data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
 }

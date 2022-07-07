@@ -34,3 +34,9 @@ type UserUpdate struct {
 	TimeUpdated          *time.Time            `bson:"time_updated,omitempty"`
 	Token                *Token                `bson:"token,omitempty"`
 }
+
+type UserFilters struct {
+	Ids    []string
+	Search *string
+	Handle *string
+}

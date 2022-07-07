@@ -11,3 +11,7 @@ type Reputation struct {
 func NewReputation() *Reputation {
 	return &Reputation{}
 }
+
+type ReputationFilters struct {
+	Ids []string
+}

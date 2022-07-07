@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
+	"github.com/firstcontributions/backend/internal/storemanager"
+	"github.com/firstcontributions/backend/pkg/cursor"
 	graphql "github.com/graph-gophers/graphql-go"
 )
 
@@ -88,4 +90,49 @@ func (n *UpdateUserInput) ToModel() *usersstore.UserUpdate {
 func (n *User) ID(ctx context.Context) graphql.ID {
 	return NewIDMarshaller("user", n.Id).
 		ToGraphqlID()
+}
+
+type UsersConnection struct {
+	Edges    []*UserEdge
+	PageInfo *PageInfo
+	filters  *usersstore.UserFilters
+}
+
+func NewUsersConnection(
+	filters *usersstore.UserFilters,
+	data []*usersstore.User,
+	hasNextPage bool,
+	hasPreviousPage bool,
+	firstCursor *string,
+	lastCursor *string,
+) *UsersConnection {
+	edges := []*UserEdge{}
+	for _, d := range data {
+		node := NewUser(d)
+
+		edges = append(edges, &UserEdge{
+			Node:   node,
+			Cursor: cursor.NewCursor(d.Id, "time_created", d.TimeCreated).String(),
+		})
+	}
+	return &UsersConnection{
+		filters: filters,
+		Edges:   edges,
+		PageInfo: &PageInfo{
+			HasNextPage:     hasNextPage,
+			HasPreviousPage: hasPreviousPage,
+			StartCursor:     firstCursor,
+			EndCursor:       lastCursor,
+		},
+	}
+}
+
+func (c UsersConnection) TotalCount(ctx context.Context) (int32, error) {
+	count, err := storemanager.FromContext(ctx).UsersStore.CountUsers(ctx, c.filters)
+	return int32(count), err
+}
+
+type UserEdge struct {
+	Node   *User
+	Cursor string
 }

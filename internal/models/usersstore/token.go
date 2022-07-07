@@ -14,3 +14,7 @@ type Token struct {
 func NewToken() *Token {
 	return &Token{}
 }
+
+type TokenFilters struct {
+	Ids []string
+}

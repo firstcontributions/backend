@@ -2,15 +2,12 @@
 
 package issuesstore
 
-import (
-	"context"
-
-	"github.com/firstcontributions/backend/internal/models/usersstore"
-)
+import "context"
 
 type Store interface {
 	// issue methods
 	GetIssueByID(ctx context.Context, id string) (*Issue, error)
-	GetIssues(ctx context.Context, ids []string, issue_type *string,
-		user *usersstore.User, after *string, before *string, first *int64, last *int64) ([]*Issue, bool, bool, string, string, error)
+	GetOneIssue(ctx context.Context, filters *IssueFilters) (*Issue, error)
+	GetIssues(ctx context.Context, filters *IssueFilters, after *string, before *string, first *int64, last *int64, sortBy *string, sortOrder *string) ([]*Issue, bool, bool, string, string, error)
+	CountIssues(ctx context.Context, filters *IssueFilters) (int64, error)
 }

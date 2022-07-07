@@ -11,3 +11,7 @@ type Tags struct {
 func NewTags() *Tags {
 	return &Tags{}
 }
+
+type TagsFilters struct {
+	Ids []string
+}

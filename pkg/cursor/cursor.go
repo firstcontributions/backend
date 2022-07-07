@@ -3,42 +3,45 @@
 package cursor
 
 import (
-	"encoding/base64"
-	"fmt"
+	"bytes"
+	"encoding/gob"
+	"strings"
 	"time"
 )
 
-const (
-	cursorFormat = "cursor:v%d:%x:%s"
-)
+func init() {
+	gob.Register(time.Time{})
 
-type Cursor struct {
-	Version   int
-	TimeStamp time.Time
-	ID        string
 }
 
-func NewCursor(id string, t time.Time) *Cursor {
+type Cursor struct {
+	Version     int
+	ID          string
+	SortBy      string
+	OffsetValue interface{}
+}
+
+func NewCursor(id, sortBy string, OffsetValue interface{}) *Cursor {
 	return &Cursor{
-		Version:   1,
-		TimeStamp: t,
-		ID:        id,
+		Version:     1,
+		ID:          id,
+		SortBy:      sortBy,
+		OffsetValue: OffsetValue,
 	}
 }
 
 func (c *Cursor) String() string {
-	str := fmt.Sprintf(cursorFormat, c.Version, c.TimeStamp.UnixMicro(), c.ID)
-	return base64.StdEncoding.EncodeToString([]byte(str))
+	buffer := new(bytes.Buffer)
+	if err := gob.NewEncoder(buffer).Encode(c); err != nil {
+		panic(err)
+	}
+	return buffer.String()
 }
 
 func FromString(s string) *Cursor {
-	bts, err := base64.StdEncoding.DecodeString(s)
-	if err != nil {
-		return nil
-	}
 	c := Cursor{}
-	var epoch int64
-	fmt.Sscanf(string(bts), cursorFormat, &c.Version, &epoch, &c.ID)
-	c.TimeStamp = time.UnixMicro(epoch)
+	if err := gob.NewDecoder(strings.NewReader(s)).Decode(&c); err != nil {
+		panic(err)
+	}
 	return &c
 }
