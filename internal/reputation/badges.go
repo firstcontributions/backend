@@ -13,7 +13,7 @@ func (r ReputationSynchroniser) SyncBadges(ctx context.Context, user *usersstore
 	start := time.Now()
 	existingBadges, _, _, _, _, err := r.userStore.GetBadges(ctx, &usersstore.BadgeFilters{
 		User: user,
-	}, nil, nil, nil, nil, nil, nil)
+	}, nil, nil, nil, nil, usersstore.BadgeSortByDefault, nil)
 	if err != nil {
 		return nil
 	}

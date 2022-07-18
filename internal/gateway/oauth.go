@@ -87,12 +87,12 @@ func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*u
 		return nil, ErrInternalServerError()
 	}
 	filters := &usersstore.UserFilters{Handle: &profile.Handle}
-	users, _, _, _, _, err := s.Store.UsersStore.GetUsers(ctx, filters, nil, nil, nil, nil, nil, nil)
+	user, err := s.Store.UsersStore.GetOneUser(ctx, filters)
 	if err != nil {
 		log.Printf("error on gettimg profile grpc %v", err)
 		return nil, ErrInternalServerError()
 	}
-	if len(users) == 0 {
+	if user == nil {
 		data, err := s.Store.UsersStore.CreateUser(ctx, profile)
 		if err != nil {
 			log.Printf("error on creating profile grpc %v", err)
@@ -100,7 +100,7 @@ func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*u
 		}
 		return data, nil
 	}
-	data := users[0]
+	data := user
 	data.Token = profile.Token
 	data.Avatar = profile.Avatar
 	go s.Store.UsersStore.UpdateUser(ctx, data.Id, &usersstore.UserUpdate{

@@ -113,7 +113,7 @@ func (g *GitHubStore) GetIssues(
 	before *string,
 	first *int64,
 	last *int64,
-	sortBy *string,
+	sortBy issuesstore.IssueSortBy,
 	sortOrder *string,
 ) (
 	[]*issuesstore.Issue,
