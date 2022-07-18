@@ -22,15 +22,11 @@ func GetLimitAndSortOrderAndCursor(first, last *int64, after, before *string) (i
 	return *last, -1, before
 }
 
-func GetSortOrder(sortBy, requestedSortOrder *string, order int) bson.D {
+func GetSortOrder(sortBy string, requestedSortOrder *string, order int) bson.D {
 	order = order * defaultOrder * getSortOrderFromString(requestedSortOrder)
 
-	field := "time_created"
-	if sortBy != nil {
-		field = *sortBy
-	}
 	return bson.D{
-		{field, order},
+		{sortBy, order},
 		{"_id", order},
 	}
 }
