@@ -8,6 +8,18 @@ import (
 	"github.com/graph-gophers/graphql-go"
 )
 
+type NodeType uint8
+
+const (
+	NodeTypeUnknown NodeType = iota
+	NodeTypeBadge
+	NodeTypeComment
+	NodeTypeIssue
+	NodeTypeReaction
+	NodeTypeStory
+	NodeTypeUser
+)
+
 type Node interface {
 	ID(context.Context) graphql.ID
 }
@@ -27,7 +39,7 @@ func (r *Resolver) Node(ctx context.Context, in NodeIDInput) (*NodeResolver, err
 		return nil, err
 	}
 	switch id.Type {
-	case "badge":
+	case NodeTypeBadge:
 		badgeData, err := store.UsersStore.GetBadgeByID(ctx, id.ID)
 		if err != nil {
 			return nil, err
@@ -36,7 +48,7 @@ func (r *Resolver) Node(ctx context.Context, in NodeIDInput) (*NodeResolver, err
 		return &NodeResolver{
 			Node: badgeNode,
 		}, nil
-	case "comment":
+	case NodeTypeComment:
 		commentData, err := store.StoriesStore.GetCommentByID(ctx, id.ID)
 		if err != nil {
 			return nil, err
@@ -45,7 +57,7 @@ func (r *Resolver) Node(ctx context.Context, in NodeIDInput) (*NodeResolver, err
 		return &NodeResolver{
 			Node: commentNode,
 		}, nil
-	case "issue":
+	case NodeTypeIssue:
 		issueData, err := store.IssuesStore.GetIssueByID(ctx, id.ID)
 		if err != nil {
 			return nil, err
@@ -54,7 +66,7 @@ func (r *Resolver) Node(ctx context.Context, in NodeIDInput) (*NodeResolver, err
 		return &NodeResolver{
 			Node: issueNode,
 		}, nil
-	case "reaction":
+	case NodeTypeReaction:
 		reactionData, err := store.StoriesStore.GetReactionByID(ctx, id.ID)
 		if err != nil {
 			return nil, err
@@ -63,7 +75,7 @@ func (r *Resolver) Node(ctx context.Context, in NodeIDInput) (*NodeResolver, err
 		return &NodeResolver{
 			Node: reactionNode,
 		}, nil
-	case "story":
+	case NodeTypeStory:
 		storyData, err := store.StoriesStore.GetStoryByID(ctx, id.ID)
 		if err != nil {
 			return nil, err
@@ -72,7 +84,7 @@ func (r *Resolver) Node(ctx context.Context, in NodeIDInput) (*NodeResolver, err
 		return &NodeResolver{
 			Node: storyNode,
 		}, nil
-	case "user":
+	case NodeTypeUser:
 		userData, err := store.UsersStore.GetUserByID(ctx, id.ID)
 		if err != nil {
 			return nil, err

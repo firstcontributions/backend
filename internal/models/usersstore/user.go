@@ -1,11 +1,15 @@
 package usersstore
 
-import "time"
+import (
+	"time"
+
+	"github.com/firstcontributions/backend/pkg/cursor"
+)
 
 type UserSortBy uint8
 
 const (
-	UserSortByDefault = iota
+	UserSortByDefault UserSortBy = iota
 	UserSortByTimeCreated
 )
 
@@ -26,6 +30,36 @@ type User struct {
 
 func NewUser() *User {
 	return &User{}
+}
+func (user *User) Get(field string) interface{} {
+	switch field {
+	case "avatar":
+		return user.Avatar
+	case "bio":
+		return user.Bio
+	case "cursor_checkpoints":
+		return user.CursorCheckpoints
+	case "git_contribution_stats":
+		return user.GitContributionStats
+	case "handle":
+		return user.Handle
+	case "_id":
+		return user.Id
+	case "name":
+		return user.Name
+	case "reputation":
+		return user.Reputation
+	case "tags":
+		return user.Tags
+	case "time_created":
+		return user.TimeCreated
+	case "time_updated":
+		return user.TimeUpdated
+	case "token":
+		return user.Token
+	default:
+		return nil
+	}
 }
 
 type UserUpdate struct {
@@ -61,5 +95,14 @@ func GetUserSortByFromString(s string) UserSortBy {
 		return UserSortByTimeCreated
 	default:
 		return UserSortByDefault
+	}
+}
+
+func (s UserSortBy) CursorType() cursor.ValueType {
+	switch s {
+	case UserSortByTimeCreated:
+		return cursor.ValueTypeTime
+	default:
+		return cursor.ValueTypeTime
 	}
 }

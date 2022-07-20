@@ -5,7 +5,6 @@ import (
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
 	"github.com/firstcontributions/backend/internal/storemanager"
-	"github.com/firstcontributions/backend/pkg/cursor"
 	graphql "github.com/graph-gophers/graphql-go"
 )
 
@@ -57,7 +56,7 @@ func (n *CreateBadgeInput) ToModel() (*usersstore.Badge, error) {
 	}, nil
 }
 func (n *Badge) ID(ctx context.Context) graphql.ID {
-	return NewIDMarshaller("badge", n.Id).
+	return NewIDMarshaller(NodeTypeBadge, n.Id, true).
 		ToGraphqlID()
 }
 
@@ -72,17 +71,21 @@ func NewBadgesConnection(
 	data []*usersstore.Badge,
 	hasNextPage bool,
 	hasPreviousPage bool,
-	firstCursor *string,
-	lastCursor *string,
+	cursors []string,
 ) *BadgesConnection {
 	edges := []*BadgeEdge{}
-	for _, d := range data {
+	for i, d := range data {
 		node := NewBadge(d)
 
 		edges = append(edges, &BadgeEdge{
 			Node:   node,
-			Cursor: cursor.NewCursor(d.Id, "time_created", d.TimeCreated).String(),
+			Cursor: cursors[i],
 		})
+	}
+	var startCursor, endCursor *string
+	if len(cursors) > 0 {
+		startCursor = &cursors[0]
+		endCursor = &cursors[len(cursors)-1]
 	}
 	return &BadgesConnection{
 		filters: filters,
@@ -90,8 +93,8 @@ func NewBadgesConnection(
 		PageInfo: &PageInfo{
 			HasNextPage:     hasNextPage,
 			HasPreviousPage: hasPreviousPage,
-			StartCursor:     firstCursor,
-			EndCursor:       lastCursor,
+			StartCursor:     startCursor,
+			EndCursor:       endCursor,
 		},
 	}
 }

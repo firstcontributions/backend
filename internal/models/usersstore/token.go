@@ -1,12 +1,15 @@
 package usersstore
 
-import "time"
+import (
+	"time"
+
+	"github.com/firstcontributions/backend/pkg/cursor"
+)
 
 type TokenSortBy uint8
 
 const (
-	TokenSortByDefault = iota
-	TokenSortByTimeCreated
+	TokenSortByDefault TokenSortBy = iota
 )
 
 type Token struct {
@@ -19,6 +22,20 @@ type Token struct {
 func NewToken() *Token {
 	return &Token{}
 }
+func (token *Token) Get(field string) interface{} {
+	switch field {
+	case "access_token":
+		return token.AccessToken
+	case "expiry":
+		return token.Expiry
+	case "refresh_token":
+		return token.RefreshToken
+	case "token_type":
+		return token.TokenType
+	default:
+		return nil
+	}
+}
 
 type TokenFilters struct {
 	Ids []string
@@ -26,8 +43,6 @@ type TokenFilters struct {
 
 func (s TokenSortBy) String() string {
 	switch s {
-	case TokenSortByTimeCreated:
-		return "time_created"
 	default:
 		return "time_created"
 	}
@@ -35,9 +50,14 @@ func (s TokenSortBy) String() string {
 
 func GetTokenSortByFromString(s string) TokenSortBy {
 	switch s {
-	case "time_created":
-		return TokenSortByTimeCreated
 	default:
 		return TokenSortByDefault
+	}
+}
+
+func (s TokenSortBy) CursorType() cursor.ValueType {
+	switch s {
+	default:
+		return cursor.ValueTypeTime
 	}
 }

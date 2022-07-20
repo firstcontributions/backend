@@ -1,10 +1,11 @@
 package usersstore
 
+import "github.com/firstcontributions/backend/pkg/cursor"
+
 type TagsSortBy uint8
 
 const (
-	TagsSortByDefault = iota
-	TagsSortByTimeCreated
+	TagsSortByDefault TagsSortBy = iota
 )
 
 type Tags struct {
@@ -16,6 +17,18 @@ type Tags struct {
 func NewTags() *Tags {
 	return &Tags{}
 }
+func (tags *Tags) Get(field string) interface{} {
+	switch field {
+	case "languages":
+		return tags.Languages
+	case "recent_repos":
+		return tags.RecentRepos
+	case "topics":
+		return tags.Topics
+	default:
+		return nil
+	}
+}
 
 type TagsFilters struct {
 	Ids []string
@@ -23,8 +36,6 @@ type TagsFilters struct {
 
 func (s TagsSortBy) String() string {
 	switch s {
-	case TagsSortByTimeCreated:
-		return "time_created"
 	default:
 		return "time_created"
 	}
@@ -32,9 +43,14 @@ func (s TagsSortBy) String() string {
 
 func GetTagsSortByFromString(s string) TagsSortBy {
 	switch s {
-	case "time_created":
-		return TagsSortByTimeCreated
 	default:
 		return TagsSortByDefault
+	}
+}
+
+func (s TagsSortBy) CursorType() cursor.ValueType {
+	switch s {
+	default:
+		return cursor.ValueTypeTime
 	}
 }

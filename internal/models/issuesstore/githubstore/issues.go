@@ -76,6 +76,7 @@ type IssueQuery struct {
 			Node struct {
 				Issue GitIssue `graphql:"... on Issue"`
 			}
+			Cursor githubv4.String
 		}
 		PageInfo struct {
 			HasNextPage     githubv4.Boolean
@@ -119,8 +120,7 @@ func (g *GitHubStore) GetIssues(
 	[]*issuesstore.Issue,
 	bool,
 	bool,
-	string,
-	string,
+	[]string,
 	error,
 ) {
 
@@ -152,18 +152,18 @@ func (g *GitHubStore) GetIssues(
 	}
 	queryData := IssueQuery{}
 	if err := g.Query(ctx, &queryData, params); err != nil {
-		return nil, false, false, "", "", err
+		return nil, false, false, nil, err
 	}
 	issues := []*issuesstore.Issue{}
-
+	cursors := []string{}
 	for _, i := range queryData.Search.Edges {
 		issues = append(issues, issueFromGithubIssue(i.Node.Issue))
+		cursors = append(cursors, string(i.Cursor))
 	}
 	return issues,
 		bool(queryData.Search.PageInfo.HasNextPage),
 		bool(queryData.Search.PageInfo.HasPreviousPage),
-		string(queryData.Search.PageInfo.StartCursor),
-		string(queryData.Search.PageInfo.EndCursor),
+		cursors,
 		nil
 }
 

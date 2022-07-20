@@ -1,10 +1,11 @@
 package usersstore
 
+import "github.com/firstcontributions/backend/pkg/cursor"
+
 type ReputationSortBy uint8
 
 const (
-	ReputationSortByDefault = iota
-	ReputationSortByTimeCreated
+	ReputationSortByDefault ReputationSortBy = iota
 )
 
 type Reputation struct {
@@ -16,6 +17,18 @@ type Reputation struct {
 func NewReputation() *Reputation {
 	return &Reputation{}
 }
+func (reputation *Reputation) Get(field string) interface{} {
+	switch field {
+	case "contributions_to_popular_repos":
+		return reputation.ContributionsToPopularRepos
+	case "contributions_to_unpopular_repos":
+		return reputation.ContributionsToUnpopularRepos
+	case "value":
+		return reputation.Value
+	default:
+		return nil
+	}
+}
 
 type ReputationFilters struct {
 	Ids []string
@@ -23,8 +36,6 @@ type ReputationFilters struct {
 
 func (s ReputationSortBy) String() string {
 	switch s {
-	case ReputationSortByTimeCreated:
-		return "time_created"
 	default:
 		return "time_created"
 	}
@@ -32,9 +43,14 @@ func (s ReputationSortBy) String() string {
 
 func GetReputationSortByFromString(s string) ReputationSortBy {
 	switch s {
-	case "time_created":
-		return ReputationSortByTimeCreated
 	default:
 		return ReputationSortByDefault
+	}
+}
+
+func (s ReputationSortBy) CursorType() cursor.ValueType {
+	switch s {
+	default:
+		return cursor.ValueTypeTime
 	}
 }

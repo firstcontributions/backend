@@ -1,11 +1,15 @@
 package storiesstore
 
-import "time"
+import (
+	"time"
+
+	"github.com/firstcontributions/backend/pkg/cursor"
+)
 
 type CommentSortBy uint8
 
 const (
-	CommentSortByDefault = iota
+	CommentSortByDefault CommentSortBy = iota
 	CommentSortByTimeCreated
 )
 
@@ -21,6 +25,26 @@ type Comment struct {
 
 func NewComment() *Comment {
 	return &Comment{}
+}
+func (comment *Comment) Get(field string) interface{} {
+	switch field {
+	case "story_id":
+		return comment.StoryID
+	case "abstract_content":
+		return comment.AbstractContent
+	case "content_json":
+		return comment.ContentJson
+	case "created_by":
+		return comment.CreatedBy
+	case "_id":
+		return comment.Id
+	case "time_created":
+		return comment.TimeCreated
+	case "time_updated":
+		return comment.TimeUpdated
+	default:
+		return nil
+	}
 }
 
 type CommentUpdate struct {
@@ -48,5 +72,14 @@ func GetCommentSortByFromString(s string) CommentSortBy {
 		return CommentSortByTimeCreated
 	default:
 		return CommentSortByDefault
+	}
+}
+
+func (s CommentSortBy) CursorType() cursor.ValueType {
+	switch s {
+	case CommentSortByTimeCreated:
+		return cursor.ValueTypeTime
+	default:
+		return cursor.ValueTypeTime
 	}
 }

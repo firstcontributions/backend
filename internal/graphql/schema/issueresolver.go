@@ -72,7 +72,7 @@ func (n *CreateIssueInput) ToModel() (*issuesstore.Issue, error) {
 	}, nil
 }
 func (n *Issue) ID(ctx context.Context) graphql.ID {
-	return NewIDMarshaller("issue", n.Id).
+	return NewIDMarshaller(NodeTypeIssue, n.Id, false).
 		ToGraphqlID()
 }
 
@@ -87,17 +87,21 @@ func NewIssuesConnection(
 	data []*issuesstore.Issue,
 	hasNextPage bool,
 	hasPreviousPage bool,
-	firstCursor *string,
-	lastCursor *string,
+	cursors []string,
 ) *IssuesConnection {
 	edges := []*IssueEdge{}
-	for _, d := range data {
+	for i, d := range data {
 		node := NewIssue(d)
 
 		edges = append(edges, &IssueEdge{
 			Node:   node,
-			Cursor: d.Cursor,
+			Cursor: cursors[i],
 		})
+	}
+	var startCursor, endCursor *string
+	if len(cursors) > 0 {
+		startCursor = &cursors[0]
+		endCursor = &cursors[len(cursors)-1]
 	}
 	return &IssuesConnection{
 		filters: filters,
@@ -105,8 +109,8 @@ func NewIssuesConnection(
 		PageInfo: &PageInfo{
 			HasNextPage:     hasNextPage,
 			HasPreviousPage: hasPreviousPage,
-			StartCursor:     firstCursor,
-			EndCursor:       lastCursor,
+			StartCursor:     startCursor,
+			EndCursor:       endCursor,
 		},
 	}
 }

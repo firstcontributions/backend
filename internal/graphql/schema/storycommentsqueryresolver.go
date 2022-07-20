@@ -12,8 +12,8 @@ type StoryCommentsInput struct {
 	Last      *int32
 	After     *string
 	Before    *string
-	SortBy    *string
 	SortOrder *string
+	SortBy    *string
 }
 
 func (n *Story) Comments(ctx context.Context, in *StoryCommentsInput) (*CommentsConnection, error) {
@@ -35,7 +35,7 @@ func (n *Story) Comments(ctx context.Context, in *StoryCommentsInput) (*Comments
 	if in.SortBy != nil {
 		sortByStr = *in.SortBy
 	}
-	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.StoriesStore.GetComments(
+	data, hasNextPage, hasPreviousPage, cursors, err := store.StoriesStore.GetComments(
 		ctx,
 		filters,
 		in.After,
@@ -48,5 +48,5 @@ func (n *Story) Comments(ctx context.Context, in *StoryCommentsInput) (*Comments
 	if err != nil {
 		return nil, err
 	}
-	return NewCommentsConnection(filters, data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewCommentsConnection(filters, data, hasNextPage, hasPreviousPage, cursors), nil
 }

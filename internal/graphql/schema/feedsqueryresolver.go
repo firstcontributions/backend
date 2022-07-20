@@ -12,8 +12,8 @@ type FeedsInput struct {
 	Last      *int32
 	After     *string
 	Before    *string
-	SortBy    *string
 	SortOrder *string
+	SortBy    *string
 }
 
 func (r *Resolver) Feeds(ctx context.Context, in *FeedsInput) (*StoriesConnection, error) {
@@ -33,7 +33,7 @@ func (r *Resolver) Feeds(ctx context.Context, in *FeedsInput) (*StoriesConnectio
 	if in.SortBy != nil {
 		sortByStr = *in.SortBy
 	}
-	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.StoriesStore.GetStories(
+	data, hasNextPage, hasPreviousPage, cursors, err := store.StoriesStore.GetStories(
 		ctx,
 		filters,
 		in.After,
@@ -46,5 +46,5 @@ func (r *Resolver) Feeds(ctx context.Context, in *FeedsInput) (*StoriesConnectio
 	if err != nil {
 		return nil, err
 	}
-	return NewStoriesConnection(filters, data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewStoriesConnection(filters, data, hasNextPage, hasPreviousPage, cursors), nil
 }

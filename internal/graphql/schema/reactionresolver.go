@@ -7,7 +7,6 @@ import (
 	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/storemanager"
-	"github.com/firstcontributions/backend/pkg/cursor"
 	graphql "github.com/graph-gophers/graphql-go"
 )
 
@@ -69,7 +68,7 @@ func (n *UpdateReactionInput) ToModel() *storiesstore.ReactionUpdate {
 	return &storiesstore.ReactionUpdate{}
 }
 func (n *Reaction) ID(ctx context.Context) graphql.ID {
-	return NewIDMarshaller("reaction", n.Id).
+	return NewIDMarshaller(NodeTypeReaction, n.Id, true).
 		ToGraphqlID()
 }
 
@@ -84,17 +83,21 @@ func NewReactionsConnection(
 	data []*storiesstore.Reaction,
 	hasNextPage bool,
 	hasPreviousPage bool,
-	firstCursor *string,
-	lastCursor *string,
+	cursors []string,
 ) *ReactionsConnection {
 	edges := []*ReactionEdge{}
-	for _, d := range data {
+	for i, d := range data {
 		node := NewReaction(d)
 
 		edges = append(edges, &ReactionEdge{
 			Node:   node,
-			Cursor: cursor.NewCursor(d.Id, "time_created", d.TimeCreated).String(),
+			Cursor: cursors[i],
 		})
+	}
+	var startCursor, endCursor *string
+	if len(cursors) > 0 {
+		startCursor = &cursors[0]
+		endCursor = &cursors[len(cursors)-1]
 	}
 	return &ReactionsConnection{
 		filters: filters,
@@ -102,8 +105,8 @@ func NewReactionsConnection(
 		PageInfo: &PageInfo{
 			HasNextPage:     hasNextPage,
 			HasPreviousPage: hasPreviousPage,
-			StartCursor:     firstCursor,
-			EndCursor:       lastCursor,
+			StartCursor:     startCursor,
+			EndCursor:       endCursor,
 		},
 	}
 }

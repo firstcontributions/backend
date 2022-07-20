@@ -1,10 +1,11 @@
 package usersstore
 
+import "github.com/firstcontributions/backend/pkg/cursor"
+
 type GitContributionStatsSortBy uint8
 
 const (
-	GitContributionStatsSortByDefault = iota
-	GitContributionStatsSortByTimeCreated
+	GitContributionStatsSortByDefault GitContributionStatsSortBy = iota
 )
 
 type GitContributionStats struct {
@@ -15,6 +16,16 @@ type GitContributionStats struct {
 func NewGitContributionStats() *GitContributionStats {
 	return &GitContributionStats{}
 }
+func (git_contribution_stats *GitContributionStats) Get(field string) interface{} {
+	switch field {
+	case "issues":
+		return git_contribution_stats.Issues
+	case "pull_requests":
+		return git_contribution_stats.PullRequests
+	default:
+		return nil
+	}
+}
 
 type GitContributionStatsFilters struct {
 	Ids []string
@@ -22,8 +33,6 @@ type GitContributionStatsFilters struct {
 
 func (s GitContributionStatsSortBy) String() string {
 	switch s {
-	case GitContributionStatsSortByTimeCreated:
-		return "time_created"
 	default:
 		return "time_created"
 	}
@@ -31,9 +40,14 @@ func (s GitContributionStatsSortBy) String() string {
 
 func GetGitContributionStatsSortByFromString(s string) GitContributionStatsSortBy {
 	switch s {
-	case "time_created":
-		return GitContributionStatsSortByTimeCreated
 	default:
 		return GitContributionStatsSortByDefault
+	}
+}
+
+func (s GitContributionStatsSortBy) CursorType() cursor.ValueType {
+	switch s {
+	default:
+		return cursor.ValueTypeTime
 	}
 }

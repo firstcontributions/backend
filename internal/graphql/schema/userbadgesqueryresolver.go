@@ -12,8 +12,8 @@ type UserBadgesInput struct {
 	Last      *int32
 	After     *string
 	Before    *string
-	SortBy    *string
 	SortOrder *string
+	SortBy    *string
 }
 
 func (n *User) Badges(ctx context.Context, in *UserBadgesInput) (*BadgesConnection, error) {
@@ -35,7 +35,7 @@ func (n *User) Badges(ctx context.Context, in *UserBadgesInput) (*BadgesConnecti
 	if in.SortBy != nil {
 		sortByStr = *in.SortBy
 	}
-	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.UsersStore.GetBadges(
+	data, hasNextPage, hasPreviousPage, cursors, err := store.UsersStore.GetBadges(
 		ctx,
 		filters,
 		in.After,
@@ -48,5 +48,5 @@ func (n *User) Badges(ctx context.Context, in *UserBadgesInput) (*BadgesConnecti
 	if err != nil {
 		return nil, err
 	}
-	return NewBadgesConnection(filters, data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewBadgesConnection(filters, data, hasNextPage, hasPreviousPage, cursors), nil
 }

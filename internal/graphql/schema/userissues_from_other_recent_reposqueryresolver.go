@@ -12,8 +12,8 @@ type UserIssuesFromOtherRecentReposInput struct {
 	Last      *int32
 	After     *string
 	Before    *string
-	SortBy    *string
 	SortOrder *string
+	SortBy    *string
 }
 
 func (n *User) IssuesFromOtherRecentRepos(ctx context.Context, in *UserIssuesFromOtherRecentReposInput) (*IssuesConnection, error) {
@@ -37,7 +37,7 @@ func (n *User) IssuesFromOtherRecentRepos(ctx context.Context, in *UserIssuesFro
 	if in.SortBy != nil {
 		sortByStr = *in.SortBy
 	}
-	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.IssuesStore.GetIssues(
+	data, hasNextPage, hasPreviousPage, cursors, err := store.IssuesStore.GetIssues(
 		ctx,
 		filters,
 		in.After,
@@ -50,5 +50,5 @@ func (n *User) IssuesFromOtherRecentRepos(ctx context.Context, in *UserIssuesFro
 	if err != nil {
 		return nil, err
 	}
-	return NewIssuesConnection(filters, data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewIssuesConnection(filters, data, hasNextPage, hasPreviousPage, cursors), nil
 }

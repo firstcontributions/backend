@@ -4,12 +4,13 @@ import (
 	"time"
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
+	"github.com/firstcontributions/backend/pkg/cursor"
 )
 
 type StorySortBy uint8
 
 const (
-	StorySortByDefault = iota
+	StorySortByDefault StorySortBy = iota
 	StorySortByTimeCreated
 )
 
@@ -28,6 +29,32 @@ type Story struct {
 
 func NewStory() *Story {
 	return &Story{}
+}
+func (story *Story) Get(field string) interface{} {
+	switch field {
+	case "user_id":
+		return story.UserID
+	case "abstract_content":
+		return story.AbstractContent
+	case "content_json":
+		return story.ContentJson
+	case "created_by":
+		return story.CreatedBy
+	case "_id":
+		return story.Id
+	case "thumbnail":
+		return story.Thumbnail
+	case "time_created":
+		return story.TimeCreated
+	case "time_updated":
+		return story.TimeUpdated
+	case "title":
+		return story.Title
+	case "url_suffix":
+		return story.UrlSuffix
+	default:
+		return nil
+	}
 }
 
 type StoryUpdate struct {
@@ -55,5 +82,14 @@ func GetStorySortByFromString(s string) StorySortBy {
 		return StorySortByTimeCreated
 	default:
 		return StorySortByDefault
+	}
+}
+
+func (s StorySortBy) CursorType() cursor.ValueType {
+	switch s {
+	case StorySortByTimeCreated:
+		return cursor.ValueTypeTime
+	default:
+		return cursor.ValueTypeTime
 	}
 }

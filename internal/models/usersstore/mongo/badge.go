@@ -90,8 +90,7 @@ func (s *UsersStore) GetBadges(
 	[]*usersstore.Badge,
 	bool,
 	bool,
-	string,
-	string,
+	[]string,
 	error,
 ) {
 	qb := badgeFiltersToQuery(filters)
@@ -102,19 +101,20 @@ func (s *UsersStore) GetBadges(
 		if c != nil {
 			if order == 1 {
 				qb.Or(
-					qb.And(
-						qb.Eq(c.SortBy, c.OffsetValue),
-						qb.Gt("_id", c.ID),
-					),
-					qb.Gt(c.SortBy, c.OffsetValue),
+
+					mongoqb.NewQueryBuilder().
+						Eq(usersstore.BadgeSortBy(c.SortBy).String(), c.OffsetValue).
+						Gt("_id", c.ID),
+					mongoqb.NewQueryBuilder().
+						Gt(usersstore.BadgeSortBy(c.SortBy).String(), c.OffsetValue),
 				)
 			} else {
 				qb.Or(
-					qb.And(
-						qb.Eq(c.SortBy, c.OffsetValue),
-						qb.Lt("_id", c.ID),
-					),
-					qb.Lt(c.SortBy, c.OffsetValue),
+					mongoqb.NewQueryBuilder().
+						Eq(usersstore.BadgeSortBy(c.SortBy).String(), c.OffsetValue).
+						Lt("_id", c.ID),
+					mongoqb.NewQueryBuilder().
+						Lt(usersstore.BadgeSortBy(c.SortBy).String(), c.OffsetValue),
 				)
 			}
 		}
@@ -126,21 +126,20 @@ func (s *UsersStore) GetBadges(
 		Sort:  utils.GetSortOrder(sortBy.String(), sortOrder, order),
 	}
 
-	var firstCursor, lastCursor string
 	var hasNextPage, hasPreviousPage bool
 
 	var badges []*usersstore.Badge
 	mongoCursor, err := s.getCollection(CollectionBadges).Find(ctx, qb.Build(), options)
 	if err != nil {
-		return nil, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err
+		return nil, hasNextPage, hasPreviousPage, nil, err
 	}
 	err = mongoCursor.All(ctx, &badges)
 	if err != nil {
-		return nil, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err
+		return nil, hasNextPage, hasPreviousPage, nil, err
 	}
 	count := len(badges)
 	if count == 0 {
-		return badges, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
+		return badges, hasNextPage, hasPreviousPage, nil, nil
 	}
 
 	// check if the cursor element present, if yes that can be a prev elem
@@ -157,16 +156,16 @@ func (s *UsersStore) GetBadges(
 		count = len(badges)
 	}
 
-	if count > 0 {
-		firstCursor = cursor.NewCursor(badges[0].Id, "time_created", badges[0].TimeCreated).String()
-		lastCursor = cursor.NewCursor(badges[count-1].Id, "time_created", badges[count-1].TimeCreated).String()
+	cursors := make([]string, count)
+	for i, badge := range badges {
+		cursors[i] = cursor.NewCursor(badge.Id, uint8(sortBy), badge.Get(sortBy.String()), sortBy.CursorType()).String()
 	}
+
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
-		firstCursor, lastCursor = lastCursor, firstCursor
 		badges = utils.ReverseList(badges)
 	}
-	return badges, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
+	return badges, hasNextPage, hasPreviousPage, cursors, nil
 }
 
 func (s *UsersStore) UpdateBadge(ctx context.Context, id string, badgeUpdate *usersstore.BadgeUpdate) error {

@@ -11,7 +11,7 @@ import (
 
 func (r ReputationSynchroniser) SyncBadges(ctx context.Context, user *usersstore.User) error {
 	start := time.Now()
-	existingBadges, _, _, _, _, err := r.userStore.GetBadges(ctx, &usersstore.BadgeFilters{
+	existingBadges, _, _, _, err := r.userStore.GetBadges(ctx, &usersstore.BadgeFilters{
 		User: user,
 	}, nil, nil, nil, nil, usersstore.BadgeSortByDefault, nil)
 	if err != nil {

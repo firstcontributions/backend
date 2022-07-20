@@ -93,8 +93,7 @@ func (s *StoriesStore) GetReactions(
 	[]*storiesstore.Reaction,
 	bool,
 	bool,
-	string,
-	string,
+	[]string,
 	error,
 ) {
 	qb := reactionFiltersToQuery(filters)
@@ -105,19 +104,20 @@ func (s *StoriesStore) GetReactions(
 		if c != nil {
 			if order == 1 {
 				qb.Or(
-					qb.And(
-						qb.Eq(c.SortBy, c.OffsetValue),
-						qb.Gt("_id", c.ID),
-					),
-					qb.Gt(c.SortBy, c.OffsetValue),
+
+					mongoqb.NewQueryBuilder().
+						Eq(storiesstore.ReactionSortBy(c.SortBy).String(), c.OffsetValue).
+						Gt("_id", c.ID),
+					mongoqb.NewQueryBuilder().
+						Gt(storiesstore.ReactionSortBy(c.SortBy).String(), c.OffsetValue),
 				)
 			} else {
 				qb.Or(
-					qb.And(
-						qb.Eq(c.SortBy, c.OffsetValue),
-						qb.Lt("_id", c.ID),
-					),
-					qb.Lt(c.SortBy, c.OffsetValue),
+					mongoqb.NewQueryBuilder().
+						Eq(storiesstore.ReactionSortBy(c.SortBy).String(), c.OffsetValue).
+						Lt("_id", c.ID),
+					mongoqb.NewQueryBuilder().
+						Lt(storiesstore.ReactionSortBy(c.SortBy).String(), c.OffsetValue),
 				)
 			}
 		}
@@ -129,21 +129,20 @@ func (s *StoriesStore) GetReactions(
 		Sort:  utils.GetSortOrder(sortBy.String(), sortOrder, order),
 	}
 
-	var firstCursor, lastCursor string
 	var hasNextPage, hasPreviousPage bool
 
 	var reactions []*storiesstore.Reaction
 	mongoCursor, err := s.getCollection(CollectionReactions).Find(ctx, qb.Build(), options)
 	if err != nil {
-		return nil, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err
+		return nil, hasNextPage, hasPreviousPage, nil, err
 	}
 	err = mongoCursor.All(ctx, &reactions)
 	if err != nil {
-		return nil, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err
+		return nil, hasNextPage, hasPreviousPage, nil, err
 	}
 	count := len(reactions)
 	if count == 0 {
-		return reactions, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
+		return reactions, hasNextPage, hasPreviousPage, nil, nil
 	}
 
 	// check if the cursor element present, if yes that can be a prev elem
@@ -160,16 +159,16 @@ func (s *StoriesStore) GetReactions(
 		count = len(reactions)
 	}
 
-	if count > 0 {
-		firstCursor = cursor.NewCursor(reactions[0].Id, "time_created", reactions[0].TimeCreated).String()
-		lastCursor = cursor.NewCursor(reactions[count-1].Id, "time_created", reactions[count-1].TimeCreated).String()
+	cursors := make([]string, count)
+	for i, reaction := range reactions {
+		cursors[i] = cursor.NewCursor(reaction.Id, uint8(sortBy), reaction.Get(sortBy.String()), sortBy.CursorType()).String()
 	}
+
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
-		firstCursor, lastCursor = lastCursor, firstCursor
 		reactions = utils.ReverseList(reactions)
 	}
-	return reactions, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
+	return reactions, hasNextPage, hasPreviousPage, cursors, nil
 }
 
 func (s *StoriesStore) UpdateReaction(ctx context.Context, id string, reactionUpdate *storiesstore.ReactionUpdate) error {

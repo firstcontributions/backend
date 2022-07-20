@@ -1,11 +1,15 @@
 package storiesstore
 
-import "time"
+import (
+	"time"
+
+	"github.com/firstcontributions/backend/pkg/cursor"
+)
 
 type ReactionSortBy uint8
 
 const (
-	ReactionSortByDefault = iota
+	ReactionSortByDefault ReactionSortBy = iota
 	ReactionSortByTimeCreated
 )
 
@@ -19,6 +23,22 @@ type Reaction struct {
 
 func NewReaction() *Reaction {
 	return &Reaction{}
+}
+func (reaction *Reaction) Get(field string) interface{} {
+	switch field {
+	case "story_id":
+		return reaction.StoryID
+	case "created_by":
+		return reaction.CreatedBy
+	case "_id":
+		return reaction.Id
+	case "time_created":
+		return reaction.TimeCreated
+	case "time_updated":
+		return reaction.TimeUpdated
+	default:
+		return nil
+	}
 }
 
 type ReactionUpdate struct {
@@ -46,5 +66,14 @@ func GetReactionSortByFromString(s string) ReactionSortBy {
 		return ReactionSortByTimeCreated
 	default:
 		return ReactionSortByDefault
+	}
+}
+
+func (s ReactionSortBy) CursorType() cursor.ValueType {
+	switch s {
+	case ReactionSortByTimeCreated:
+		return cursor.ValueTypeTime
+	default:
+		return cursor.ValueTypeTime
 	}
 }

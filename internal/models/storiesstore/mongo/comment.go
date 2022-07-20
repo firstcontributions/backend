@@ -93,8 +93,7 @@ func (s *StoriesStore) GetComments(
 	[]*storiesstore.Comment,
 	bool,
 	bool,
-	string,
-	string,
+	[]string,
 	error,
 ) {
 	qb := commentFiltersToQuery(filters)
@@ -105,19 +104,20 @@ func (s *StoriesStore) GetComments(
 		if c != nil {
 			if order == 1 {
 				qb.Or(
-					qb.And(
-						qb.Eq(c.SortBy, c.OffsetValue),
-						qb.Gt("_id", c.ID),
-					),
-					qb.Gt(c.SortBy, c.OffsetValue),
+
+					mongoqb.NewQueryBuilder().
+						Eq(storiesstore.CommentSortBy(c.SortBy).String(), c.OffsetValue).
+						Gt("_id", c.ID),
+					mongoqb.NewQueryBuilder().
+						Gt(storiesstore.CommentSortBy(c.SortBy).String(), c.OffsetValue),
 				)
 			} else {
 				qb.Or(
-					qb.And(
-						qb.Eq(c.SortBy, c.OffsetValue),
-						qb.Lt("_id", c.ID),
-					),
-					qb.Lt(c.SortBy, c.OffsetValue),
+					mongoqb.NewQueryBuilder().
+						Eq(storiesstore.CommentSortBy(c.SortBy).String(), c.OffsetValue).
+						Lt("_id", c.ID),
+					mongoqb.NewQueryBuilder().
+						Lt(storiesstore.CommentSortBy(c.SortBy).String(), c.OffsetValue),
 				)
 			}
 		}
@@ -129,21 +129,20 @@ func (s *StoriesStore) GetComments(
 		Sort:  utils.GetSortOrder(sortBy.String(), sortOrder, order),
 	}
 
-	var firstCursor, lastCursor string
 	var hasNextPage, hasPreviousPage bool
 
 	var comments []*storiesstore.Comment
 	mongoCursor, err := s.getCollection(CollectionComments).Find(ctx, qb.Build(), options)
 	if err != nil {
-		return nil, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err
+		return nil, hasNextPage, hasPreviousPage, nil, err
 	}
 	err = mongoCursor.All(ctx, &comments)
 	if err != nil {
-		return nil, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err
+		return nil, hasNextPage, hasPreviousPage, nil, err
 	}
 	count := len(comments)
 	if count == 0 {
-		return comments, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
+		return comments, hasNextPage, hasPreviousPage, nil, nil
 	}
 
 	// check if the cursor element present, if yes that can be a prev elem
@@ -160,16 +159,16 @@ func (s *StoriesStore) GetComments(
 		count = len(comments)
 	}
 
-	if count > 0 {
-		firstCursor = cursor.NewCursor(comments[0].Id, "time_created", comments[0].TimeCreated).String()
-		lastCursor = cursor.NewCursor(comments[count-1].Id, "time_created", comments[count-1].TimeCreated).String()
+	cursors := make([]string, count)
+	for i, comment := range comments {
+		cursors[i] = cursor.NewCursor(comment.Id, uint8(sortBy), comment.Get(sortBy.String()), sortBy.CursorType()).String()
 	}
+
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
-		firstCursor, lastCursor = lastCursor, firstCursor
 		comments = utils.ReverseList(comments)
 	}
-	return comments, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
+	return comments, hasNextPage, hasPreviousPage, cursors, nil
 }
 
 func (s *StoriesStore) UpdateComment(ctx context.Context, id string, commentUpdate *storiesstore.CommentUpdate) error {

@@ -4,13 +4,13 @@ import (
 	"time"
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
+	"github.com/firstcontributions/backend/pkg/cursor"
 )
 
 type IssueSortBy uint8
 
 const (
-	IssueSortByDefault = iota
-	IssueSortByTimeCreated
+	IssueSortByDefault IssueSortBy = iota
 )
 
 type Issue struct {
@@ -25,11 +25,38 @@ type Issue struct {
 	RepositoryUpdatedAt time.Time `bson:"repository_updated_at,omitempty"`
 	Title               string    `bson:"title,omitempty"`
 	Url                 string    `bson:"url,omitempty"`
-	Cursor              string
 }
 
 func NewIssue() *Issue {
 	return &Issue{}
+}
+func (issue *Issue) Get(field string) interface{} {
+	switch field {
+	case "user_id":
+		return issue.UserID
+	case "body":
+		return issue.Body
+	case "comment_count":
+		return issue.CommentCount
+	case "_id":
+		return issue.Id
+	case "issue_type":
+		return issue.IssueType
+	case "labels":
+		return issue.Labels
+	case "repository":
+		return issue.Repository
+	case "repository_avatar":
+		return issue.RepositoryAvatar
+	case "repository_updated_at":
+		return issue.RepositoryUpdatedAt
+	case "title":
+		return issue.Title
+	case "url":
+		return issue.Url
+	default:
+		return nil
+	}
 }
 
 type IssueFilters struct {
@@ -40,8 +67,6 @@ type IssueFilters struct {
 
 func (s IssueSortBy) String() string {
 	switch s {
-	case IssueSortByTimeCreated:
-		return "time_created"
 	default:
 		return "time_created"
 	}
@@ -49,9 +74,14 @@ func (s IssueSortBy) String() string {
 
 func GetIssueSortByFromString(s string) IssueSortBy {
 	switch s {
-	case "time_created":
-		return IssueSortByTimeCreated
 	default:
 		return IssueSortByDefault
+	}
+}
+
+func (s IssueSortBy) CursorType() cursor.ValueType {
+	switch s {
+	default:
+		return cursor.ValueTypeTime
 	}
 }

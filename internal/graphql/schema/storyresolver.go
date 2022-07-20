@@ -7,7 +7,6 @@ import (
 	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/storemanager"
-	"github.com/firstcontributions/backend/pkg/cursor"
 	graphql "github.com/graph-gophers/graphql-go"
 )
 
@@ -84,7 +83,7 @@ func (n *UpdateStoryInput) ToModel() *storiesstore.StoryUpdate {
 	return &storiesstore.StoryUpdate{}
 }
 func (n *Story) ID(ctx context.Context) graphql.ID {
-	return NewIDMarshaller("story", n.Id).
+	return NewIDMarshaller(NodeTypeStory, n.Id, true).
 		ToGraphqlID()
 }
 
@@ -99,17 +98,21 @@ func NewStoriesConnection(
 	data []*storiesstore.Story,
 	hasNextPage bool,
 	hasPreviousPage bool,
-	firstCursor *string,
-	lastCursor *string,
+	cursors []string,
 ) *StoriesConnection {
 	edges := []*StoryEdge{}
-	for _, d := range data {
+	for i, d := range data {
 		node := NewStory(d)
 
 		edges = append(edges, &StoryEdge{
 			Node:   node,
-			Cursor: cursor.NewCursor(d.Id, "time_created", d.TimeCreated).String(),
+			Cursor: cursors[i],
 		})
+	}
+	var startCursor, endCursor *string
+	if len(cursors) > 0 {
+		startCursor = &cursors[0]
+		endCursor = &cursors[len(cursors)-1]
 	}
 	return &StoriesConnection{
 		filters: filters,
@@ -117,8 +120,8 @@ func NewStoriesConnection(
 		PageInfo: &PageInfo{
 			HasNextPage:     hasNextPage,
 			HasPreviousPage: hasPreviousPage,
-			StartCursor:     firstCursor,
-			EndCursor:       lastCursor,
+			StartCursor:     startCursor,
+			EndCursor:       endCursor,
 		},
 	}
 }

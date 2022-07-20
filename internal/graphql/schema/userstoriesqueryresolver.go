@@ -12,8 +12,8 @@ type UserStoriesInput struct {
 	Last      *int32
 	After     *string
 	Before    *string
-	SortBy    *string
 	SortOrder *string
+	SortBy    *string
 }
 
 func (n *User) Stories(ctx context.Context, in *UserStoriesInput) (*StoriesConnection, error) {
@@ -35,7 +35,7 @@ func (n *User) Stories(ctx context.Context, in *UserStoriesInput) (*StoriesConne
 	if in.SortBy != nil {
 		sortByStr = *in.SortBy
 	}
-	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.StoriesStore.GetStories(
+	data, hasNextPage, hasPreviousPage, cursors, err := store.StoriesStore.GetStories(
 		ctx,
 		filters,
 		in.After,
@@ -48,5 +48,5 @@ func (n *User) Stories(ctx context.Context, in *UserStoriesInput) (*StoriesConne
 	if err != nil {
 		return nil, err
 	}
-	return NewStoriesConnection(filters, data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewStoriesConnection(filters, data, hasNextPage, hasPreviousPage, cursors), nil
 }

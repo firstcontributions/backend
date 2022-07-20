@@ -1,13 +1,14 @@
 package schema
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"errors"
-	"strings"
 
 	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/firstcontributions/backend/internal/storemanager"
+	"github.com/google/uuid"
 	graphql "github.com/graph-gophers/graphql-go"
 )
 
@@ -29,14 +30,16 @@ func (r *Resolver) Viewer(ctx context.Context) (*User, error) {
 }
 
 type IDMarshaller struct {
-	Type string
-	ID   string
+	Type   NodeType
+	ID     string
+	IsUUID bool
 }
 
-func NewIDMarshaller(t, id string) *IDMarshaller {
+func NewIDMarshaller(t NodeType, id string, isUUID bool) *IDMarshaller {
 	return &IDMarshaller{
-		Type: t,
-		ID:   id,
+		Type:   t,
+		ID:     id,
+		IsUUID: isUUID,
 	}
 }
 
@@ -52,20 +55,36 @@ func ParseGraphqlID(gid graphql.ID) (*IDMarshaller, error) {
 	if err != nil {
 		return nil, errors.New("invalid ID")
 	}
-	ids := strings.Split(string(sDec), ":")
-	if len(ids) != 2 {
+	parts := bytes.Split(sDec, []byte{'|'})
+	if len(parts) < 3 {
 		return nil, errors.New("invalid ID")
 	}
-	return &IDMarshaller{
-		Type: ids[0],
-		ID:   ids[1],
-	}, nil
+	id := IDMarshaller{}
+	id.Type = NodeType(parts[0][0])
+	if parts[1][0] == 1 {
+		id.IsUUID = true
+	}
+	if id.IsUUID {
+		uid, _ := uuid.FromBytes(parts[2])
+		id.ID = uid.String()
+	} else {
+		id.ID = string(parts[2])
+	}
+	return &id, nil
 }
 
 func (id *IDMarshaller) String() string {
-	return base64.StdEncoding.EncodeToString(
-		[]byte(id.Type + ":" + id.ID),
-	)
+	bts := []byte{byte(id.Type), '|'}
+	if id.IsUUID {
+		bts = append(bts, 1, '|')
+		uid, _ := uuid.Parse(id.ID)
+		binuuid, _ := uid.MarshalBinary()
+		bts = append(bts, binuuid...)
+	} else {
+		bts = append(bts, 0, '|')
+		bts = append(bts, []byte(id.ID)...)
+	}
+	return base64.StdEncoding.EncodeToString(bts)
 }
 
 func (id *IDMarshaller) ToGraphqlID() graphql.ID {

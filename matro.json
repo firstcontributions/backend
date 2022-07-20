@@ -114,7 +114,8 @@
                     "name": "badge",
                     "type": "object",
                     "meta": {
-                        "mutatable_fields" :["points", "current_level", "progress_percentage_to_next_level"]
+                        "mutatable_fields" :["points", "current_level", "progress_percentage_to_next_level"],
+                        "sort_by": ["points"]
                     },
                     "properties":{
                         "id": "id",

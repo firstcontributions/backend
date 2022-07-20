@@ -93,8 +93,7 @@ func (s *UsersStore) GetUsers(
 	[]*usersstore.User,
 	bool,
 	bool,
-	string,
-	string,
+	[]string,
 	error,
 ) {
 	qb := userFiltersToQuery(filters)
@@ -105,19 +104,20 @@ func (s *UsersStore) GetUsers(
 		if c != nil {
 			if order == 1 {
 				qb.Or(
-					qb.And(
-						qb.Eq(c.SortBy, c.OffsetValue),
-						qb.Gt("_id", c.ID),
-					),
-					qb.Gt(c.SortBy, c.OffsetValue),
+
+					mongoqb.NewQueryBuilder().
+						Eq(usersstore.UserSortBy(c.SortBy).String(), c.OffsetValue).
+						Gt("_id", c.ID),
+					mongoqb.NewQueryBuilder().
+						Gt(usersstore.UserSortBy(c.SortBy).String(), c.OffsetValue),
 				)
 			} else {
 				qb.Or(
-					qb.And(
-						qb.Eq(c.SortBy, c.OffsetValue),
-						qb.Lt("_id", c.ID),
-					),
-					qb.Lt(c.SortBy, c.OffsetValue),
+					mongoqb.NewQueryBuilder().
+						Eq(usersstore.UserSortBy(c.SortBy).String(), c.OffsetValue).
+						Lt("_id", c.ID),
+					mongoqb.NewQueryBuilder().
+						Lt(usersstore.UserSortBy(c.SortBy).String(), c.OffsetValue),
 				)
 			}
 		}
@@ -129,21 +129,20 @@ func (s *UsersStore) GetUsers(
 		Sort:  utils.GetSortOrder(sortBy.String(), sortOrder, order),
 	}
 
-	var firstCursor, lastCursor string
 	var hasNextPage, hasPreviousPage bool
 
 	var users []*usersstore.User
 	mongoCursor, err := s.getCollection(CollectionUsers).Find(ctx, qb.Build(), options)
 	if err != nil {
-		return nil, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err
+		return nil, hasNextPage, hasPreviousPage, nil, err
 	}
 	err = mongoCursor.All(ctx, &users)
 	if err != nil {
-		return nil, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err
+		return nil, hasNextPage, hasPreviousPage, nil, err
 	}
 	count := len(users)
 	if count == 0 {
-		return users, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
+		return users, hasNextPage, hasPreviousPage, nil, nil
 	}
 
 	// check if the cursor element present, if yes that can be a prev elem
@@ -160,16 +159,16 @@ func (s *UsersStore) GetUsers(
 		count = len(users)
 	}
 
-	if count > 0 {
-		firstCursor = cursor.NewCursor(users[0].Id, "time_created", users[0].TimeCreated).String()
-		lastCursor = cursor.NewCursor(users[count-1].Id, "time_created", users[count-1].TimeCreated).String()
+	cursors := make([]string, count)
+	for i, user := range users {
+		cursors[i] = cursor.NewCursor(user.Id, uint8(sortBy), user.Get(sortBy.String()), sortBy.CursorType()).String()
 	}
+
 	if order < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
-		firstCursor, lastCursor = lastCursor, firstCursor
 		users = utils.ReverseList(users)
 	}
-	return users, hasNextPage, hasPreviousPage, firstCursor, lastCursor, nil
+	return users, hasNextPage, hasPreviousPage, cursors, nil
 }
 
 func (s *UsersStore) UpdateUser(ctx context.Context, id string, userUpdate *usersstore.UserUpdate) error {

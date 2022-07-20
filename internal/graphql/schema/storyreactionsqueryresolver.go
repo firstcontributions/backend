@@ -12,8 +12,8 @@ type StoryReactionsInput struct {
 	Last      *int32
 	After     *string
 	Before    *string
-	SortBy    *string
 	SortOrder *string
+	SortBy    *string
 }
 
 func (n *Story) Reactions(ctx context.Context, in *StoryReactionsInput) (*ReactionsConnection, error) {
@@ -35,7 +35,7 @@ func (n *Story) Reactions(ctx context.Context, in *StoryReactionsInput) (*Reacti
 	if in.SortBy != nil {
 		sortByStr = *in.SortBy
 	}
-	data, hasNextPage, hasPreviousPage, firstCursor, lastCursor, err := store.StoriesStore.GetReactions(
+	data, hasNextPage, hasPreviousPage, cursors, err := store.StoriesStore.GetReactions(
 		ctx,
 		filters,
 		in.After,
@@ -48,5 +48,5 @@ func (n *Story) Reactions(ctx context.Context, in *StoryReactionsInput) (*Reacti
 	if err != nil {
 		return nil, err
 	}
-	return NewReactionsConnection(filters, data, hasNextPage, hasPreviousPage, &firstCursor, &lastCursor), nil
+	return NewReactionsConnection(filters, data, hasNextPage, hasPreviousPage, cursors), nil
 }
