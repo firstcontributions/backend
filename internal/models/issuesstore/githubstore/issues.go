@@ -15,20 +15,26 @@ const (
 	IssueTypeRelevant   = "relevant_issues"
 )
 
-func getQuery(user *usersstore.User, issueType string) string {
+func getQuery(user *usersstore.User, issueType string) (string, error) {
 	query := "is:issue is:open  no:assignee"
 
 	switch issueType {
 	case IssueTypeLastRepo:
-		return fmt.Sprintf("%s repo:%s", query, *user.Tags.RecentRepos[0])
+		if len(user.Tags.RecentRepos) == 0 {
+			return "", fmt.Errorf("no recent repos")
+		}
+		return fmt.Sprintf("%s repo:%s", query, *user.Tags.RecentRepos[0]), nil
 	case IssueTypeRecentRepo:
 		ln := len(user.Tags.RecentRepos)
+		if len(user.Tags.RecentRepos) < 2 {
+			return "", fmt.Errorf("no recent repos")
+		}
 		count := min(7, ln)
 		repos := user.Tags.RecentRepos[1:count]
 		for _, repo := range repos {
 			query += fmt.Sprintf(" repo:%s", *repo)
 		}
-		return query + " label:\"help wanted\",\"good first issue\",\"goodfirstissue\""
+		return query + " label:\"help wanted\",\"good first issue\",\"goodfirstissue\"", nil
 	default:
 		languageCount := min(3, len(user.Tags.Languages))
 		languages := user.Tags.Languages[:languageCount]
@@ -36,7 +42,7 @@ func getQuery(user *usersstore.User, issueType string) string {
 		for _, lng := range languages {
 			query += fmt.Sprintf(" language:%s", *lng)
 		}
-		return query + " label:\"good first issue\",\"goodfirstissue\""
+		return query + " label:\"good first issue\",\"goodfirstissue\"", nil
 	}
 }
 
@@ -143,8 +149,12 @@ func (g *GitHubStore) GetIssues(
 		tmp := githubv4.String(*before)
 		beforeGql = &tmp
 	}
+	query, err := getQuery(filters.User, *filters.IssueType)
+	if err != nil {
+		return nil, false, false, nil, nil
+	}
 	params := map[string]interface{}{
-		"q":      githubv4.String(getQuery(filters.User, *filters.IssueType)),
+		"q":      githubv4.String(query),
 		"after":  afterGql,
 		"before": beforeGql,
 		"first":  firstGql,
