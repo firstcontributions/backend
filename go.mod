@@ -13,6 +13,7 @@ require (
 	github.com/graph-gophers/graphql-go v1.4.0
 	github.com/rs/cors v1.8.2
 	github.com/shurcooL/githubv4 v0.0.0-20220520033151-0b4e3294ff00
+	github.com/stretchr/testify v1.8.0
 	go.mongodb.org/mongo-driver v1.10.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.32.0
 	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo v0.32.0
@@ -26,6 +27,7 @@ require (
 
 require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
@@ -36,6 +38,7 @@ require (
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/shurcooL/graphql v0.0.0-20220606043923-3cf50f8a0a29 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.1 // indirect
@@ -49,4 +52,5 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	google.golang.org/genproto v0.0.0-20200825200019-8632dd797987 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

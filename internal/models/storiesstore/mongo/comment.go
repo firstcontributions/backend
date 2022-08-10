@@ -97,12 +97,22 @@ func (s *StoriesStore) GetComments(
 	error,
 ) {
 	qb := commentFiltersToQuery(filters)
-	limit, order, cursorStr := utils.GetLimitAndSortOrderAndCursor(first, last, after, before)
+	reqSortOrder := utils.GetSortOrderFromString(sortOrder)
+	limit, paginationSortOrder, cursorStr, err := utils.GetLimitAndSortOrderAndCursor(first, last, after, before)
+	if err != nil {
+		return nil, false, false, nil, err
+	}
+
+	effectiveSortOrder := reqSortOrder * paginationSortOrder
+
 	var c *cursor.Cursor
 	if cursorStr != nil {
-		c = cursor.FromString(*cursorStr)
+		c, err = cursor.FromString(*cursorStr)
+		if err != nil {
+			return nil, false, false, nil, err
+		}
 		if c != nil {
-			if order == 1 {
+			if effectiveSortOrder == 1 {
 				qb.Or(
 
 					mongoqb.NewQueryBuilder().
@@ -126,7 +136,7 @@ func (s *StoriesStore) GetComments(
 	limit += 2
 	options := &options.FindOptions{
 		Limit: &limit,
-		Sort:  utils.GetSortOrder(sortBy.String(), sortOrder, order),
+		Sort:  utils.GetSortOrder(sortBy.String(), effectiveSortOrder),
 	}
 
 	var hasNextPage, hasPreviousPage bool
@@ -164,7 +174,7 @@ func (s *StoriesStore) GetComments(
 		cursors[i] = cursor.NewCursor(comment.Id, uint8(sortBy), comment.Get(sortBy.String()), sortBy.CursorType()).String()
 	}
 
-	if order < 0 {
+	if paginationSortOrder < 0 {
 		hasNextPage, hasPreviousPage = hasPreviousPage, hasNextPage
 		comments = utils.ReverseList(comments)
 	}

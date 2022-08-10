@@ -2,40 +2,42 @@
 
 package utils
 
-import "go.mongodb.org/mongo-driver/bson"
+import (
+	"errors"
+
+	"go.mongodb.org/mongo-driver/bson"
+)
 
 const (
 	defaultLimit int64 = 10
 	defaultOrder int   = 1
 )
 
-func GetLimitAndSortOrderAndCursor(first, last *int64, after, before *string) (int64, int, *string) {
-	if first != nil || after != nil {
-		if first == nil {
-			return defaultLimit, 1, after
-		}
-		return *first, 1, after
+func GetLimitAndSortOrderAndCursor(first, last *int64, after, before *string) (int64, int, *string, error) {
+	if first == nil && last == nil {
+		return 0, 1, nil, errors.New("first or last is mandatory")
 	}
-	if last == nil {
-		return defaultLimit, -1, before
+	if (first != nil && before != nil) || (last != nil && after != nil) || (first != nil && last != nil) {
+		return 0, 1, nil, errors.New("conflicting pagination parameters")
 	}
-	return *last, -1, before
+	if first != nil {
+		return *first, 1, after, nil
+	}
+	return *last, -1, before, nil
 }
 
-func GetSortOrder(sortBy string, requestedSortOrder *string, order int) bson.D {
-	order = order * defaultOrder * getSortOrderFromString(requestedSortOrder)
-
+func GetSortOrder(sortBy string, order int) bson.D {
 	return bson.D{
 		{sortBy, order},
 		{"_id", order},
 	}
 }
 
-func getSortOrderFromString(order *string) int {
-	if order != nil && *order == "desc" {
-		return -1
+func GetSortOrderFromString(order *string) int {
+	if order != nil && *order == "asc" {
+		return 1
 	}
-	return 1
+	return -1
 }
 
 func ReverseList[T interface{}](list []*T) []*T {

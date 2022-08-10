@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+  # redis setup, used by call state manager
+  redis-itest:
+    container_name: redis-itest
+    image: 'redis:4-alpine'
+    command: 'redis-server --requirepass spy0nM3'
+    ports:
+      - 7379:6379
+    networks:
+      docker_network:
+        ipv4_address: 172.30.0.10
+    stop_grace_period: 3s
+
+
+  # mongo for metrics meta store and live dashboard
+  mongo-itest:
+    container_name: mongo-itest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: spy0nM3
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    networks:
+      docker_network:
+        ipv4_address: 172.30.0.4
+
+
+  itest:
+    image: golang:1.18 
+    container_name: itest
+    env_file: ./env/itest.env      
+    depends_on:
+      - redis-itest
+      - mongo-itest
+    volumes:
+      - .:/code
+    command: bash -c "cd /code && go test ./test"
+    
+    ports:
+      - 18000:18000
+    networks:
+      docker_network:
+        ipv4_address: 172.30.0.15
+
+
+
+# docker network interface
+networks:
+  docker_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.0.0/16

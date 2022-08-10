@@ -74,14 +74,13 @@ services:
   #       ipv4_address: 172.30.1.5
   #   stop_grace_period: 3s
 
-
   gateway:
-    build:
-      context: ./
-      dockerfile: deployments/gateway.Dockerfile
-    image: gateway:latest
+    image: golang:1.18 
     container_name: gateway
-    env_file: ./env/gateway.env
+    env_file: ./env/gateway.env      
+    volumes:
+      - .:/code
+    command: bash -c "cd /code && go run cmd/gateway/main.go"
     networks:
       docker_network:
         ipv4_address: 172.30.1.6

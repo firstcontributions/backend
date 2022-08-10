@@ -3,6 +3,7 @@ package cursor
 import (
 	"bytes"
 	"encoding/base64"
+	"errors"
 	"math/big"
 	"time"
 
@@ -10,6 +11,10 @@ import (
 )
 
 type ValueType uint8
+
+var (
+	errInvalidCursor = errors.New("invalid cursor")
+)
 
 const (
 	ValueTypeInt ValueType = iota
@@ -84,24 +89,38 @@ func (c *Cursor) String() string {
 	return base64.RawStdEncoding.EncodeToString(val)
 }
 
-func FromString(s string) *Cursor {
+func FromString(s string) (*Cursor, error) {
 	if len(s) == 0 {
-		return nil
+		return nil, nil
 	}
 	bts, err := base64.RawStdEncoding.DecodeString(s)
 	if err != nil {
-		return nil
+		return nil, errInvalidCursor
 	}
 	parts := bytes.Split(bts, []byte{'|'})
+	if len(parts) < 5 {
+		return nil, errInvalidCursor
+	}
 
 	c := Cursor{}
+	if len(parts[0]) < 2 {
+		return nil, errInvalidCursor
+	}
 	c.Version = uint8(parts[0][1])
 
-	id, _ := uuid.FromBytes(parts[1])
+	id, err := uuid.FromBytes(parts[1])
+	if err != nil {
+		return nil, errInvalidCursor
+	}
 	c.ID = id.String()
-
+	if len(parts[2]) < 1 {
+		return nil, errInvalidCursor
+	}
 	c.SortBy = uint8(parts[2][0])
+	if len(parts[4]) < 1 {
+		return nil, errInvalidCursor
+	}
 	c.Type = ValueType(parts[4][0])
 	c.OffsetValue = valueFromBytes(parts[3], c.Type)
-	return &c
+	return &c, nil
 }
