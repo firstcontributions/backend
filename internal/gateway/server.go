@@ -143,7 +143,7 @@ func (s *Server) ListenAndServe() error {
 }
 
 func (s *Server) GetGraphqlSchema() (*graphql.Schema, error) {
-	schema, err := ioutil.ReadFile("./schema.graphql")
+	schema, err := ioutil.ReadFile("./assets/schema.graphql")
 	if err != nil {
 		return nil, err
 	}

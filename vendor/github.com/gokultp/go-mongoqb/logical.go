@@ -30,7 +30,24 @@ func (q *LogicalQuery) Build() bson.M {
 			queries = append(queries, generatedQuery)
 		}
 	}
-	return bson.M{
-		q.operation: queries,
+	if q.operation != operationAnd {
+		return bson.M{
+			q.operation: queries,
+		}
 	}
+	// and queries can be optimised further
+	final := bson.M{}
+
+	for _, sq := range queries {
+		for key, val := range sq {
+			// see if the same ref is there
+			if _, ok := final[key]; ok {
+				return bson.M{
+					q.operation: queries,
+				}
+			}
+			final[key] = val
+		}
+	}
+	return final
 }

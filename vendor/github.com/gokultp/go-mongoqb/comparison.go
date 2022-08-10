@@ -34,6 +34,11 @@ func NewComparisonQuery(
 }
 
 func (c *ComparisonQuery) Build() bson.M {
+	if c.operation == operationEq {
+		return bson.M{
+			c.field: c.operand,
+		}
+	}
 	return bson.M{
 		c.field: bson.M{
 			c.operation: c.operand,
