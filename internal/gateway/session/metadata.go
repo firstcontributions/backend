@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
+	"github.com/firstcontributions/backend/pkg/authorizer"
 )
 
 type CxtKey int
@@ -16,11 +17,13 @@ const (
 // MetaData encapsulates session info
 type MetaData struct {
 	usersstore.User
+	Permissions map[string]map[uint8]int
 }
 
 func NewMetaData(user *usersstore.User) *MetaData {
 	return &MetaData{
-		User: *user,
+		User:        *user,
+		Permissions: authorizer.GetResolvedUserPermission(user.Permissions),
 	}
 }
 

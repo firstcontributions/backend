@@ -3,6 +3,7 @@ package usersstore
 import (
 	"time"
 
+	"github.com/firstcontributions/backend/pkg/authorizer"
 	"github.com/firstcontributions/backend/pkg/cursor"
 )
 
@@ -13,10 +14,11 @@ const (
 )
 
 type Token struct {
-	AccessToken  string    `bson:"access_token,omitempty"`
-	Expiry       time.Time `bson:"expiry,omitempty"`
-	RefreshToken string    `bson:"refresh_token,omitempty"`
-	TokenType    string    `bson:"token_type,omitempty"`
+	AccessToken  string            `bson:"access_token,omitempty"`
+	Expiry       time.Time         `bson:"expiry,omitempty"`
+	RefreshToken string            `bson:"refresh_token,omitempty"`
+	TokenType    string            `bson:"token_type,omitempty"`
+	Ownership    *authorizer.Scope `bson:"ownership,omitempty"`
 }
 
 func NewToken() *Token {

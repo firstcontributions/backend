@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
+	"github.com/firstcontributions/backend/pkg/authorizer"
 	"github.com/firstcontributions/backend/pkg/cursor"
 )
 
@@ -15,16 +16,17 @@ const (
 )
 
 type Story struct {
-	UserID          string    `bson:"user_id"`
-	AbstractContent string    `bson:"abstract_content,omitempty"`
-	ContentJson     string    `bson:"content_json,omitempty"`
-	CreatedBy       string    `bson:"created_by,omitempty"`
-	Id              string    `bson:"_id"`
-	Thumbnail       string    `bson:"thumbnail,omitempty"`
-	TimeCreated     time.Time `bson:"time_created,omitempty"`
-	TimeUpdated     time.Time `bson:"time_updated,omitempty"`
-	Title           string    `bson:"title,omitempty"`
-	UrlSuffix       string    `bson:"url_suffix,omitempty"`
+	UserID          string            `bson:"user_id"`
+	AbstractContent string            `bson:"abstract_content,omitempty"`
+	ContentJson     string            `bson:"content_json,omitempty"`
+	CreatedBy       string            `bson:"created_by,omitempty"`
+	Id              string            `bson:"_id"`
+	Thumbnail       string            `bson:"thumbnail,omitempty"`
+	TimeCreated     time.Time         `bson:"time_created,omitempty"`
+	TimeUpdated     time.Time         `bson:"time_updated,omitempty"`
+	Title           string            `bson:"title,omitempty"`
+	UrlSuffix       string            `bson:"url_suffix,omitempty"`
+	Ownership       *authorizer.Scope `bson:"ownership,omitempty"`
 }
 
 func NewStory() *Story {
@@ -59,6 +61,7 @@ func (story *Story) Get(field string) interface{} {
 
 type StoryUpdate struct {
 	TimeUpdated *time.Time `bson:"time_updated,omitempty"`
+	Title       *string    `bson:"title,omitempty"`
 }
 
 type StoryFilters struct {

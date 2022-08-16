@@ -7,6 +7,7 @@ import (
 
 	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/models/utils"
+	"github.com/firstcontributions/backend/pkg/authorizer"
 	"github.com/firstcontributions/backend/pkg/cursor"
 	"github.com/gokultp/go-mongoqb"
 	"github.com/google/uuid"
@@ -27,7 +28,7 @@ func reactionFiltersToQuery(filters *storiesstore.ReactionFilters) *mongoqb.Quer
 	}
 	return qb
 }
-func (s *StoriesStore) CreateReaction(ctx context.Context, reaction *storiesstore.Reaction) (*storiesstore.Reaction, error) {
+func (s *StoriesStore) CreateReaction(ctx context.Context, reaction *storiesstore.Reaction, ownership *authorizer.Scope) (*storiesstore.Reaction, error) {
 	now := time.Now()
 	reaction.TimeCreated = now
 	reaction.TimeUpdated = now
@@ -36,6 +37,7 @@ func (s *StoriesStore) CreateReaction(ctx context.Context, reaction *storiesstor
 		return nil, err
 	}
 	reaction.Id = uuid.String()
+	reaction.Ownership = ownership
 	if _, err := s.getCollection(CollectionReactions).InsertOne(ctx, reaction); err != nil {
 		return nil, err
 	}

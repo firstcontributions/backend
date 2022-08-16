@@ -1,6 +1,9 @@
 package usersstore
 
-import "github.com/firstcontributions/backend/pkg/cursor"
+import (
+	"github.com/firstcontributions/backend/pkg/authorizer"
+	"github.com/firstcontributions/backend/pkg/cursor"
+)
 
 type GitContributionStatsSortBy uint8
 
@@ -9,8 +12,9 @@ const (
 )
 
 type GitContributionStats struct {
-	Issues       int64 `bson:"issues,omitempty"`
-	PullRequests int64 `bson:"pull_requests,omitempty"`
+	Issues       int64             `bson:"issues,omitempty"`
+	PullRequests int64             `bson:"pull_requests,omitempty"`
+	Ownership    *authorizer.Scope `bson:"ownership,omitempty"`
 }
 
 func NewGitContributionStats() *GitContributionStats {

@@ -3,10 +3,12 @@ package mongo
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/models/utils"
+	"github.com/firstcontributions/backend/pkg/authorizer"
 	"github.com/firstcontributions/backend/pkg/cursor"
 	"github.com/gokultp/go-mongoqb"
 	"github.com/google/uuid"
@@ -27,7 +29,7 @@ func storyFiltersToQuery(filters *storiesstore.StoryFilters) *mongoqb.QueryBuild
 	}
 	return qb
 }
-func (s *StoriesStore) CreateStory(ctx context.Context, story *storiesstore.Story) (*storiesstore.Story, error) {
+func (s *StoriesStore) CreateStory(ctx context.Context, story *storiesstore.Story, ownership *authorizer.Scope) (*storiesstore.Story, error) {
 	now := time.Now()
 	story.TimeCreated = now
 	story.TimeUpdated = now
@@ -36,6 +38,8 @@ func (s *StoriesStore) CreateStory(ctx context.Context, story *storiesstore.Stor
 		return nil, err
 	}
 	story.Id = uuid.String()
+	story.Ownership = ownership
+	fmt.Println("owner", *story.Ownership)
 	if _, err := s.getCollection(CollectionStories).InsertOne(ctx, story); err != nil {
 		return nil, err
 	}

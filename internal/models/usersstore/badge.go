@@ -3,6 +3,7 @@ package usersstore
 import (
 	"time"
 
+	"github.com/firstcontributions/backend/pkg/authorizer"
 	"github.com/firstcontributions/backend/pkg/cursor"
 )
 
@@ -15,14 +16,15 @@ const (
 )
 
 type Badge struct {
-	UserID                        string    `bson:"user_id"`
-	CurrentLevel                  int64     `bson:"current_level,omitempty"`
-	DisplayName                   string    `bson:"display_name,omitempty"`
-	Id                            string    `bson:"_id"`
-	Points                        int64     `bson:"points,omitempty"`
-	ProgressPercentageToNextLevel int64     `bson:"progress_percentage_to_next_level,omitempty"`
-	TimeCreated                   time.Time `bson:"time_created,omitempty"`
-	TimeUpdated                   time.Time `bson:"time_updated,omitempty"`
+	UserID                        string            `bson:"user_id"`
+	CurrentLevel                  int64             `bson:"current_level,omitempty"`
+	DisplayName                   string            `bson:"display_name,omitempty"`
+	Id                            string            `bson:"_id"`
+	Points                        int64             `bson:"points,omitempty"`
+	ProgressPercentageToNextLevel int64             `bson:"progress_percentage_to_next_level,omitempty"`
+	TimeCreated                   time.Time         `bson:"time_created,omitempty"`
+	TimeUpdated                   time.Time         `bson:"time_updated,omitempty"`
+	Ownership                     *authorizer.Scope `bson:"ownership,omitempty"`
 }
 
 func NewBadge() *Badge {

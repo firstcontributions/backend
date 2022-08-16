@@ -1,6 +1,9 @@
 package usersstore
 
-import "github.com/firstcontributions/backend/pkg/cursor"
+import (
+	"github.com/firstcontributions/backend/pkg/authorizer"
+	"github.com/firstcontributions/backend/pkg/cursor"
+)
 
 type TagsSortBy uint8
 
@@ -9,9 +12,10 @@ const (
 )
 
 type Tags struct {
-	Languages   []*string `bson:"languages,omitempty"`
-	RecentRepos []*string `bson:"recent_repos,omitempty"`
-	Topics      []*string `bson:"topics,omitempty"`
+	Languages   []*string         `bson:"languages,omitempty"`
+	RecentRepos []*string         `bson:"recent_repos,omitempty"`
+	Topics      []*string         `bson:"topics,omitempty"`
+	Ownership   *authorizer.Scope `bson:"ownership,omitempty"`
 }
 
 func NewTags() *Tags {

@@ -7,6 +7,7 @@ import (
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
 	"github.com/firstcontributions/backend/internal/models/utils"
+	"github.com/firstcontributions/backend/pkg/authorizer"
 	"github.com/firstcontributions/backend/pkg/cursor"
 	"github.com/gokultp/go-mongoqb"
 	"github.com/google/uuid"
@@ -24,7 +25,7 @@ func badgeFiltersToQuery(filters *usersstore.BadgeFilters) *mongoqb.QueryBuilder
 	}
 	return qb
 }
-func (s *UsersStore) CreateBadge(ctx context.Context, badge *usersstore.Badge) (*usersstore.Badge, error) {
+func (s *UsersStore) CreateBadge(ctx context.Context, badge *usersstore.Badge, ownership *authorizer.Scope) (*usersstore.Badge, error) {
 	now := time.Now()
 	badge.TimeCreated = now
 	badge.TimeUpdated = now
@@ -33,6 +34,7 @@ func (s *UsersStore) CreateBadge(ctx context.Context, badge *usersstore.Badge) (
 		return nil, err
 	}
 	badge.Id = uuid.String()
+	badge.Ownership = ownership
 	if _, err := s.getCollection(CollectionBadges).InsertOne(ctx, badge); err != nil {
 		return nil, err
 	}

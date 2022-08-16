@@ -1,6 +1,9 @@
 package usersstore
 
-import "github.com/firstcontributions/backend/pkg/cursor"
+import (
+	"github.com/firstcontributions/backend/pkg/authorizer"
+	"github.com/firstcontributions/backend/pkg/cursor"
+)
 
 type CursorCheckpointsSortBy uint8
 
@@ -9,7 +12,8 @@ const (
 )
 
 type CursorCheckpoints struct {
-	PullRequests string `bson:"pull_requests,omitempty"`
+	PullRequests string            `bson:"pull_requests,omitempty"`
+	Ownership    *authorizer.Scope `bson:"ownership,omitempty"`
 }
 
 func NewCursorCheckpoints() *CursorCheckpoints {

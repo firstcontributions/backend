@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
+	"github.com/firstcontributions/backend/pkg/authorizer"
 	"github.com/shurcooL/githubv4"
 )
 
@@ -66,7 +67,7 @@ func (r ReputationSynchroniser) updateBadge(ctx context.Context, badge *userssto
 	badge.ProgressPercentageToNextLevel = GetProgressPercentageToNextLevel(int(badge.Points))
 
 	if badge.Id == "" {
-		_, err := r.userStore.CreateBadge(ctx, badge)
+		_, err := r.userStore.CreateBadge(ctx, badge, &authorizer.Scope{Users: []string{user.Id}})
 		return err
 	}
 	update := &usersstore.BadgeUpdate{

@@ -38,7 +38,7 @@ func (r *Resolver) Node(ctx context.Context, in NodeIDInput) (*NodeResolver, err
 	if err != nil {
 		return nil, err
 	}
-	switch id.Type {
+	switch id.NodeType() {
 	case NodeTypeBadge:
 		badgeData, err := store.UsersStore.GetBadgeByID(ctx, id.ID)
 		if err != nil {

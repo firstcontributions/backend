@@ -1,6 +1,9 @@
 package usersstore
 
-import "github.com/firstcontributions/backend/pkg/cursor"
+import (
+	"github.com/firstcontributions/backend/pkg/authorizer"
+	"github.com/firstcontributions/backend/pkg/cursor"
+)
 
 type ReputationSortBy uint8
 
@@ -9,9 +12,10 @@ const (
 )
 
 type Reputation struct {
-	ContributionsToPopularRepos   int64   `bson:"contributions_to_popular_repos,omitempty"`
-	ContributionsToUnpopularRepos int64   `bson:"contributions_to_unpopular_repos,omitempty"`
-	Value                         float64 `bson:"value,omitempty"`
+	ContributionsToPopularRepos   int64             `bson:"contributions_to_popular_repos,omitempty"`
+	ContributionsToUnpopularRepos int64             `bson:"contributions_to_unpopular_repos,omitempty"`
+	Value                         float64           `bson:"value,omitempty"`
+	Ownership                     *authorizer.Scope `bson:"ownership,omitempty"`
 }
 
 func NewReputation() *Reputation {

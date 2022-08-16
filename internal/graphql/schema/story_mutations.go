@@ -3,9 +3,11 @@ package schema
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/firstcontributions/backend/internal/storemanager"
+	"github.com/firstcontributions/backend/pkg/authorizer"
 )
 
 func (m *Resolver) CreateStory(
@@ -26,7 +28,10 @@ func (m *Resolver) CreateStory(
 	storyModelInput.CreatedBy = session.UserID()
 	storyModelInput.UserID = session.UserID()
 
-	story, err := storemanager.FromContext(ctx).StoriesStore.CreateStory(ctx, storyModelInput)
+	ownership := &authorizer.Scope{
+		Users: []string{session.UserID()},
+	}
+	story, err := storemanager.FromContext(ctx).StoriesStore.CreateStory(ctx, storyModelInput, ownership)
 	if err != nil {
 		return nil, err
 	}
@@ -38,16 +43,31 @@ func (m *Resolver) UpdateStory(
 		Story *UpdateStoryInput
 	},
 ) (*Story, error) {
+	session := session.FromContext(ctx)
+	if session == nil {
+		return nil, errors.New("unauthorized")
+	}
+
 	store := storemanager.FromContext(ctx)
 
 	id, err := ParseGraphqlID(args.Story.ID)
 	if err != nil {
 		return nil, err
 	}
+
+	story, err := store.StoriesStore.GetStoryByID(ctx, id.ID)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(session.Permissions, *story.Ownership)
+
+	if !authorizer.IsAuthorized(session.Permissions, story.Ownership, authorizer.Story, authorizer.OperationUpdate) {
+		return nil, errors.New("forbidden")
+	}
 	if err := store.StoriesStore.UpdateStory(ctx, id.ID, args.Story.ToModel()); err != nil {
 		return nil, err
 	}
-	story, err := store.StoriesStore.GetStoryByID(ctx, id.ID)
+	story, err = store.StoriesStore.GetStoryByID(ctx, id.ID)
 	if err != nil {
 		return nil, err
 	}

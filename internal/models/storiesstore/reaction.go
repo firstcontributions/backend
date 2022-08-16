@@ -3,6 +3,7 @@ package storiesstore
 import (
 	"time"
 
+	"github.com/firstcontributions/backend/pkg/authorizer"
 	"github.com/firstcontributions/backend/pkg/cursor"
 )
 
@@ -14,11 +15,12 @@ const (
 )
 
 type Reaction struct {
-	StoryID     string    `bson:"story_id"`
-	CreatedBy   string    `bson:"created_by,omitempty"`
-	Id          string    `bson:"_id"`
-	TimeCreated time.Time `bson:"time_created,omitempty"`
-	TimeUpdated time.Time `bson:"time_updated,omitempty"`
+	StoryID     string            `bson:"story_id"`
+	CreatedBy   string            `bson:"created_by,omitempty"`
+	Id          string            `bson:"_id"`
+	TimeCreated time.Time         `bson:"time_created,omitempty"`
+	TimeUpdated time.Time         `bson:"time_updated,omitempty"`
+	Ownership   *authorizer.Scope `bson:"ownership,omitempty"`
 }
 
 func NewReaction() *Reaction {
