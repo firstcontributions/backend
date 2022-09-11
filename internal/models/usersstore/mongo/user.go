@@ -7,6 +7,7 @@ import (
 
 	"github.com/firstcontributions/backend/internal/models/usersstore"
 	"github.com/firstcontributions/backend/internal/models/utils"
+	"github.com/firstcontributions/backend/pkg/authorizer"
 	"github.com/firstcontributions/backend/pkg/cursor"
 	"github.com/gokultp/go-mongoqb"
 	"github.com/google/uuid"
@@ -27,7 +28,7 @@ func userFiltersToQuery(filters *usersstore.UserFilters) *mongoqb.QueryBuilder {
 	}
 	return qb
 }
-func (s *UsersStore) CreateUser(ctx context.Context, user *usersstore.User) (*usersstore.User, error) {
+func (s *UsersStore) CreateUser(ctx context.Context, user *usersstore.User, ownership *authorizer.Scope) (*usersstore.User, error) {
 	now := time.Now()
 	user.TimeCreated = now
 	user.TimeUpdated = now
@@ -36,6 +37,13 @@ func (s *UsersStore) CreateUser(ctx context.Context, user *usersstore.User) (*us
 		return nil, err
 	}
 	user.Id = uuid.String()
+	user.Permissions = []authorizer.Permission{
+		{
+			Role:  "admin",
+			Scope: authorizer.Scope{Users: []string{user.Id}},
+		},
+	}
+	user.Ownership = &authorizer.Scope{Users: []string{user.Id}}
 	if _, err := s.getCollection(CollectionUsers).InsertOne(ctx, user); err != nil {
 		return nil, err
 	}

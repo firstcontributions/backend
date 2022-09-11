@@ -7,6 +7,7 @@ import (
 
 	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/models/utils"
+	"github.com/firstcontributions/backend/pkg/authorizer"
 	"github.com/firstcontributions/backend/pkg/cursor"
 	"github.com/gokultp/go-mongoqb"
 	"github.com/google/uuid"
@@ -27,7 +28,7 @@ func commentFiltersToQuery(filters *storiesstore.CommentFilters) *mongoqb.QueryB
 	}
 	return qb
 }
-func (s *StoriesStore) CreateComment(ctx context.Context, comment *storiesstore.Comment) (*storiesstore.Comment, error) {
+func (s *StoriesStore) CreateComment(ctx context.Context, comment *storiesstore.Comment, ownership *authorizer.Scope) (*storiesstore.Comment, error) {
 	now := time.Now()
 	comment.TimeCreated = now
 	comment.TimeUpdated = now
@@ -36,6 +37,7 @@ func (s *StoriesStore) CreateComment(ctx context.Context, comment *storiesstore.
 		return nil, err
 	}
 	comment.Id = uuid.String()
+	comment.Ownership = ownership
 	if _, err := s.getCollection(CollectionComments).InsertOne(ctx, comment); err != nil {
 		return nil, err
 	}

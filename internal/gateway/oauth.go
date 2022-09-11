@@ -93,7 +93,7 @@ func (s *Server) handleAuthCallback(ctx context.Context, code, state string) (*u
 		return nil, ErrInternalServerError()
 	}
 	if user == nil {
-		data, err := s.Store.UsersStore.CreateUser(ctx, profile)
+		data, err := s.Store.UsersStore.CreateUser(ctx, profile, nil)
 		if err != nil {
 			log.Printf("error on creating profile grpc %v", err)
 			return nil, ErrInternalServerError()

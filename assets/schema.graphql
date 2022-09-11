@@ -191,6 +191,7 @@ input StoryInput {
 }
 input UpdateStoryInput {
 	id: ID!
+	title: String
 } 
 
 type StoriesConnection {

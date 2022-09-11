@@ -73,14 +73,17 @@ func (n *CreateStoryInput) ToModel() (*storiesstore.Story, error) {
 }
 
 type UpdateStoryInput struct {
-	ID graphql.ID
+	ID    graphql.ID
+	Title *string
 }
 
 func (n *UpdateStoryInput) ToModel() *storiesstore.StoryUpdate {
 	if n == nil {
 		return nil
 	}
-	return &storiesstore.StoryUpdate{}
+	return &storiesstore.StoryUpdate{
+		Title: n.Title,
+	}
 }
 func (n *Story) ID(ctx context.Context) graphql.ID {
 	return NewIDMarshaller(NodeTypeStory, n.Id, true).

@@ -215,7 +215,7 @@
                     "meta": {
                         "search_fields": [],
                         "filters": [],
-                        "mutatable_fields" :[],
+                        "mutatable_fields" :["title"],
                         "graphql_ops": "CRUD",
                         "viewer_reference_field": "created_by"
                     },
