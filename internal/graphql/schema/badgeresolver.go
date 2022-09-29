@@ -13,6 +13,7 @@ type Badge struct {
 	CurrentLevel                  int32
 	DisplayName                   string
 	Id                            string
+	LinesOfCodeToNextLevel        int32
 	Points                        int32
 	ProgressPercentageToNextLevel int32
 	TimeCreated                   graphql.Time
@@ -28,6 +29,7 @@ func NewBadge(m *usersstore.Badge) *Badge {
 		CurrentLevel:                  int32(m.CurrentLevel),
 		DisplayName:                   m.DisplayName,
 		Id:                            m.Id,
+		LinesOfCodeToNextLevel:        int32(m.LinesOfCodeToNextLevel),
 		Points:                        int32(m.Points),
 		ProgressPercentageToNextLevel: int32(m.ProgressPercentageToNextLevel),
 		TimeCreated:                   graphql.Time{Time: m.TimeCreated},
@@ -38,6 +40,7 @@ func NewBadge(m *usersstore.Badge) *Badge {
 type CreateBadgeInput struct {
 	CurrentLevel                  int32
 	DisplayName                   string
+	LinesOfCodeToNextLevel        int32
 	Points                        int32
 	ProgressPercentageToNextLevel int32
 	UserID                        graphql.ID
@@ -51,6 +54,7 @@ func (n *CreateBadgeInput) ToModel() (*usersstore.Badge, error) {
 	return &usersstore.Badge{
 		CurrentLevel:                  int64(n.CurrentLevel),
 		DisplayName:                   n.DisplayName,
+		LinesOfCodeToNextLevel:        int64(n.LinesOfCodeToNextLevel),
 		Points:                        int64(n.Points),
 		ProgressPercentageToNextLevel: int64(n.ProgressPercentageToNextLevel),
 	}, nil

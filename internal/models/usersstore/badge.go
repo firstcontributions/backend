@@ -20,6 +20,7 @@ type Badge struct {
 	CurrentLevel                  int64             `bson:"current_level,omitempty"`
 	DisplayName                   string            `bson:"display_name,omitempty"`
 	Id                            string            `bson:"_id"`
+	LinesOfCodeToNextLevel        int64             `bson:"lines_of_code_to_next_level,omitempty"`
 	Points                        int64             `bson:"points,omitempty"`
 	ProgressPercentageToNextLevel int64             `bson:"progress_percentage_to_next_level,omitempty"`
 	TimeCreated                   time.Time         `bson:"time_created,omitempty"`
@@ -40,6 +41,8 @@ func (badge *Badge) Get(field string) interface{} {
 		return badge.DisplayName
 	case "_id":
 		return badge.Id
+	case "lines_of_code_to_next_level":
+		return badge.LinesOfCodeToNextLevel
 	case "points":
 		return badge.Points
 	case "progress_percentage_to_next_level":
@@ -55,6 +58,7 @@ func (badge *Badge) Get(field string) interface{} {
 
 type BadgeUpdate struct {
 	CurrentLevel                  *int64     `bson:"current_level,omitempty"`
+	LinesOfCodeToNextLevel        *int64     `bson:"lines_of_code_to_next_level,omitempty"`
 	Points                        *int64     `bson:"points,omitempty"`
 	ProgressPercentageToNextLevel *int64     `bson:"progress_percentage_to_next_level,omitempty"`
 	TimeUpdated                   *time.Time `bson:"time_updated,omitempty"`

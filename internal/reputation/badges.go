@@ -65,6 +65,7 @@ func (r ReputationSynchroniser) updateBadge(ctx context.Context, badge *userssto
 	badge.CurrentLevel = int64(GetLevelFromPoints(int(badge.Points)))
 	badge.UserID = user.Id
 	badge.ProgressPercentageToNextLevel = GetProgressPercentageToNextLevel(int(badge.Points))
+	badge.LinesOfCodeToNextLevel = GetLinesOfCodeToNextLevel(int(badge.Points))
 
 	if badge.Id == "" {
 		_, err := r.userStore.CreateBadge(ctx, badge, &authorizer.Scope{Users: []string{user.Id}})
@@ -74,6 +75,7 @@ func (r ReputationSynchroniser) updateBadge(ctx context.Context, badge *userssto
 		CurrentLevel:                  &badge.CurrentLevel,
 		Points:                        &badge.Points,
 		ProgressPercentageToNextLevel: &badge.ProgressPercentageToNextLevel,
+		LinesOfCodeToNextLevel:        &badge.LinesOfCodeToNextLevel,
 	}
 	return r.userStore.UpdateBadge(ctx, badge.Id, update)
 }

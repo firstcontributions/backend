@@ -56,6 +56,7 @@ func (m *Resolver) UpdateUser(
 	if err != nil {
 		return nil, err
 	}
+
 	if !authorizer.IsAuthorized(session.Permissions, user.Ownership, authorizer.User, authorizer.OperationUpdate) {
 		return nil, errors.New("forbidden")
 	}

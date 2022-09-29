@@ -3,7 +3,6 @@ package schema
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/firstcontributions/backend/internal/gateway/session"
 	"github.com/firstcontributions/backend/internal/storemanager"
@@ -59,7 +58,6 @@ func (m *Resolver) UpdateStory(
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(session.Permissions, *story.Ownership)
 
 	if !authorizer.IsAuthorized(session.Permissions, story.Ownership, authorizer.Story, authorizer.OperationUpdate) {
 		return nil, errors.New("forbidden")

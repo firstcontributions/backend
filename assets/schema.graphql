@@ -37,6 +37,7 @@ type Badge implements Node {
 	currentLevel: Int!
 	displayName: String!
 	id: ID!
+	linesOfCodeToNextLevel: Int!
 	points: Int!
 	progressPercentageToNextLevel: Int!
 	timeCreated: Time!
