@@ -560,9 +560,10 @@ type Badge struct {
 	Id                            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	Points                        int64                  `protobuf:"varint,4,opt,name=points,proto3" json:"points,omitempty"`
 	ProgressPercentageToNextLevel int64                  `protobuf:"varint,5,opt,name=progress_percentage_to_next_level,json=progressPercentageToNextLevel,proto3" json:"progress_percentage_to_next_level,omitempty"`
-	TimeCreated                   *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=time_created,json=timeCreated,proto3" json:"time_created,omitempty"`
-	TimeUpdated                   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=time_updated,json=timeUpdated,proto3" json:"time_updated,omitempty"`
-	UserId                        string                 `protobuf:"bytes,8,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	LinesOfCodeToNextLevel        int64                  `protobuf:"varint,6,opt,name=lines_of_code_to_next_level,json=linesOfCodeToNextLevel,proto3" json:"lines_of_code_to_next_level,omitempty"`
+	TimeCreated                   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=time_created,json=timeCreated,proto3" json:"time_created,omitempty"`
+	TimeUpdated                   *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=time_updated,json=timeUpdated,proto3" json:"time_updated,omitempty"`
+	UserId                        string                 `protobuf:"bytes,9,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 }
 
 func (x *Badge) Reset() {
@@ -628,6 +629,13 @@ func (x *Badge) GetPoints() int64 {
 func (x *Badge) GetProgressPercentageToNextLevel() int64 {
 	if x != nil {
 		return x.ProgressPercentageToNextLevel
+	}
+	return 0
+}
+
+func (x *Badge) GetLinesOfCodeToNextLevel() int64 {
+	if x != nil {
+		return x.LinesOfCodeToNextLevel
 	}
 	return 0
 }
@@ -828,7 +836,8 @@ type UpdateBadgeRequest struct {
 	CurrentLevel                  *int64                 `protobuf:"varint,2,opt,name=current_level,json=currentLevel,proto3,oneof" json:"current_level,omitempty"`
 	Points                        *int64                 `protobuf:"varint,3,opt,name=points,proto3,oneof" json:"points,omitempty"`
 	ProgressPercentageToNextLevel *int64                 `protobuf:"varint,4,opt,name=progress_percentage_to_next_level,json=progressPercentageToNextLevel,proto3,oneof" json:"progress_percentage_to_next_level,omitempty"`
-	TimeUpdated                   *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=time_updated,json=timeUpdated,proto3,oneof" json:"time_updated,omitempty"`
+	LinesOfCodeToNextLevel        *int64                 `protobuf:"varint,5,opt,name=lines_of_code_to_next_level,json=linesOfCodeToNextLevel,proto3,oneof" json:"lines_of_code_to_next_level,omitempty"`
+	TimeUpdated                   *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=time_updated,json=timeUpdated,proto3,oneof" json:"time_updated,omitempty"`
 }
 
 func (x *UpdateBadgeRequest) Reset() {
@@ -887,6 +896,13 @@ func (x *UpdateBadgeRequest) GetPoints() int64 {
 func (x *UpdateBadgeRequest) GetProgressPercentageToNextLevel() int64 {
 	if x != nil && x.ProgressPercentageToNextLevel != nil {
 		return *x.ProgressPercentageToNextLevel
+	}
+	return 0
+}
+
+func (x *UpdateBadgeRequest) GetLinesOfCodeToNextLevel() int64 {
+	if x != nil && x.LinesOfCodeToNextLevel != nil {
+		return *x.LinesOfCodeToNextLevel
 	}
 	return 0
 }

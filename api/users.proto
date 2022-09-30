@@ -61,9 +61,10 @@ message Badge {
 	string id= 3; 
 	int64 points= 4; 
 	int64 progress_percentage_to_next_level= 5; 
-	google.protobuf.Timestamp time_created= 6; 
-	google.protobuf.Timestamp time_updated= 7;
-	string user_id= 8;
+	int64 lines_of_code_to_next_level= 6; 
+	google.protobuf.Timestamp time_created= 7; 
+	google.protobuf.Timestamp time_updated= 8;
+	string user_id= 9;
 } 
 message GetBadgesRequest {
 	optional string before= 1;
@@ -85,7 +86,8 @@ message UpdateBadgeRequest {
 	optional int64 current_level= 2; 
 	optional int64 points= 3; 
 	optional int64 progress_percentage_to_next_level= 4; 
-	optional google.protobuf.Timestamp time_updated= 5;
+	optional int64 lines_of_code_to_next_level= 5; 
+	optional google.protobuf.Timestamp time_updated= 6;
 }
 
 message CursorCheckpoints { 

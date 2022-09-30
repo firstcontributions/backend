@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/firstcontributions/backend/internal/models/storiesstore"
@@ -39,7 +38,6 @@ func (s *StoriesStore) CreateStory(ctx context.Context, story *storiesstore.Stor
 	}
 	story.Id = uuid.String()
 	story.Ownership = ownership
-	fmt.Println("owner", *story.Ownership)
 	if _, err := s.getCollection(CollectionStories).InsertOne(ctx, story); err != nil {
 		return nil, err
 	}

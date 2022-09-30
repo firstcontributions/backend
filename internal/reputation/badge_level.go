@@ -62,3 +62,10 @@ func GetProgressPercentageToNextLevel(points int) int64 {
 
 	return int64((float64(points-prevTarget) / float64(nextTarget-prevTarget)) * 100)
 }
+
+func GetLinesOfCodeToNextLevel(points int) int64 {
+	currLevel := GetLevelFromPoints(points)
+	nextTarget := GetLevelTarget(currLevel)
+
+	return int64(nextTarget - points)
+}

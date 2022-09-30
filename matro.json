@@ -114,7 +114,7 @@
                     "name": "badge",
                     "type": "object",
                     "meta": {
-                        "mutatable_fields" :["points", "current_level", "progress_percentage_to_next_level"],
+                        "mutatable_fields" :["points", "current_level", "progress_percentage_to_next_level", "lines_of_code_to_next_level"],
                         "sort_by": ["points"]
                     },
                     "properties":{
@@ -122,7 +122,8 @@
                         "display_name": "string",
                         "points": "int",
                         "current_level" : "int",
-                        "progress_percentage_to_next_level" : "int"
+                        "progress_percentage_to_next_level" : "int",
+                        "lines_of_code_to_next_level" : "int"
                     }
                 },
                 "cursor_checkpoints" : {
