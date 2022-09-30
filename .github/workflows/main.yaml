@@ -40,6 +40,5 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Test Report
         run: |
-
-          go test -v -coverpkg=./... -coverprofile=c.out ./...
+          go test -v -coverpkg=./... $(go list ./... | grep -v /vendor/ | grep -v /test) -coverprofile=c.out
           go tool cover -func c.out
