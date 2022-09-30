@@ -17,4 +17,4 @@ FROM public.ecr.aws/lambda/provided:al2 as deploy
 WORKDIR /service/
 COPY --from=builder /service/graphql_lambda/build/* ./
 RUN ls
-ENTRYPOINT ["/main"]
+ENTRYPOINT ["/service/main"]
