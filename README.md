@@ -18,3 +18,9 @@ Need to setup a reverse proxy to do local setup
 127.0.0.1 api.firstcontributions.com
 127.0.0.1 explorer.firstcontributions.com
 ```
+To run integration tests
+
+```sh
+$ sudo make configure
+$ make itest
+```
