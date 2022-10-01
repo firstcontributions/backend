@@ -11,18 +11,19 @@ import (
 )
 
 func (r ReputationSynchroniser) SyncBadges(ctx context.Context, user *usersstore.User) error {
+	badgeCount := int64(200)
 	start := time.Now()
 	existingBadges, _, _, _, err := r.userStore.GetBadges(ctx, &usersstore.BadgeFilters{
 		User: user,
-	}, nil, nil, nil, nil, usersstore.BadgeSortByDefault, nil)
+	}, nil, nil, &badgeCount, nil, usersstore.BadgeSortByDefault, nil)
 	if err != nil {
-		return nil
+		log.Println("error on getting exising badges", err)
+		return err
 	}
 
 	badgeMap := BadgeMapFromBadges(existingBadges)
 
 	fileChanges, cursor := r.getPRFileChangesFromGitHub(ctx, user)
-
 	for _, f := range fileChanges {
 		badgeMap.Add(f.path, f.additions)
 	}

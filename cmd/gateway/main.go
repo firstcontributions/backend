@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	fmt.Println("from gateway 5")
+	fmt.Println("from gateway 6")
 	s := gateway.NewServer()
 	if err := s.Init(); err != nil {
 		panic(err)
