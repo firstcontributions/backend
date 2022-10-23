@@ -185,7 +185,8 @@
                     "type": "object",
                     "meta": {
                         "filters": ["issue_type"],
-                        "graphql_ops": "R"
+                        "graphql_ops": "R",
+                        "sort_by": ["repository_updated_at"]
                     },
                     "properties":{
                         "id": "id",
