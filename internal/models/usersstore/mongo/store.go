@@ -11,8 +11,8 @@ import (
 
 const (
 	DBUsers          = "users"
-	CollectionBadges = "badges"
 	CollectionUsers  = "users"
+	CollectionBadges = "badges"
 )
 
 type UsersStore struct {

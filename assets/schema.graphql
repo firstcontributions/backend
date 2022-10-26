@@ -129,6 +129,7 @@ type IssueEdge {
 } 
 
 enum IssueSortBy {
+	repository_updated_at,
 }
 
 type Reaction implements Node {

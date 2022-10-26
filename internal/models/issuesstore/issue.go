@@ -12,6 +12,7 @@ type IssueSortBy uint8
 
 const (
 	IssueSortByDefault IssueSortBy = iota
+	IssueSortByRepositoryUpdatedAt
 )
 
 type Issue struct {
@@ -69,6 +70,8 @@ type IssueFilters struct {
 
 func (s IssueSortBy) String() string {
 	switch s {
+	case IssueSortByRepositoryUpdatedAt:
+		return "repository_updated_at"
 	default:
 		return "time_created"
 	}
@@ -76,6 +79,8 @@ func (s IssueSortBy) String() string {
 
 func GetIssueSortByFromString(s string) IssueSortBy {
 	switch s {
+	case "repository_updated_at":
+		return IssueSortByRepositoryUpdatedAt
 	default:
 		return IssueSortByDefault
 	}
@@ -83,6 +88,8 @@ func GetIssueSortByFromString(s string) IssueSortBy {
 
 func (s IssueSortBy) CursorType() cursor.ValueType {
 	switch s {
+	case IssueSortByRepositoryUpdatedAt:
+		return cursor.ValueTypeTime
 	default:
 		return cursor.ValueTypeTime
 	}
