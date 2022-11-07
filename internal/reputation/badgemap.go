@@ -18,6 +18,9 @@ var fileExtensionBadgeMap = map[string]string{
 	"rs":   "Rust",
 	"sh":   "Unix Sell",
 	"php":  "PHP",
+	"html":  "HTML",
+	"css":  "CSS",
+	"md":  "Markdown",
 }
 
 type BadgeMap struct {
