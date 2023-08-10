@@ -58,9 +58,7 @@ jobs:
       run: doctl registry login --expiry-seconds 600
     
     - name: Push image to Digital Ocean Container Registry 
-      run: |
-      docker push registry.digitalocean.com/opensource/backend:$IMAGE_TAG
-      echo "registry.digitalocean.com/opensource/backend:$IMAGE_TAG"
+      run: docker push registry.digitalocean.com/opensource/backend:$IMAGE_TAG
 
 
     
