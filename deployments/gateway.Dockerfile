@@ -13,4 +13,5 @@ COPY ./assets/schema.graphql ./build/assets/
 FROM alpine:3.16 as deploy
 WORKDIR /service/
 COPY --from=builder /service/gateway/build/* ./
+COPY ./assets/schema.graphql ./assets/
 CMD [ "sh", "-c", "sleep 5; /service/gateway" ]
