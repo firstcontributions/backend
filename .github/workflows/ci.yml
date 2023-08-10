@@ -60,6 +60,7 @@ jobs:
     - name: Push image to Digital Ocean Container Registry 
       run: |
       docker push registry.digitalocean.com/opensource/backend:$IMAGE_TAG
-      echo "::set-output name=image::registry.digitalocean.com/opensource/backend:$IMAGE_TAG"
+      echo "registry.digitalocean.com/opensource/backend:$IMAGE_TAG"
+
 
     
