@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	fmt.Println("from gateway 6")
+	fmt.Println("from gateway new CI pipeline")
 	s := gateway.NewServer()
 	if err := s.Init(); err != nil {
 		panic(err)
