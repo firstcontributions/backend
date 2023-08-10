@@ -48,17 +48,16 @@ jobs:
 
     - name: Build
       id: build-image
-      run: docker build -f ./deployments/graphql-lambda.Dockerfile -t registry.digitalocean.com/opensource/backend:$IMAGE_TAG .
+      run: docker build -f ./deployments/gateway.Dockerfile -t registry.digitalocean.com/opensource/backend:$IMAGE_TAG .
 
     - name: Install doctl 
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DO_API_KEY }}
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DO_API_KEY }}
     - name: Log in to DO Container Registry 
       run: doctl registry login --expiry-seconds 600
     
-    - name: Push image to DO Container Registry 
-      run: |
-      docker push registry.digitalocean.com/opensource/backend:$IMAGE_TAG
+    - name: Push image to Digital Ocean Container Registry 
+      run: docker push registry.digitalocean.com/opensource/backend:$IMAGE_TAG
 
     
