@@ -64,7 +64,7 @@ jobs:
       env:
         CID_URL: ${{secrets.CID_URL}}
         API_KEY: ${{secrets.API_KEY}}
-      run: curl "$CID_URL?git_hash=$IMAGE_TAG" -H "API_KEY:$API_KEY"
+      run: curl "$CID_URL?git_hash=$IMAGE_TAG" -a "$API_KEY"
 
 
     
