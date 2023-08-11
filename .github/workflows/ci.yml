@@ -62,7 +62,7 @@ jobs:
     
     - name: Deploy code
       env:
-        CD_URL: ${{secrets.CD_URL}}
+        CID_URL: ${{secrets.CID_URL}}
         API_KEY: ${{secrets.API_KEY}}
       run: curl "$CID_URL?git_hash=$IMAGE_TAG" -H "API_KEY:$API_KEY"
 
