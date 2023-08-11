@@ -59,5 +59,8 @@ jobs:
     
     - name: Push image to Digital Ocean Container Registry 
       run: docker push registry.digitalocean.com/opensource/backend:$IMAGE_TAG
+    
+    - name: Deploy code
+      run: curl "$CD_URL?git_hash=$IMAGE_TAG" -h "API_KEY:$API_KEY"
 
     
