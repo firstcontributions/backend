@@ -61,6 +61,9 @@ jobs:
       run: docker push registry.digitalocean.com/opensource/backend:$IMAGE_TAG
     
     - name: Deploy code
+      env:
+        CD_URL: ${{secrets.CD_URL}}
+        API_KEY: ${{secrets.API_KEY}}
       run: curl "$CD_URL?git_hash=$IMAGE_TAG" -h "API_KEY:$API_KEY"
 
 
