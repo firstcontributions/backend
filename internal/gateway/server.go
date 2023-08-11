@@ -114,7 +114,7 @@ func (s *Server) ListenAndServe() error {
 	log.Printf("listening at :%s", *s.Port)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"https://explorer.opensource.forum", "https://app.opensource.forum"},
+		AllowedOrigins:   []string{"https://explorer.opensource.forum", "https://opensource.forum", "https://www.opensource.forum"},
 		AllowCredentials: true,
 	})
 	tp, err := tracerProvider()
