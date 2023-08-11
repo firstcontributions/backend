@@ -109,7 +109,7 @@ services:
 
   explorer:
     
-    image: gokultp/graphql-explorer:latest
+    image: gokultp/graphql-explorer:c2d18f1ba2f66adf6c8c2ca4b38030e04cfb41d2
     container_name: explorer
     networks:
       docker_network:
