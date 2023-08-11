@@ -29,7 +29,7 @@ func (s *Server) AuthRedirect(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(ErrInternalServerError(), w)
 		return
 	}
-	origin := "http://explorer.firstcontributions.com"
+	origin := "http://explorer.opensource.forum"
 	if originFromQuery := r.URL.Query().Get("origin"); originFromQuery != "" {
 		origin = originFromQuery
 	}
@@ -38,7 +38,7 @@ func (s *Server) AuthRedirect(w http.ResponseWriter, r *http.Request) {
 		Value:   origin,
 		Expires: time.Now().Add(5 * time.Minute * 5),
 		Path:    "/",
-		Domain:  "firstcontributions.com",
+		Domain:  "opensource.forum",
 	})
 	http.Redirect(w, r, conf.AuthCodeURL(state), http.StatusSeeOther)
 }
@@ -62,7 +62,7 @@ func (s *Server) AuthCallback(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(ErrInternalServerError(), w)
 	}
 	go s.UpdateProfileReputation(p, sessionID)
-	redirect := "http://explorer.firstcontributions.com"
+	redirect := "http://explorer.opensource.forum"
 	cookie, _ := r.Cookie("fc_origin")
 	if cookie != nil && cookie.Value != "" {
 		redirect = cookie.Value
