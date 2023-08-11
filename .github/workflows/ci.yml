@@ -66,4 +66,5 @@ jobs:
         API_KEY: ${{secrets.API_KEY}}
       run: curl "$CD_URL?git_hash=$IMAGE_TAG" -h "API_KEY:$API_KEY"
 
+
     
