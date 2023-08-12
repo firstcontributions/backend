@@ -16,6 +16,8 @@ type Story struct {
 	ContentJson     string
 	createdBy       string
 	Id              string
+	Languages       []*string
+	Repos           []*string
 	Thumbnail       string
 	TimeCreated     graphql.Time
 	TimeUpdated     graphql.Time
@@ -33,6 +35,8 @@ func NewStory(m *storiesstore.Story) *Story {
 		ContentJson:     m.ContentJson,
 		createdBy:       m.CreatedBy,
 		Id:              m.Id,
+		Languages:       m.Languages,
+		Repos:           m.Repos,
 		Thumbnail:       m.Thumbnail,
 		TimeCreated:     graphql.Time{Time: m.TimeCreated},
 		TimeUpdated:     graphql.Time{Time: m.TimeUpdated},
@@ -52,6 +56,8 @@ func (n *Story) CreatedBy(ctx context.Context) (*User, error) {
 type CreateStoryInput struct {
 	AbstractContent string
 	ContentJson     string
+	Languages       []*string
+	Repos           []*string
 	Thumbnail       string
 	Title           string
 	UrlSuffix       string
@@ -66,6 +72,8 @@ func (n *CreateStoryInput) ToModel() (*storiesstore.Story, error) {
 	return &storiesstore.Story{
 		AbstractContent: n.AbstractContent,
 		ContentJson:     n.ContentJson,
+		Languages:       n.Languages,
+		Repos:           n.Repos,
 		Thumbnail:       n.Thumbnail,
 		Title:           n.Title,
 		UrlSuffix:       n.UrlSuffix,
@@ -73,8 +81,13 @@ func (n *CreateStoryInput) ToModel() (*storiesstore.Story, error) {
 }
 
 type UpdateStoryInput struct {
-	ID    graphql.ID
-	Title *string
+	ID              graphql.ID
+	AbstractContent *string
+	ContentJson     *string
+	Languages       []*string
+	Repos           []*string
+	Thumbnail       *string
+	Title           *string
 }
 
 func (n *UpdateStoryInput) ToModel() *storiesstore.StoryUpdate {
@@ -82,7 +95,12 @@ func (n *UpdateStoryInput) ToModel() *storiesstore.StoryUpdate {
 		return nil
 	}
 	return &storiesstore.StoryUpdate{
-		Title: n.Title,
+		AbstractContent: n.AbstractContent,
+		ContentJson:     n.ContentJson,
+		Languages:       n.Languages,
+		Repos:           n.Repos,
+		Thumbnail:       n.Thumbnail,
+		Title:           n.Title,
 	}
 }
 func (n *Story) ID(ctx context.Context) graphql.ID {

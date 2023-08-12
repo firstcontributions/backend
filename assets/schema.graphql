@@ -176,7 +176,9 @@ type Story implements Node {
 	contentJson: String!
 	createdBy: User!
 	id: ID!
+	languages: [String]!
 	reactions(first: Int, last: Int, after: String, before: String, sortOrder: SortOrder, sortBy: ReactionSortBy): ReactionsConnection!
+	repos: [String]!
 	thumbnail: String!
 	timeCreated: Time!
 	timeUpdated: Time!
@@ -187,12 +189,19 @@ type Story implements Node {
 input StoryInput {
 	abstractContent: String!
 	contentJson: String!
+	languages: [String]!
+	repos: [String]!
 	thumbnail: String!
 	title: String!
 	urlSuffix: String!
 }
 input UpdateStoryInput {
 	id: ID!
+	abstractContent: String
+	contentJson: String
+	languages: [String]
+	repos: [String]
+	thumbnail: String
 	title: String
 } 
 

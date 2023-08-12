@@ -7,14 +7,6 @@ import (
 )
 
 type Store interface {
-	// reaction methods
-	GetReactionByID(ctx context.Context, id string) (*Reaction, error)
-	GetOneReaction(ctx context.Context, filters *ReactionFilters) (*Reaction, error)
-	GetReactions(ctx context.Context, filters *ReactionFilters, after *string, before *string, first *int64, last *int64, sortBy ReactionSortBy, sortOrder *string) ([]*Reaction, bool, bool, []string, error)
-	CountReactions(ctx context.Context, filters *ReactionFilters) (int64, error)
-	CreateReaction(ctx context.Context, reaction *Reaction, ownership *authorizer.Scope) (*Reaction, error)
-	UpdateReaction(ctx context.Context, id string, update *ReactionUpdate) error
-	DeleteReactionByID(ctx context.Context, id string) error
 	// story methods
 	GetStoryByID(ctx context.Context, id string) (*Story, error)
 	GetOneStory(ctx context.Context, filters *StoryFilters) (*Story, error)
@@ -31,4 +23,12 @@ type Store interface {
 	CreateComment(ctx context.Context, comment *Comment, ownership *authorizer.Scope) (*Comment, error)
 	UpdateComment(ctx context.Context, id string, update *CommentUpdate) error
 	DeleteCommentByID(ctx context.Context, id string) error
+	// reaction methods
+	GetReactionByID(ctx context.Context, id string) (*Reaction, error)
+	GetOneReaction(ctx context.Context, filters *ReactionFilters) (*Reaction, error)
+	GetReactions(ctx context.Context, filters *ReactionFilters, after *string, before *string, first *int64, last *int64, sortBy ReactionSortBy, sortOrder *string) ([]*Reaction, bool, bool, []string, error)
+	CountReactions(ctx context.Context, filters *ReactionFilters) (int64, error)
+	CreateReaction(ctx context.Context, reaction *Reaction, ownership *authorizer.Scope) (*Reaction, error)
+	UpdateReaction(ctx context.Context, id string, update *ReactionUpdate) error
+	DeleteReactionByID(ctx context.Context, id string) error
 }
