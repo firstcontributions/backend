@@ -217,7 +217,7 @@
                     "meta": {
                         "search_fields": [],
                         "filters": [],
-                        "mutatable_fields" :["title"],
+                        "mutatable_fields" :["title", "content_json", "abstract_content", "thumbnail", "repos", "languages"],
                         "graphql_ops": "CRUD",
                         "viewer_reference_field": "created_by"
                     },
@@ -228,6 +228,8 @@
                         "abstract_content": "string",
                         "url_suffix": "string",
                         "thumbnail": "string",
+                        "repos": {"type": "list", "schema": "string"},
+                        "languages": {"type": "list", "schema": "string"},
                         "comments": {
                             "type": "list",
                             "schema": "comment",

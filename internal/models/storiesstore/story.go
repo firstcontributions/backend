@@ -21,6 +21,8 @@ type Story struct {
 	ContentJson     string            `bson:"content_json,omitempty"`
 	CreatedBy       string            `bson:"created_by,omitempty"`
 	Id              string            `bson:"_id"`
+	Languages       []*string         `bson:"languages,omitempty"`
+	Repos           []*string         `bson:"repos,omitempty"`
 	Thumbnail       string            `bson:"thumbnail,omitempty"`
 	TimeCreated     time.Time         `bson:"time_created,omitempty"`
 	TimeUpdated     time.Time         `bson:"time_updated,omitempty"`
@@ -44,6 +46,10 @@ func (story *Story) Get(field string) interface{} {
 		return story.CreatedBy
 	case "_id":
 		return story.Id
+	case "languages":
+		return story.Languages
+	case "repos":
+		return story.Repos
 	case "thumbnail":
 		return story.Thumbnail
 	case "time_created":
@@ -60,8 +66,13 @@ func (story *Story) Get(field string) interface{} {
 }
 
 type StoryUpdate struct {
-	TimeUpdated *time.Time `bson:"time_updated,omitempty"`
-	Title       *string    `bson:"title,omitempty"`
+	AbstractContent *string    `bson:"abstract_content,omitempty"`
+	ContentJson     *string    `bson:"content_json,omitempty"`
+	Languages       []*string  `bson:"languages,omitempty"`
+	Repos           []*string  `bson:"repos,omitempty"`
+	Thumbnail       *string    `bson:"thumbnail,omitempty"`
+	TimeUpdated     *time.Time `bson:"time_updated,omitempty"`
+	Title           *string    `bson:"title,omitempty"`
 }
 
 type StoryFilters struct {
