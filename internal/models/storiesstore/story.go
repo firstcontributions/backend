@@ -68,8 +68,8 @@ func (story *Story) Get(field string) interface{} {
 type StoryUpdate struct {
 	AbstractContent *string    `bson:"abstract_content,omitempty"`
 	ContentJson     *string    `bson:"content_json,omitempty"`
-	Languages       []*string  `bson:"languages,omitempty"`
-	Repos           []*string  `bson:"repos,omitempty"`
+	Languages       *[]*string `bson:"languages,omitempty"`
+	Repos           *[]*string `bson:"repos,omitempty"`
 	Thumbnail       *string    `bson:"thumbnail,omitempty"`
 	TimeUpdated     *time.Time `bson:"time_updated,omitempty"`
 	Title           *string    `bson:"title,omitempty"`

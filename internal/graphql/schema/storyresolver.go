@@ -84,8 +84,8 @@ type UpdateStoryInput struct {
 	ID              graphql.ID
 	AbstractContent *string
 	ContentJson     *string
-	Languages       []*string
-	Repos           []*string
+	Languages       *[]*string
+	Repos           *[]*string
 	Thumbnail       *string
 	Title           *string
 }
