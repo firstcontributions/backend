@@ -5,17 +5,20 @@ import (
 	"fmt"
 
 	"github.com/firstcontributions/backend/internal/models/issuesstore"
+	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/models/usersstore"
 	"github.com/shurcooL/githubv4"
 )
 
 const (
-	IssueTypeLastRepo   = "last_repo_issues"
-	IssueTypeRecentRepo = "issues_from_other_recent_repos"
-	IssueTypeRelevant   = "relevant_issues"
+	IssueTypeLastRepo         = "last_repo_issues"
+	IssueTypeRecentRepo       = "issues_from_other_recent_repos"
+	IssueTypeRelevant         = "relevant_issues"
+	IssueTypeReposInStory     = "issues_from_repo_story"
+	IssueTypeRelevantForStory = "relevant_issues_story"
 )
 
-func getQuery(user *usersstore.User, issueType string) (string, error) {
+func getQuery(user *usersstore.User, story *storiesstore.Story, issueType string) (string, error) {
 	query := "is:issue is:open  no:assignee"
 
 	switch issueType {
@@ -35,6 +38,25 @@ func getQuery(user *usersstore.User, issueType string) (string, error) {
 			query += fmt.Sprintf(" repo:%s", *repo)
 		}
 		return query + " label:\"help wanted\",\"good first issue\",\"goodfirstissue\"", nil
+	case IssueTypeReposInStory:
+		ln := len(story.Repos)
+		if len(user.Tags.RecentRepos) < 1 {
+			return "", fmt.Errorf("no recent repos")
+		}
+		count := min(7, ln)
+
+		for _, repo := range story.Repos[:count] {
+			query += fmt.Sprintf(" repo:%s", *repo)
+		}
+		return query + " label:\"help wanted\",\"good first issue\",\"goodfirstissue\"", nil
+	case IssueTypeRelevantForStory:
+		languageCount := min(3, len(story.Languages))
+		languages := story.Languages[:languageCount]
+
+		for _, lng := range languages {
+			query += fmt.Sprintf(" language:%s", *lng)
+		}
+		return query + " label:\"good first issue\",\"goodfirstissue\"", nil
 	default:
 		languageCount := min(3, len(user.Tags.Languages))
 		languages := user.Tags.Languages[:languageCount]
@@ -149,7 +171,7 @@ func (g *GitHubStore) GetIssues(
 		tmp := githubv4.String(*before)
 		beforeGql = &tmp
 	}
-	query, err := getQuery(filters.User, *filters.IssueType)
+	query, err := getQuery(filters.User, filters.Story, *filters.IssueType)
 	if err != nil {
 		return nil, false, false, nil, nil
 	}

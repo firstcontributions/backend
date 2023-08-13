@@ -56,8 +56,8 @@ type BadgeEdge {
 } 
 
 enum BadgeSortBy {
-	points,
 	time_created,
+	points,
 }
 
 type Comment implements Node {
@@ -176,8 +176,10 @@ type Story implements Node {
 	contentJson: String!
 	createdBy: User!
 	id: ID!
+	issuesFromRepos(first: Int, last: Int, after: String, before: String, sortOrder: SortOrder, sortBy: IssueSortBy): IssuesConnection!
 	languages: [String]!
 	reactions(first: Int, last: Int, after: String, before: String, sortOrder: SortOrder, sortBy: ReactionSortBy): ReactionsConnection!
+	relevantIssues(first: Int, last: Int, after: String, before: String, sortOrder: SortOrder, sortBy: IssueSortBy): IssuesConnection!
 	repos: [String]!
 	thumbnail: String!
 	timeCreated: Time!

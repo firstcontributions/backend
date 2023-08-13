@@ -242,6 +242,24 @@
                             "joined_data": true,
                             "paginated": true
                         },
+                        "issues_from_repos" : {
+                            "type": "list",
+                            "schema": "issue",
+                            "joined_data": true,
+                            "paginated": true,
+                            "hardcoded_filters" : {
+                                "issue_type": "issues_from_repo_story"
+                            }
+                        },
+                        "relevant_issues" : {
+                            "type": "list",
+                            "schema": "issue",
+                            "joined_data": true,
+                            "paginated": true,
+                            "hardcoded_filters" : {
+                                "issue_type": "relevant_issues_story"
+                            }
+                        },
                         "created_by" : {
                             "type": "object",
                             "schema": "user",
