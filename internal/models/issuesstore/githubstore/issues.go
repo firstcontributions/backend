@@ -51,6 +51,9 @@ func getQuery(user *usersstore.User, story *storiesstore.Story, issueType string
 		return query + " label:\"help wanted\",\"good first issue\",\"goodfirstissue\"", nil
 	case IssueTypeRelevantForStory:
 		languageCount := min(3, len(story.Languages))
+		if languageCount == 0 {
+			return "", fmt.Errorf("no langs provided")
+		}
 		languages := story.Languages[:languageCount]
 
 		for _, lng := range languages {
