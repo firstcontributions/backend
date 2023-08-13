@@ -40,7 +40,7 @@ func getQuery(user *usersstore.User, story *storiesstore.Story, issueType string
 		return query + " label:\"help wanted\",\"good first issue\",\"goodfirstissue\"", nil
 	case IssueTypeReposInStory:
 		ln := len(story.Repos)
-		if len(user.Tags.RecentRepos) < 1 {
+		if len(story.Repos) < 1 {
 			return "", fmt.Errorf("no recent repos")
 		}
 		count := min(7, ln)
