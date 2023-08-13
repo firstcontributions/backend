@@ -51,12 +51,17 @@ type CreateIssueInput struct {
 	RepositoryUpdatedAt graphql.Time
 	Title               string
 	Url                 string
+	StoryID             graphql.ID
 	UserID              graphql.ID
 }
 
 func (n *CreateIssueInput) ToModel() (*issuesstore.Issue, error) {
 	if n == nil {
 		return nil, nil
+	}
+	storyID, err := ParseGraphqlID(n.StoryID)
+	if err != nil {
+		return nil, err
 	}
 
 	return &issuesstore.Issue{
@@ -69,6 +74,7 @@ func (n *CreateIssueInput) ToModel() (*issuesstore.Issue, error) {
 		RepositoryUpdatedAt: n.RepositoryUpdatedAt.Time,
 		Title:               n.Title,
 		Url:                 n.Url,
+		StoryID:             storyID.ID,
 	}, nil
 }
 func (n *Issue) ID(ctx context.Context) graphql.ID {

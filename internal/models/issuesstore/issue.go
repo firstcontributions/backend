@@ -3,6 +3,7 @@ package issuesstore
 import (
 	"time"
 
+	"github.com/firstcontributions/backend/internal/models/storiesstore"
 	"github.com/firstcontributions/backend/internal/models/usersstore"
 	"github.com/firstcontributions/backend/pkg/authorizer"
 	"github.com/firstcontributions/backend/pkg/cursor"
@@ -16,6 +17,7 @@ const (
 )
 
 type Issue struct {
+	StoryID             string            `bson:"story_id"`
 	UserID              string            `bson:"user_id"`
 	Body                string            `bson:"body,omitempty"`
 	CommentCount        int64             `bson:"comment_count,omitempty"`
@@ -35,6 +37,8 @@ func NewIssue() *Issue {
 }
 func (issue *Issue) Get(field string) interface{} {
 	switch field {
+	case "story_id":
+		return issue.StoryID
 	case "user_id":
 		return issue.UserID
 	case "body":
@@ -65,6 +69,7 @@ func (issue *Issue) Get(field string) interface{} {
 type IssueFilters struct {
 	Ids       []string
 	IssueType *string
+	Story     *storiesstore.Story
 	User      *usersstore.User
 }
 
