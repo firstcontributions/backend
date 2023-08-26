@@ -36,6 +36,11 @@ func (s *UsersStore) CreateUser(ctx context.Context, user *usersstore.User, owne
 	if err != nil {
 		return nil, err
 	}
+	if dproc, ok := interface{}(user).(utils.DataProcessor); ok {
+		if err := dproc.Process(ctx); err != nil {
+			return nil, err
+		}
+	}
 	user.Id = uuid.String()
 	user.Permissions = []authorizer.Permission{
 		{
@@ -190,6 +195,12 @@ func (s *UsersStore) GetUsers(
 }
 
 func (s *UsersStore) UpdateUser(ctx context.Context, id string, userUpdate *usersstore.UserUpdate) error {
+
+	if dproc, ok := interface{}(userUpdate).(utils.DataProcessor); ok {
+		if err := dproc.Process(ctx); err != nil {
+			return err
+		}
+	}
 	qb := mongoqb.NewQueryBuilder().
 		Eq("_id", id)
 

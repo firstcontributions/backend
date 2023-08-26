@@ -36,6 +36,11 @@ func (s *StoriesStore) CreateStory(ctx context.Context, story *storiesstore.Stor
 	if err != nil {
 		return nil, err
 	}
+	if dproc, ok := interface{}(story).(utils.DataProcessor); ok {
+		if err := dproc.Process(ctx); err != nil {
+			return nil, err
+		}
+	}
 	story.Id = uuid.String()
 	story.Ownership = ownership
 	if _, err := s.getCollection(CollectionStories).InsertOne(ctx, story); err != nil {
@@ -184,6 +189,12 @@ func (s *StoriesStore) GetStories(
 }
 
 func (s *StoriesStore) UpdateStory(ctx context.Context, id string, storyUpdate *storiesstore.StoryUpdate) error {
+
+	if dproc, ok := interface{}(storyUpdate).(utils.DataProcessor); ok {
+		if err := dproc.Process(ctx); err != nil {
+			return err
+		}
+	}
 	qb := mongoqb.NewQueryBuilder().
 		Eq("_id", id)
 

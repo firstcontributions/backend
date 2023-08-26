@@ -27,6 +27,7 @@ type Story struct {
 	TimeCreated     time.Time         `bson:"time_created,omitempty"`
 	TimeUpdated     time.Time         `bson:"time_updated,omitempty"`
 	Title           string            `bson:"title,omitempty"`
+	Topics          []*string         `bson:"topics,omitempty"`
 	UrlSuffix       string            `bson:"url_suffix,omitempty"`
 	Ownership       *authorizer.Scope `bson:"ownership,omitempty"`
 }
@@ -58,6 +59,8 @@ func (story *Story) Get(field string) interface{} {
 		return story.TimeUpdated
 	case "title":
 		return story.Title
+	case "topics":
+		return story.Topics
 	case "url_suffix":
 		return story.UrlSuffix
 	default:

@@ -36,6 +36,11 @@ func (s *StoriesStore) CreateReaction(ctx context.Context, reaction *storiesstor
 	if err != nil {
 		return nil, err
 	}
+	if dproc, ok := interface{}(reaction).(utils.DataProcessor); ok {
+		if err := dproc.Process(ctx); err != nil {
+			return nil, err
+		}
+	}
 	reaction.Id = uuid.String()
 	reaction.Ownership = ownership
 	if _, err := s.getCollection(CollectionReactions).InsertOne(ctx, reaction); err != nil {
@@ -184,6 +189,12 @@ func (s *StoriesStore) GetReactions(
 }
 
 func (s *StoriesStore) UpdateReaction(ctx context.Context, id string, reactionUpdate *storiesstore.ReactionUpdate) error {
+
+	if dproc, ok := interface{}(reactionUpdate).(utils.DataProcessor); ok {
+		if err := dproc.Process(ctx); err != nil {
+			return err
+		}
+	}
 	qb := mongoqb.NewQueryBuilder().
 		Eq("_id", id)
 

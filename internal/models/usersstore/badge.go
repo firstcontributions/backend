@@ -11,8 +11,8 @@ type BadgeSortBy uint8
 
 const (
 	BadgeSortByDefault BadgeSortBy = iota
-	BadgeSortByTimeCreated
 	BadgeSortByPoints
+	BadgeSortByTimeCreated
 )
 
 type Badge struct {
@@ -72,10 +72,10 @@ type BadgeFilters struct {
 
 func (s BadgeSortBy) String() string {
 	switch s {
-	case BadgeSortByTimeCreated:
-		return "time_created"
 	case BadgeSortByPoints:
 		return "points"
+	case BadgeSortByTimeCreated:
+		return "time_created"
 	default:
 		return "time_created"
 	}
@@ -83,10 +83,10 @@ func (s BadgeSortBy) String() string {
 
 func GetBadgeSortByFromString(s string) BadgeSortBy {
 	switch s {
-	case "time_created":
-		return BadgeSortByTimeCreated
 	case "points":
 		return BadgeSortByPoints
+	case "time_created":
+		return BadgeSortByTimeCreated
 	default:
 		return BadgeSortByDefault
 	}
@@ -94,10 +94,10 @@ func GetBadgeSortByFromString(s string) BadgeSortBy {
 
 func (s BadgeSortBy) CursorType() cursor.ValueType {
 	switch s {
-	case BadgeSortByTimeCreated:
-		return cursor.ValueTypeTime
 	case BadgeSortByPoints:
 		return cursor.ValueTypeInt
+	case BadgeSortByTimeCreated:
+		return cursor.ValueTypeTime
 	default:
 		return cursor.ValueTypeTime
 	}
