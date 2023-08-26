@@ -36,6 +36,11 @@ func (s *StoriesStore) CreateComment(ctx context.Context, comment *storiesstore.
 	if err != nil {
 		return nil, err
 	}
+	if dproc, ok := interface{}(comment).(utils.DataProcessor); ok {
+		if err := dproc.Process(ctx); err != nil {
+			return nil, err
+		}
+	}
 	comment.Id = uuid.String()
 	comment.Ownership = ownership
 	if _, err := s.getCollection(CollectionComments).InsertOne(ctx, comment); err != nil {
@@ -184,6 +189,12 @@ func (s *StoriesStore) GetComments(
 }
 
 func (s *StoriesStore) UpdateComment(ctx context.Context, id string, commentUpdate *storiesstore.CommentUpdate) error {
+
+	if dproc, ok := interface{}(commentUpdate).(utils.DataProcessor); ok {
+		if err := dproc.Process(ctx); err != nil {
+			return err
+		}
+	}
 	qb := mongoqb.NewQueryBuilder().
 		Eq("_id", id)
 

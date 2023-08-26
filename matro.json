@@ -228,8 +228,9 @@
                         "abstract_content": "string",
                         "url_suffix": "string",
                         "thumbnail": "string",
-                        "repos": {"type": "list", "schema": "string"},
-                        "languages": {"type": "list", "schema": "string"},
+                        "repos": {"type": "list", "schema": "string", "no_graphql": true},
+                        "languages": {"type": "list", "schema": "string", "no_graphql": true},
+                        "topics": {"type": "list", "schema": "string", "no_graphql": true},
                         "comments": {
                             "type": "list",
                             "schema": "comment",

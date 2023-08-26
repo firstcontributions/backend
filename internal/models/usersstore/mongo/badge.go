@@ -33,6 +33,11 @@ func (s *UsersStore) CreateBadge(ctx context.Context, badge *usersstore.Badge, o
 	if err != nil {
 		return nil, err
 	}
+	if dproc, ok := interface{}(badge).(utils.DataProcessor); ok {
+		if err := dproc.Process(ctx); err != nil {
+			return nil, err
+		}
+	}
 	badge.Id = uuid.String()
 	badge.Ownership = ownership
 	if _, err := s.getCollection(CollectionBadges).InsertOne(ctx, badge); err != nil {
@@ -181,6 +186,12 @@ func (s *UsersStore) GetBadges(
 }
 
 func (s *UsersStore) UpdateBadge(ctx context.Context, id string, badgeUpdate *usersstore.BadgeUpdate) error {
+
+	if dproc, ok := interface{}(badgeUpdate).(utils.DataProcessor); ok {
+		if err := dproc.Process(ctx); err != nil {
+			return err
+		}
+	}
 	qb := mongoqb.NewQueryBuilder().
 		Eq("_id", id)
 

@@ -56,8 +56,8 @@ type BadgeEdge {
 } 
 
 enum BadgeSortBy {
-	time_created,
 	points,
+	time_created,
 }
 
 type Comment implements Node {
@@ -177,10 +177,8 @@ type Story implements Node {
 	createdBy: User!
 	id: ID!
 	issuesFromRepos(first: Int, last: Int, after: String, before: String, sortOrder: SortOrder, sortBy: IssueSortBy): IssuesConnection!
-	languages: [String]!
 	reactions(first: Int, last: Int, after: String, before: String, sortOrder: SortOrder, sortBy: ReactionSortBy): ReactionsConnection!
 	relevantIssues(first: Int, last: Int, after: String, before: String, sortOrder: SortOrder, sortBy: IssueSortBy): IssuesConnection!
-	repos: [String]!
 	thumbnail: String!
 	timeCreated: Time!
 	timeUpdated: Time!
@@ -191,8 +189,6 @@ type Story implements Node {
 input StoryInput {
 	abstractContent: String!
 	contentJson: String!
-	languages: [String]!
-	repos: [String]!
 	thumbnail: String!
 	title: String!
 	urlSuffix: String!
@@ -201,8 +197,6 @@ input UpdateStoryInput {
 	id: ID!
 	abstractContent: String
 	contentJson: String
-	languages: [String]
-	repos: [String]
 	thumbnail: String
 	title: String
 } 
