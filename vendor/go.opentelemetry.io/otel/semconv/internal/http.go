@@ -147,12 +147,6 @@ func (sc *SemanticConventions) EndUserAttributesFromHTTPRequest(request *http.Re
 func (sc *SemanticConventions) HTTPClientAttributesFromHTTPRequest(request *http.Request) []attribute.KeyValue {
 	attrs := []attribute.KeyValue{}
 
-	if request.Method != "" {
-		attrs = append(attrs, sc.HTTPMethodKey.String(request.Method))
-	} else {
-		attrs = append(attrs, sc.HTTPMethodKey.String(http.MethodGet))
-	}
-
 	// remove any username/password info that may be in the URL
 	// before adding it to the attributes
 	userinfo := request.URL.User
@@ -204,6 +198,12 @@ func (sc *SemanticConventions) httpBasicAttributesFromHTTPRequest(request *http.
 		attrs = append(attrs, sc.HTTPFlavorKey.String(flavor))
 	}
 
+	if request.Method != "" {
+		attrs = append(attrs, sc.HTTPMethodKey.String(request.Method))
+	} else {
+		attrs = append(attrs, sc.HTTPMethodKey.String(http.MethodGet))
+	}
+
 	return attrs
 }
 
@@ -223,7 +223,6 @@ func (sc *SemanticConventions) HTTPServerMetricAttributesFromHTTPRequest(serverN
 // supported.
 func (sc *SemanticConventions) HTTPServerAttributesFromHTTPRequest(serverName, route string, request *http.Request) []attribute.KeyValue {
 	attrs := []attribute.KeyValue{
-		sc.HTTPMethodKey.String(request.Method),
 		sc.HTTPTargetKey.String(request.RequestURI),
 	}
 
@@ -233,10 +232,12 @@ func (sc *SemanticConventions) HTTPServerAttributesFromHTTPRequest(serverName, r
 	if route != "" {
 		attrs = append(attrs, sc.HTTPRouteKey.String(route))
 	}
-	if values, ok := request.Header["X-Forwarded-For"]; ok && len(values) > 0 {
-		if addresses := strings.SplitN(values[0], ",", 2); len(addresses) > 0 {
-			attrs = append(attrs, sc.HTTPClientIPKey.String(addresses[0]))
+	if values := request.Header["X-Forwarded-For"]; len(values) > 0 {
+		addr := values[0]
+		if i := strings.Index(addr, ","); i > 0 {
+			addr = addr[:i]
 		}
+		attrs = append(attrs, sc.HTTPClientIPKey.String(addr))
 	}
 
 	return append(attrs, sc.httpCommonAttributesFromHTTPRequest(request)...)
