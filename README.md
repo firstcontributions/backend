@@ -1,26 +1,52 @@
-# FirstContributions App Backend
+# 🚀 Backend API — FirstContributions
 
-How to run
+Welcome to the **Backend API** for the *FirstContributions* project!  
+This service powers the application’s backend functionality and exposes RESTful endpoints used by the frontend. The codebase is written in Go and organized for clarity, scalability, and easy contribution.
 
-```sh
-$ sudo make configure
-$ make run
-```
+---
+
+## 📌 About
+
+This repository contains the backend code that supports the FirstContributions open-source project, including API routing, data handling, configurations, and deployment tools. The goal of this backend is to provide a reliable server that can handle requests from client apps, manage data, and serve resources securely and efficiently.
+
+---
+
+## 🧰 Tech Stack
+
+| Technology | Purpose |
+|------------|---------|
+| Go         | Backend language |
+| Docker     | Containerization |
+| Make       | Build & run automation |
+| GitHub Actions | CI/CD workflows |
+| Nginx      | Reverse proxy config |
+
+---
+
+## 📁 Project Structure
+
+├── .github/ # GitHub workflows (CI/CD)
+├── .vscode/ # Editor settings
+├── api/ # API request handlers and routing
+├── internal/ # Internal application logic
+├── pkg/ # Reusable packages
+├── test/ # Test cases
+├── docker-compose.yml # Local environment setup
+├── Makefile # Build and run scripts
+├── go.mod # Module dependencies
+└── README.md # Project documentation
 
 
-For mac and environments using docker compose, it is unable to connect to the docker network ip as docker is running in a VM.
-Need to setup a reverse proxy to do local setup
 
-1. Install nginx, refer config (./mac.nginx.conf)
-2. change hosts config (/etc/hosts)
+---
 
-```
-127.0.0.1 api.firstcontributions.com
-127.0.0.1 explorer.firstcontributions.com
-```
-To run integration tests
+## 🚀 Getting Started
 
-```sh
-$ sudo make configure
-$ make itest
-```
+Follow these steps to run the backend locally:
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/osamashabih6960/backend.git
+cd backend
+
