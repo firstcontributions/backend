@@ -1,34 +1,30 @@
-Languages: 
+This project includes or supports code written in the following languages:
 
-C
-C#
-C++
-CoffeeScript
-CSS
-Dart
-DM
-Elixir
-Go
-Groovy
-HTML
-Java
-JavaScript
-Kotlin
-Markdown
-Objective-C
-Perl
-PHP
-PowerShell
-Python
-Ruby
-Rust
-Scala
-Shell
-Swift
-TypeScript
+- C  
+- C#  
+- C++  
+- CoffeeScript  
+- CSS  
+- Dart  
+- DM  
+- Elixir  
+- Go  
+- Groovy  
+- HTML  
+- Java  
+- JavaScript  
+- Kotlin  
+- Markdown  
+- Objective-C  
+- Perl  
+- PHP  
+- PowerShell  
+- Python  
+- Ruby  
+- Rust  
+- Scala  
+- Shell  
+- Swift  
+- TypeScript  
 
-
-Ignore paths
-
-node_module
-vendor
+---

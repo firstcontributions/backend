@@ -16,13 +16,13 @@ services:
     stop_grace_period: 3s
 
 
-  # # zookeeper for kafka
-  # zookeeper:
-  #   container_name: zookeeper
-  #   image: zookeeper:3.5.5
-  #   networks:
-  #     docker_network:
-  #       ipv4_address: 172.30.1.2
+  # zookeeper for kafka
+  zookeeper:
+    container_name: zookeeper
+    image: zookeeper:3.5.5
+    networks:
+      docker_network:
+        ipv4_address: 172.30.1.2
 
   # #kafka for post pipeline
   # kafka:
