@@ -1,26 +1,38 @@
 # FirstContributions App Backend
 
-How to run
+## Overview
+
+This repository contains the backend service for the First Contributions app. It handles API requests and supports integration with the frontend.
+
+## Setup & Run
 
 ```sh
-$ sudo make configure
-$ make run
+sudo make configure
+make run
 ```
 
+## macOS / Docker Setup Notes
 
-For mac and environments using docker compose, it is unable to connect to the docker network ip as docker is running in a VM.
-Need to setup a reverse proxy to do local setup
+On macOS and environments using Docker Compose, the application may not be able to connect to Docker network IPs because Docker runs inside a virtual machine.
 
-1. Install nginx, refer config (./mac.nginx.conf)
-2. change hosts config (/etc/hosts)
+To resolve this, set up a reverse proxy using Nginx.
 
-```
+### Steps
+
+1. Install Nginx and refer to the configuration file:
+   `./mac.nginx.conf`
+
+2. Update your `/etc/hosts` file:
+
+```text
 127.0.0.1 api.firstcontributions.com
 127.0.0.1 explorer.firstcontributions.com
 ```
-To run integration tests
+
+## Running Integration Tests
 
 ```sh
-$ sudo make configure
-$ make itest
+sudo make configure
+make itest
 ```
+
